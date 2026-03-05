@@ -1,0 +1,140 @@
+:root {
+  --primary-color: #409eff;
+  --success-color: #67c23a;
+  --warning-color: #e6a23c;
+  --danger-color: #f56c6c;
+  --info-color: #909399;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'Noto Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f5f7fa;
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Utility classes */
+.text-center {
+  text-align: center;
+}
+
+.mt-20 {
+  margin-top: 20px;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+/* Card styles */
+.feature-card {
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Status badges */
+.status-pending {
+  color: var(--info-color);
+}
+
+.status-processing {
+  color: var(--warning-color);
+}
+
+.status-completed {
+  color: var(--success-color);
+}
+
+.status-failed {
+  color: var(--danger-color);
+}
+
+/* 全局移动端适配 */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .el-card {
+    margin: 8px;
+  }
+  
+  .el-button {
+    padding: 8px 15px;
+  }
+  
+  .el-input__inner {
+    font-size: 16px; /* 防止 iOS 缩放 */
+  }
+}
+
+/* 移动端下拉菜单适配 */
+@media (max-width: 768px) {
+  .mobile-submenu {
+    min-width: 150px !important;
+  }
+  
+  .el-dialog {
+    margin: 10px auto !important;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  .el-table {
+    font-size: 13px;
+  }
+  
+  .el-table th {
+    padding: 8px 0;
+  }
+  
+  .el-table td {
+    padding: 8px 0;
+  }
+}
+
+/* Element Plus 移动端优化 */
+@media (max-width: 768px) {
+  .el-menu--horizontal {
+    justify-content: space-around;
+  }
+  
+  .el-menu--horizontal > .el-menu-item,
+  .el-menu--horizontal > .el-sub-menu .el-sub-menu__title {
+    padding: 0 10px;
+  }
+}
+
+/* 触摸设备优化 */
+@media (hover: none) {
+  .feature-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .feature-card:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}

@@ -1,0 +1,3 @@
+[submodule "upstream/BA-Modding-Toolkit"]
+	path = upstream/BA-Modding-Toolkit
+	url = https://github.com/Agent-0808/BA-Modding-Toolkit.git
