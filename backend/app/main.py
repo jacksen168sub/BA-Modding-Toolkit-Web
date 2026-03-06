@@ -8,6 +8,7 @@ from fastapi.responses import FileResponse
 
 from .config import settings
 from .models.database import init_db
+from .models import Session, Task, File  # Import models to register with Base
 from .routers import session, files, tasks
 from .utils.cleanup import periodic_cleanup
 
