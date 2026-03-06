@@ -103,7 +103,7 @@ docker run -d \
 也可从 DockerHub 拉取：
 
 ```bash
-docker pull <dockerhub-username>/ba-modding-toolkit-web:latest
+docker pull jacksen168/ba-modding-toolkit-web:latest
 ```
 
 ## 项目结构
