@@ -29,8 +29,12 @@ RUN uv sync --no-dev
 
 COPY backend/app ./app
 
-# Copy upstream BA-Modding-Toolkit (submodule)
+# Copy upstream BA-Modding-Toolkit (submodule) and install dependencies
 COPY upstream ./upstream
+WORKDIR /app/upstream/BA-Modding-Toolkit
+RUN uv sync --no-dev
+
+WORKDIR /app
 
 # Setup frontend (copy from build stage, works for all platforms)
 COPY --from=frontend-build /app/frontend/dist /var/www/html
