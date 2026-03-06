@@ -8,12 +8,14 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     
     # File storage paths
-    # Path(__file__) = backend/app/config.py
-    # .parent = backend/app
-    # .parent.parent = backend
-    # .parent.parent.parent = BA-Modding-Toolkit-Web/ (project root)
-    BASE_DIR: Path = Path(__file__).parent.parent  # backend/
-    PROJECT_ROOT: Path = Path(__file__).parent.parent.parent  # BA-Modding-Toolkit-Web/
+    # In Docker, we're at /app/app/config.py, so PROJECT_ROOT should be /app
+    # In development, we're at backend/app/config.py, so PROJECT_ROOT should be project root
+    BASE_DIR: Path = Path(__file__).parent.parent  # backend/ or /app/
+    
+    # Detect if running in Docker (check if /app/.venv exists)
+    _is_docker: bool = (Path("/app/.venv").exists())
+    
+    PROJECT_ROOT: Path = Path("/app") if _is_docker else Path(__file__).parent.parent.parent
     
     # Database - use absolute path
     @property
