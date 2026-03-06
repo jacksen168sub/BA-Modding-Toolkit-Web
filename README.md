@@ -1,85 +1,92 @@
 # BA-Modding-Toolkit-Web
 
-为 [BA-Modding-Toolkit](https://github.com/Agent-0808/BA-Modding-Toolkit) 构建的 Web 服务平台，支持多用户自助式使用。
+[![Docker Build](https://github.com/jacksen168sub/BA-Modding-Toolkit-Web/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/jacksen168sub/BA-Modding-Toolkit-Web/actions/workflows/docker-publish.yml)
+[![GitHub release](https://img.shields.io/github/v/release/jacksen168sub/BA-Modding-Toolkit-Web?include_prereleases)](https://github.com/jacksen168sub/BA-Modding-Toolkit-Web/releases)
+[![Docker Pulls](https://img.shields.io/docker/pulls/jacksen168/ba-modding-toolkit-web)](https://hub.docker.com/r/jacksen168/ba-modding-toolkit-web)
+[![License](https://img.shields.io/github/license/jacksen168sub/BA-Modding-Toolkit-Web)](LICENSE)
 
-## 功能特性
+A web service platform for [BA-Modding-Toolkit](https://github.com/Agent-0808/BA-Modding-Toolkit), supporting multi-user self-service usage.
 
-- **Mod 更新** - 更新游戏 Mod 文件
-- **资源打包** - 将资源文件打包成游戏格式
-- **资源解包** - 解包游戏资源文件
-- **CRC 校验** - 计算文件 CRC 校验值
+**[中文文档](docs/README.zh-CN.md)**
 
-## 技术栈
+## Features
 
-| 组件 | 技术 |
-|------|------|
-| 后端 | FastAPI + SQLAlchemy + SQLite |
-| 前端 | Vue 3 + Vite + Element Plus |
-| 部署 | Docker Compose |
+- **Mod Update** - Update game mod files to the latest version
+- **Asset Pack** - Pack resource files into game bundles
+- **Asset Extract** - Extract assets from game bundles
+- **CRC Tool** - Calculate and fix CRC checksums
 
-## 快速开始
+## Tech Stack
 
-### 方式一：生产模式（推荐）
+| Component | Technology |
+|-----------|------------|
+| Backend | FastAPI + SQLAlchemy + SQLite |
+| Frontend | Vue 3 + Vite + Element Plus |
+| Deployment | Docker Compose |
 
-构建前端并启动后端，所有服务运行在 **8000 端口**：
+## Quick Start
+
+### Option 1: Production Mode (Recommended)
+
+Build frontend and start backend, all services run on **port 8000**:
 
 ```bash
-# 1. 构建前端
+# 1. Build frontend
 cd frontend
 npm install
 npm run build
 cd ..
 
-# 2. 启动后端（自动托管前端静态文件）
+# 2. Start backend (automatically serves frontend static files)
 cd backend
 uv sync
 uv run uvicorn app.main:app --host 0.0.0.0 --port 8000
 cd ..
 ```
 
-访问 http://localhost:8000
+Visit http://localhost:8000
 
-### 方式二：开发模式
+### Option 2: Development Mode
 
-前后端分离运行，支持热重载：
+Run frontend and backend separately with hot reload:
 
-**终端 1 - 启动后端：**
+**Terminal 1 - Start backend:**
 ```bash
 cd backend
 uv sync
 uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-**终端 2 - 启动前端：**
+**Terminal 2 - Start frontend:**
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-- 前端访问：http://localhost:3000
-- 后端 API：http://localhost:8000
-- 前端会自动代理 `/api` 请求到后端
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+- Frontend automatically proxies `/api` requests to backend
 
-### 方式三：Docker（端口 80）
+### Option 3: Docker (Port 80)
 
-#### 使用 Docker Compose（本地构建）
+#### Using Docker Compose (Local Build)
 
 ```bash
 docker-compose up --build
 ```
 
-访问 http://localhost
+Visit http://localhost
 
-#### 使用预构建镜像
+#### Using Pre-built Image
 
-从 GitHub Container Registry 拉取镜像：
+Pull from GitHub Container Registry:
 
 ```bash
-# 拉取镜像
+# Pull image
 docker pull ghcr.io/jacksen168sub/ba-modding-toolkit-web:latest
 
-# 运行容器
+# Run container
 docker run -d \
   --name bamt-web \
   -p 80:80 \
@@ -88,65 +95,86 @@ docker run -d \
   ghcr.io/jacksen168sub/ba-modding-toolkit-web:latest
 ```
 
-访问 http://localhost
+Visit http://localhost
 
-#### 可选配置
+#### Optional Configuration
 
-| 参数 | 说明 |
-|------|------|
-| `-p 80:80` | 端口映射，格式为 `主机端口:容器端口` |
-| `-v ./storage:/app/storage` | 持久化文件存储 |
-| `-v ./data:/app/data` | 持久化数据库 |
+| Parameter | Description |
+|-----------|-------------|
+| `-p 80:80` | Port mapping, format: `host_port:container_port` |
+| `-v ./storage:/app/storage` | Persistent file storage |
+| `-v ./data:/app/data` | Persistent database |
 
 #### Docker Hub
 
-也可从 DockerHub 拉取：
+Also available on Docker Hub:
 
 ```bash
 docker pull jacksen168/ba-modding-toolkit-web:latest
 ```
 
-## 项目结构
+## Project Structure
 
 ```
 BA-Modding-Toolkit-Web/
-├── backend/                 # FastAPI 后端
+├── backend/                 # FastAPI backend
 │   ├── app/
-│   │   ├── main.py          # 应用入口
-│   │   ├── routers/         # API 路由
-│   │   ├── services/        # 业务逻辑
-│   │   ├── models/          # 数据模型
-│   │   └── utils/           # 工具函数
+│   │   ├── main.py          # Application entry
+│   │   ├── routers/         # API routes
+│   │   ├── services/        # Business logic
+│   │   ├── models/          # Data models
+│   │   └── utils/           # Utilities
 │   └── pyproject.toml
-├── frontend/                # Vue 3 前端
+├── frontend/                # Vue 3 frontend
 │   ├── src/
-│   │   ├── pages/           # 页面组件
-│   │   ├── components/      # 通用组件
-│   │   ├── api/             # API 封装
-│   │   └── stores/          # 状态管理
+│   │   ├── pages/           # Page components
+│   │   ├── components/      # Common components
+│   │   ├── api/             # API wrappers
+│   │   └── stores/          # State management
 │   └── package.json
-├── storage/                 # 文件存储
-│   ├── uploads/             # 用户上传
-│   └── outputs/             # 处理结果
-├── data/                    # SQLite 数据库
-└── upstream/                # BA-Modding-Toolkit 子模块
+├── storage/                 # File storage
+│   ├── uploads/             # User uploads
+│   └── outputs/             # Processing results
+├── data/                    # SQLite database
+└── upstream/                # BA-Modding-Toolkit submodule
 ```
 
-## 环境要求
+## Requirements
 
 - Python >= 3.10
 - Node.js >= 18
-- uv（Python 包管理器）
+- uv (Python package manager)
 
-## 配置
+## Configuration
 
-后端配置位于 `backend/app/config.py`，支持环境变量：
+Backend configuration is located in `backend/app/config.py`, supports environment variables:
 
-| 变量 | 说明 | 默认值 |
-|------|------|--------|
-| UPLOAD_DIR | 上传文件目录 | storage/uploads |
-| OUTPUT_DIR | 输出文件目录 | storage/outputs |
-| SESSION_EXPIRE_HOURS | 会话过期时间 | 24 |
+| Variable | Description | Default |
+|----------|-------------|---------|
+| UPLOAD_DIR | Upload directory | storage/uploads |
+| OUTPUT_DIR | Output directory | storage/outputs |
+| SESSION_EXPIRE_HOURS | Session expiration time | 24 |
+
+## Supported Languages
+
+The interface supports multiple languages:
+
+- English (en-US)
+- 简体中文 (zh-CN)
+- 繁體中文 (zh-TW)
+- 日本語 (ja-JP)
+- 한국어 (ko-KR)
+- Español (es-ES)
+- Français (fr-FR)
+- Русский (ru-RU)
+- العربية (ar-SA)
+- हिन्दी (hi-IN)
+- বাংলা (bn-BD)
+- ไทย (th-TH)
+
+## Acknowledgments
+
+- [BA-Modding-Toolkit](https://github.com/Agent-0808/BA-Modding-Toolkit) - The upstream CLI tool
 
 ## License
 
