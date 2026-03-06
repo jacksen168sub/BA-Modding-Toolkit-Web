@@ -1,4 +1,4 @@
-name: Publish Test Docker images
+name: Publish Test Docker image
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   push_to_registry:
-    name: Push Docker images to multiple registries
+    name: Push Docker image to multiple registries
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -37,53 +37,24 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Build and push backend image
-      - name: Docker meta (backend)
-        id: meta-backend
+      - name: Docker meta
+        id: meta
         uses: docker/metadata-action@v5
         with:
           images: |
-            ghcr.io/${{ github.repository }}-backend
-            ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPONAME }}-backend
+            ghcr.io/${{ github.repository }}
+            ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPONAME }}
           tags: |
             type=raw,value=test
 
-      - name: Build and push backend image
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile.backend
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ steps.meta-backend.outputs.tags }}
-          labels: ${{ steps.meta-backend.outputs.labels }}
-          build-args: |
-            BUILD_VERSION=${{ github.ref_name }}
-            BUILD_COMMIT_SHA=${{ github.sha }}
-            BUILD_COMMIT_LINK=${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      # Build and push frontend image
-      - name: Docker meta (frontend)
-        id: meta-frontend
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            ghcr.io/${{ github.repository }}-frontend
-            ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPONAME }}-frontend
-          tags: |
-            type=raw,value=test
-
-      - name: Build and push frontend image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./Dockerfile.frontend
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ steps.meta-frontend.outputs.tags }}
-          labels: ${{ steps.meta-frontend.outputs.labels }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             BUILD_VERSION=${{ github.ref_name }}
             BUILD_COMMIT_SHA=${{ github.sha }}
