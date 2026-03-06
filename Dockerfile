@@ -39,11 +39,9 @@ WORKDIR /app
 
 # Setup frontend (copy from build stage, works for all platforms)
 COPY --from=frontend-build /app/frontend/dist /var/www/html
-COPY nginx.conf /etc/nginx/sites-available/default
 
-# Enable nginx site
-RUN rm -f /etc/nginx/sites-enabled/default && \
-    ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+# Setup nginx - use as main config (not sites-enabled)
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # Create necessary directories
 RUN mkdir -p /app/storage/uploads /app/storage/outputs /app/storage/temp /app/data
