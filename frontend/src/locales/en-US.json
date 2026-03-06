@@ -170,7 +170,8 @@
     "upstream": "BA-Modding-Toolkit",
     "madeWith": "Made with",
     "sessionId": "Session ID",
-    "expiresAt": "Expires At"
+    "expiresAt": "Expires At",
+    "version": "Version"
   },
   "lang": {
     "switch": "Language",

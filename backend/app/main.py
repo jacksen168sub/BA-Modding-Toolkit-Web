@@ -9,7 +9,7 @@ from fastapi.responses import FileResponse
 from .config import settings
 from .models.database import init_db
 from .models import Session, Task, File  # Import models to register with Base
-from .routers import session, files, tasks
+from .routers import session, files, tasks, version
 from .utils.cleanup import periodic_cleanup
 
 # Frontend dist directory
@@ -62,6 +62,7 @@ app.add_middleware(
 app.include_router(session.router, prefix="/api")
 app.include_router(files.router, prefix="/api")
 app.include_router(tasks.router, prefix="/api")
+app.include_router(version.router, prefix="/api")
 
 
 @app.get("/health")

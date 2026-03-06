@@ -170,7 +170,8 @@
     "upstream": "BA-Modding-Toolkit",
     "madeWith": "制作",
     "sessionId": "会话ID",
-    "expiresAt": "过期时间"
+    "expiresAt": "过期时间",
+    "version": "版本"
   },
   "lang": {
     "switch": "语言",

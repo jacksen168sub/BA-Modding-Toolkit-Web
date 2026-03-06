@@ -7,6 +7,7 @@
           {{ $t('footer.upstream') }}
         </a>
         Web Interface
+        <span v-if="version" class="version-info">| {{ $t('footer.version') }}: {{ version }}</span>
       </p>
       <p class="session-info">
         {{ $t('footer.sessionId') }}: {{ sessionStore.uuid }}
@@ -19,11 +20,23 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useSessionStore } from '@/stores/session'
+import { getVersion } from '@/api/version'
 
 const { t } = useI18n()
 const sessionStore = useSessionStore()
+const version = ref(null)
+
+onMounted(async () => {
+  try {
+    const data = await getVersion()
+    version.value = data.version
+  } catch (e) {
+    // Ignore version fetch errors
+  }
+})
 
 function formatTime(time) {
   return new Date(time).toLocaleString()
@@ -49,6 +62,10 @@ function formatTime(time) {
 .session-info {
   font-family: monospace;
   color: #c0c4cc;
+}
+
+.version-info {
+  margin-left: 8px;
 }
 
 /* 移动端适配 */
