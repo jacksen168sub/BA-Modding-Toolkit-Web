@@ -162,6 +162,9 @@ class CLIRunner:
         if asset_types:
             args.extend(["--asset-types"] + asset_types)
         
+        # Add compression parameter from config
+        args.extend(["--compression", settings.CLI_COMPRESSION])
+        
         cmd = ["uv", "run", "bamt-cli"] + args
         returncode, stdout, stderr = await self._run_command(args)
         
@@ -199,6 +202,9 @@ class CLIRunner:
         
         if not crc_correction:
             args.append("--no-crc")
+        
+        # Add compression parameter from config
+        args.extend(["--compression", settings.CLI_COMPRESSION])
         
         cmd = ["uv", "run", "bamt-cli"] + args
         returncode, stdout, stderr = await self._run_command(args)
