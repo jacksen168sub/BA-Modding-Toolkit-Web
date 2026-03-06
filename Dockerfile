@@ -18,6 +18,7 @@ WORKDIR /app
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
+    g++ \
     nginx \
     supervisor \
     && rm -rf /var/lib/apt/lists/*
