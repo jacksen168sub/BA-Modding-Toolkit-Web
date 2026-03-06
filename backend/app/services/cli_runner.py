@@ -266,9 +266,10 @@ class CLIRunner:
             The CLI modifies the file in-place. If no_backup is False,
             a .bak backup is created. The output_path points to the modified file.
         """
+        # Note: 'modified' is a positional argument, not --modified
         args = [
             "crc",
-            "--modified", str(modified_path),
+            str(modified_path),
             "--original", str(original_path)
         ]
         
