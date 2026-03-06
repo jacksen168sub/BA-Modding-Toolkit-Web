@@ -154,6 +154,7 @@ BA-Modding-Toolkit-Web/
 | UPLOAD_DIR | 上传文件目录 | storage/uploads |
 | OUTPUT_DIR | 输出文件目录 | storage/outputs |
 | SESSION_EXPIRE_HOURS | 会话过期时间 | 24 |
+| CLI_COMPRESSION | Bundle 压缩方式 (lzma, lz4, original, none) | lz4 |
 
 ## 支持的语言
 

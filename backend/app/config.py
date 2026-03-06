@@ -40,6 +40,7 @@ class Settings(BaseSettings):
     
     # CLI settings
     CLI_TIMEOUT: int = 600  # 10 minutes
+    CLI_COMPRESSION: str = "lz4"  # Compression method: lzma, lz4, original, none
 
     # Concurrency settings
     MAX_CONCURRENT_TASKS: int = 2  # Maximum concurrent tasks

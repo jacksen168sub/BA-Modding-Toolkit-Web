@@ -154,6 +154,7 @@ Backend configuration is located in `backend/app/config.py`, supports environmen
 | UPLOAD_DIR | Upload directory | storage/uploads |
 | OUTPUT_DIR | Output directory | storage/outputs |
 | SESSION_EXPIRE_HOURS | Session expiration time | 24 |
+| CLI_COMPRESSION | Bundle compression method (lzma, lz4, original, none) | lzma |
 
 ## Supported Languages
 
