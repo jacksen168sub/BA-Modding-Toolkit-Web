@@ -55,7 +55,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { HomeFilled, Tools, List, Platform } from '@element-plus/icons-vue'
-import { setLocale, getLocale, getAvailableLocales } from '@/i18n'
+import { setLocale, getLocale } from '@/i18n'
 
 const route = useRoute()
 const router = useRouter()
@@ -70,7 +70,17 @@ const isMobile = computed(() => windowWidth.value < 768)
 // 可用语言列表
 const availableLocales = [
   { value: 'zh-CN', label: '简体中文' },
-  { value: 'en-US', label: 'English' }
+  { value: 'zh-TW', label: '繁體中文' },
+  { value: 'en-US', label: 'English' },
+  { value: 'ja-JP', label: '日本語' },
+  { value: 'ko-KR', label: '한국어' },
+  { value: 'es-ES', label: 'Español' },
+  { value: 'fr-FR', label: 'Français' },
+  { value: 'ru-RU', label: 'Русский' },
+  { value: 'ar-SA', label: 'العربية' },
+  { value: 'hi-IN', label: 'हिन्दी' },
+  { value: 'bn-BD', label: 'বাংলা' },
+  { value: 'th-TH', label: 'ไทย' }
 ]
 
 function changeLocale(locale) {
