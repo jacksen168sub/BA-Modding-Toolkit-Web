@@ -33,6 +33,10 @@ COPY backend/app ./app
 COPY --from=frontend-build /app/frontend/dist /var/www/html
 COPY nginx.conf /etc/nginx/sites-available/default
 
+# Enable nginx site
+RUN rm -f /etc/nginx/sites-enabled/default && \
+    ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+
 # Create necessary directories
 RUN mkdir -p /app/storage/uploads /app/storage/outputs /app/storage/temp /app/data
 

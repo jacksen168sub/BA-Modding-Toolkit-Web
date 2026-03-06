@@ -61,13 +61,50 @@ npm run dev
 - 后端 API：http://localhost:8000
 - 前端会自动代理 `/api` 请求到后端
 
-### 方式三：Docker Compose
+### 方式三：Docker（端口 80）
+
+#### 使用 Docker Compose（本地构建）
 
 ```bash
 docker-compose up --build
 ```
 
 访问 http://localhost
+
+#### 使用预构建镜像
+
+从 GitHub Container Registry 拉取镜像：
+
+```bash
+# 拉取镜像
+docker pull ghcr.io/jacksen168sub/ba-modding-toolkit-web:latest
+
+# 运行容器
+docker run -d \
+  --name bamt-web \
+  -p 80:80 \
+  -v ./storage:/app/storage \
+  -v ./data:/app/data \
+  ghcr.io/jacksen168sub/ba-modding-toolkit-web:latest
+```
+
+访问 http://localhost
+
+#### 可选配置
+
+| 参数 | 说明 |
+|------|------|
+| `-p 80:80` | 端口映射，格式为 `主机端口:容器端口` |
+| `-v ./storage:/app/storage` | 持久化文件存储 |
+| `-v ./data:/app/data` | 持久化数据库 |
+
+#### Docker Hub
+
+也可从 DockerHub 拉取：
+
+```bash
+docker pull <dockerhub-username>/ba-modding-toolkit-web:latest
+```
 
 ## 项目结构
 
