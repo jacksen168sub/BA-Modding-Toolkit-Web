@@ -12,6 +12,10 @@ RUN npm run build
 # Production stage
 FROM python:3.12-slim
 
+# Build arguments for version info
+ARG GIT_TAG=""
+ARG GIT_COMMIT=""
+
 WORKDIR /app
 
 # Install uv and supervisor
@@ -49,6 +53,10 @@ RUN mkdir -p /app/storage/uploads /app/storage/outputs /app/storage/temp /app/da
 # Supervisor configuration
 RUN mkdir -p /var/log/supervisor
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Set version info as environment variables
+ENV GIT_TAG=${GIT_TAG}
+ENV GIT_COMMIT=${GIT_COMMIT}
 
 EXPOSE 80
 
