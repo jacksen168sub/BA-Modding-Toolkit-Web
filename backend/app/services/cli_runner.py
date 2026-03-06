@@ -247,21 +247,33 @@ class CLIRunner:
     
     async def run_crc(
         self,
-        bundle_path: Path,
-        output_dir: Path
+        modified_path: Path,
+        original_path: Path,
+        no_backup: bool = False
     ) -> Tuple[Path, str]:
         """
         Run CRC correction command asynchronously.
         
+        Args:
+            modified_path: Path to the modified file (to be fixed)
+            original_path: Path to the original file (provides target CRC value)
+            no_backup: Do not create a backup (.bak) before fixing the file
+        
         Returns:
             Tuple of (output_path, full_log)
+        
+        Note:
+            The CLI modifies the file in-place. If no_backup is False,
+            a .bak backup is created. The output_path points to the modified file.
         """
         args = [
             "crc",
-            "correct",
-            str(bundle_path),
-            "--output", str(output_dir)
+            "--modified", str(modified_path),
+            "--original", str(original_path)
         ]
+        
+        if no_backup:
+            args.append("--no-backup")
         
         cmd = ["uv", "run", "bamt-cli"] + args
         returncode, stdout, stderr = await self._run_command(args)
@@ -271,11 +283,8 @@ class CLIRunner:
         if returncode != 0:
             raise RuntimeError(f"CRC correction failed: {stderr or stdout}", full_log)
         
-        output_files = list(output_dir.glob("*.bundle"))
-        if output_files:
-            return output_files[0], full_log
-        
-        raise FileNotFoundError("No output bundle generated", full_log)
+        # CRC modifies the file in-place, return the modified file path
+        return modified_path, full_log
 
 
 # Global CLI runner instance

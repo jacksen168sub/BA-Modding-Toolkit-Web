@@ -110,7 +110,8 @@ class ExtractTaskCreate(BaseModel):
 # CRC task specific schemas
 class CrcTaskCreate(BaseModel):
     session_uuid: str
-    bundle_file_id: str
+    modified_file_id: str   # Modified bundle file (to be fixed)
+    original_file_id: str   # Original bundle file (provides target CRC)
 
 
 # API Response schemas

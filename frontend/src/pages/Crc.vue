@@ -15,19 +15,43 @@
         <el-form-item :label="$t('crc.modifiedFile')" required>
           <div class="upload-area">
             <el-upload
-              ref="bundleUploadRef"
+              ref="modifiedUploadRef"
               :action="uploadUrl"
               :data="{ session_uuid: sessionUuid }"
-              :on-success="onBundleUploaded"
+              :on-success="onModifiedUploaded"
               :on-error="onUploadError"
               :before-upload="beforeUpload"
               :limit="1"
-              :file-list="bundleFileList"
+              :file-list="modifiedFileList"
               drag
             >
               <el-icon class="el-icon--upload"><UploadFilled /></el-icon>
               <div class="el-upload__text">
                 {{ $t('crc.modifiedFileHint') }}
+              </div>
+              <template #tip>
+                <div class="el-upload__tip">.bundle</div>
+              </template>
+            </el-upload>
+          </div>
+        </el-form-item>
+        
+        <el-form-item :label="$t('crc.originalFile')" required>
+          <div class="upload-area">
+            <el-upload
+              ref="originalUploadRef"
+              :action="uploadUrl"
+              :data="{ session_uuid: sessionUuid }"
+              :on-success="onOriginalUploaded"
+              :on-error="onUploadError"
+              :before-upload="beforeUpload"
+              :limit="1"
+              :file-list="originalFileList"
+              drag
+            >
+              <el-icon class="el-icon--upload"><UploadFilled /></el-icon>
+              <div class="el-upload__text">
+                {{ $t('crc.originalFileHint') }}
               </div>
               <template #tip>
                 <div class="el-upload__tip">.bundle</div>
@@ -67,12 +91,15 @@ const tasksStore = useTasksStore()
 const windowWidth = ref(window.innerWidth)
 const isMobile = computed(() => windowWidth.value < 768)
 
-const bundleUploadRef = ref()
+const modifiedUploadRef = ref()
+const originalUploadRef = ref()
 const submitting = ref(false)
 const currentTask = ref(null)
 
-const bundleFile = ref(null)
-const bundleFileList = ref([])
+const modifiedFile = ref(null)
+const originalFile = ref(null)
+const modifiedFileList = ref([])
+const originalFileList = ref([])
 
 const sessionUuid = computed(() => sessionStore.uuid)
 const uploadUrl = '/api/files/upload'
@@ -98,8 +125,13 @@ function beforeUpload(file) {
   return true
 }
 
-function onBundleUploaded(response) {
-  bundleFile.value = response
+function onModifiedUploaded(response) {
+  modifiedFile.value = response
+  ElMessage.success(t('crc.fileUploaded'))
+}
+
+function onOriginalUploaded(response) {
+  originalFile.value = response
   ElMessage.success(t('crc.fileUploaded'))
 }
 
@@ -108,8 +140,13 @@ function onUploadError(error) {
 }
 
 async function submitTask() {
-  if (!bundleFile.value) {
-    ElMessage.warning(t('crc.pleaseUploadFile'))
+  if (!modifiedFile.value) {
+    ElMessage.warning(t('crc.pleaseUploadModified'))
+    return
+  }
+  
+  if (!originalFile.value) {
+    ElMessage.warning(t('crc.pleaseUploadOriginal'))
     return
   }
   
@@ -118,7 +155,8 @@ async function submitTask() {
   try {
     const task = await createCrcTask({
       session_uuid: sessionStore.uuid,
-      bundle_file_id: bundleFile.value.id
+      modified_file_id: modifiedFile.value.id,
+      original_file_id: originalFile.value.id
     })
     
     currentTask.value = task
@@ -141,8 +179,10 @@ async function submitTask() {
 }
 
 function resetForm() {
-  bundleFile.value = null
-  bundleFileList.value = []
+  modifiedFile.value = null
+  originalFile.value = null
+  modifiedFileList.value = []
+  originalFileList.value = []
   currentTask.value = null
 }
 

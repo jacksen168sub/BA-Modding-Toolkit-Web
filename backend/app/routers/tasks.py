@@ -298,27 +298,32 @@ async def execute_crc_task(task_id: str, session_uuid: str, options: dict):
             
             task_service.update_status(task_id, TaskStatus.PROCESSING)
             
-            bundle_id = options.get("bundle_file_id")
-            bundle_file = file_service.get(bundle_id)
+            modified_id = options.get("modified_file_id")
+            original_id = options.get("original_file_id")
             
-            if not bundle_file:
-                task_service.update_status(task_id, TaskStatus.FAILED, "Bundle file not found")
+            modified_file = file_service.get(modified_id)
+            original_file = file_service.get(original_id)
+            
+            if not modified_file:
+                task_service.update_status(task_id, TaskStatus.FAILED, "Modified bundle file not found")
                 return
             
-            output_dir = settings.output_path / session_uuid / task_id
-            output_dir.mkdir(parents=True, exist_ok=True)
+            if not original_file:
+                task_service.update_status(task_id, TaskStatus.FAILED, "Original bundle file not found")
+                return
             
             try:
                 output_path, cli_log = await cli_runner.run_crc(
-                    bundle_path=Path(bundle_file.stored_path),
-                    output_dir=output_dir
+                    modified_path=Path(modified_file.stored_path),
+                    original_path=Path(original_file.stored_path),
+                    no_backup=True  # Don't create backup in server environment
                 )
                 
-                # Use original bundle name for output
+                # Create output file record for the modified bundle
                 output_file = file_service.create_output_file(
                     session_uuid=session_uuid,
                     file_path=output_path,
-                    original_name=bundle_file.original_name,
+                    original_name=modified_file.original_name,
                     task_id=task_id
                 )
                 
@@ -428,7 +433,10 @@ def create_crc_task(
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
 ):
-    """Create a CRC correction task."""
+    """Create a CRC correction task.
+    
+    Requires both modified and original bundle files to perform CRC correction.
+    """
     session_service = SessionService(db)
     session = session_service.get(request.session_uuid)
     if not session:
