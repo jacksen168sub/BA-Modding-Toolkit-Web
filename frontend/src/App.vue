@@ -15,8 +15,17 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
 import NavBar from '@/components/NavBar.vue'
 import Footer from '@/components/Footer.vue'
+import { useSessionStore } from '@/stores/session'
+
+const sessionStore = useSessionStore()
+
+// Initialize session on app mount
+onMounted(() => {
+  sessionStore.fetchSession()
+})
 </script>
 
 <style>
