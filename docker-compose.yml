@@ -1,6 +1,11 @@
 version: '3.8'
 services:
   ba-modding-toolkit-web:
+    build:
+      context: .
+      args:
+        GIT_TAG: ${GIT_TAG:-}
+        GIT_COMMIT: ${GIT_COMMIT:-}
     image: jacksen168/ba-modding-toolkit-web:latest
     container_name: ba-modding-toolkit-web
     network_mode: bridge
