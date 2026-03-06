@@ -29,6 +29,9 @@ RUN uv sync --no-dev
 
 COPY backend/app ./app
 
+# Copy upstream BA-Modding-Toolkit (submodule)
+COPY upstream ./upstream
+
 # Setup frontend (copy from build stage, works for all platforms)
 COPY --from=frontend-build /app/frontend/dist /var/www/html
 COPY nginx.conf /etc/nginx/sites-available/default
