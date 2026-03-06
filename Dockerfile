@@ -1,5 +1,5 @@
-# Build stage for frontend
-FROM node:20-alpine AS frontend-build
+# Build stage for frontend (only runs on amd64)
+FROM --platform=$BUILDPLATFORM node:20-alpine AS frontend-build
 
 WORKDIR /app/frontend
 
@@ -29,7 +29,7 @@ RUN uv sync --no-dev
 
 COPY backend/app ./app
 
-# Setup frontend
+# Setup frontend (copy from build stage, works for all platforms)
 COPY --from=frontend-build /app/frontend/dist /var/www/html
 COPY nginx.conf /etc/nginx/sites-available/default
 
