@@ -14,7 +14,8 @@ class TaskService:
         self,
         session_uuid: str,
         task_type: TaskType,
-        options: dict = None
+        options: dict = None,
+        name: str = None
     ) -> Task:
         """Create a new task."""
         task_id = str(uuid_lib.uuid4())
@@ -23,7 +24,8 @@ class TaskService:
             id=task_id,
             session_uuid=session_uuid,
             type=task_type,
-            status=TaskStatus.PENDING
+            status=TaskStatus.PENDING,
+            name=name
         )
         
         if options:

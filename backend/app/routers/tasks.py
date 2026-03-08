@@ -1,8 +1,34 @@
 import asyncio
+import re
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from pathlib import Path
 from datetime import datetime
+
+
+def extract_character_name(filename: str) -> str:
+    """Extract character name from bundle filename."""
+    if not filename:
+        return "unknown"
+    
+    patterns = [
+        r'spinelobbies-([a-zA-Z0-9_-]+?)-_mxdependency',
+        r'spinecharacters-([a-zA-Z0-9_-]+?)-_mxprolog',
+        r'spinebackground-([a-zA-Z0-9_-]+?)-_mxdependency',
+        r'assets-_mx-spinecharacters-([a-zA-Z0-9_-]+?)-_mxdependency',
+    ]
+    
+    for pattern in patterns:
+        match = re.search(pattern, filename, re.IGNORECASE)
+        if match:
+            name = match.group(1)
+            # Format: xxx_yyy -> xxx(yyy)
+            idx = name.rfind('_')
+            if idx > 0:
+                return f"{name[:idx]}({name[idx+1:]})"
+            return name
+    
+    return "unknown"
 
 from ..models.database import get_db
 from ..models.task import TaskType, TaskStatus
@@ -33,6 +59,7 @@ def get_task_response(task, db: Session) -> TaskResponse:
         session_uuid=task.session_uuid,
         type=task.type,
         status=task.status,
+        name=task.name,
         options=task.get_options(),
         error_message=task.error_message,
         cli_log=task.cli_log,
@@ -352,11 +379,17 @@ def create_update_task(
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
     
+    # Get file info to extract character name
+    file_service = FileService(db)
+    old_bundle_file = file_service.get(request.old_bundle_file_id)
+    name = extract_character_name(old_bundle_file.original_name) if old_bundle_file else "unknown"
+    
     task_service = TaskService(db)
     task = task_service.create(
         session_uuid=request.session_uuid,
         task_type=TaskType.UPDATE,
-        options=request.model_dump()
+        options=request.model_dump(),
+        name=name
     )
     
     background_tasks.add_task(
@@ -381,11 +414,17 @@ def create_pack_task(
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
     
+    # Get file info to extract character name
+    file_service = FileService(db)
+    target_file = file_service.get(request.target_bundle_file_id)
+    name = extract_character_name(target_file.original_name) if target_file else "unknown"
+    
     task_service = TaskService(db)
     task = task_service.create(
         session_uuid=request.session_uuid,
         task_type=TaskType.PACK,
-        options=request.model_dump()
+        options=request.model_dump(),
+        name=name
     )
     
     background_tasks.add_task(
@@ -410,11 +449,20 @@ def create_extract_task(
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
     
+    # Get file info to extract character name (use first bundle)
+    file_service = FileService(db)
+    name = "unknown"
+    if request.bundle_file_ids:
+        first_bundle = file_service.get(request.bundle_file_ids[0])
+        if first_bundle:
+            name = extract_character_name(first_bundle.original_name)
+    
     task_service = TaskService(db)
     task = task_service.create(
         session_uuid=request.session_uuid,
         task_type=TaskType.EXTRACT,
-        options=request.model_dump()
+        options=request.model_dump(),
+        name=name
     )
     
     background_tasks.add_task(
@@ -442,11 +490,17 @@ def create_crc_task(
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
     
+    # Get file info to extract character name
+    file_service = FileService(db)
+    modified_file = file_service.get(request.modified_file_id)
+    name = extract_character_name(modified_file.original_name) if modified_file else "unknown"
+    
     task_service = TaskService(db)
     task = task_service.create(
         session_uuid=request.session_uuid,
         task_type=TaskType.CRC,
-        options=request.model_dump()
+        options=request.model_dump(),
+        name=name
     )
     
     background_tasks.add_task(
@@ -481,10 +535,18 @@ def list_session_tasks(session_uuid: str, db: Session = Depends(get_db)):
     result = []
     for task in tasks:
         files = file_service.get_by_task(task.id)
+        
+        # Get name: use existing name or extract from file
+        name = task.name
+        if not name and files:
+            # Extract name from first file's original name
+            name = extract_character_name(files[0].original_name)
+        
         result.append(TaskBrief(
             id=task.id,
             type=task.type,
             status=task.status,
+            name=name,
             created_at=task.created_at,
             completed_at=task.completed_at,
             options=task.get_options(),
