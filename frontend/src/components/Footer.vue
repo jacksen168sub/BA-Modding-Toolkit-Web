@@ -1,13 +1,17 @@
 <template>
   <div class="footer">
-    <el-divider />
     <div class="footer-content">
+      <p>
+        <a href="https://github.com/jacksen168sub/BA-Modding-Toolkit-Web" target="_blank" class="repo-link">
+          {{ $t('footer.repository') }}
+        </a>
+        <span v-if="version" class="version-info">| {{ $t('footer.version') }}: {{ version }}</span>
+      </p>
       <p>
         <a href="https://github.com/Agent-0808/BA-Modding-Toolkit" target="_blank">
           {{ $t('footer.upstream') }}
         </a>
         Web Interface
-        <span v-if="version" class="version-info">| {{ $t('footer.version') }}: {{ version }}</span>
       </p>
       <p class="session-info">
         {{ $t('footer.sessionId') }}: {{ sessionStore.uuid }}
@@ -57,6 +61,15 @@ function formatTime(time) {
 
 .footer-content p {
   margin: 5px 0;
+}
+
+.footer-content a {
+  color: #409eff;
+  text-decoration: none;
+}
+
+.footer-content a:hover {
+  text-decoration: underline;
 }
 
 .session-info {

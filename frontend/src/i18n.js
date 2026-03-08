@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 jacksen168sub
+
 import { createI18n } from 'vue-i18n'
 import zhCN from './locales/zh-CN.json'
 import enUS from './locales/en-US.json'

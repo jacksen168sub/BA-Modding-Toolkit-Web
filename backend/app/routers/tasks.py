@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 jacksen168sub
+
 import asyncio
 import re
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks

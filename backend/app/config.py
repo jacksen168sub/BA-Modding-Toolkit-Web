@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 jacksen168sub
+
 from pathlib import Path
 from pydantic_settings import BaseSettings
 

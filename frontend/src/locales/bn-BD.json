@@ -84,6 +84,8 @@
   "update": {
     "title": "মড আপডেট",
     "description": "পুরনো মড ফাইল এবং নতুন গেম রিসোর্স ফাইল আপলোড করুন, সিস্টেম পুরনো মড থেকে রিসোর্স নতুন ফাইলে স্থানান্তর করবে।",
+    "oldModHintLabel": "রিসোর্স এক্সট্র্যাক্ট করতে পুরনো মডের <code>.bundle</code> ফাইল আপলোড করুন",
+    "targetBundleHintLabel": "রিসোর্স ইনজেক্ট করতে নতুন গেম সংস্করণের <code>.bundle</code> ফাইল আপলোড করুন (Android-Steam রূপান্তর সমর্থিত)",
     "oldMod": "পুরনো মড ফাইল",
     "oldModHint": "পুরনো মড ফাইল নির্বাচন করতে টেনে আনুন বা ক্লিক করুন (.bundle)",
     "targetBundle": "টার্গেট বান্ডেল",
@@ -110,6 +112,8 @@
   "pack": {
     "title": "অ্যাসেট প্যাক",
     "description": "অ্যাসেট ফাইল এবং টার্গেট বান্ডেল আপলোড করুন, সিস্টেম অ্যাসেট টার্গেট বান্ডেলে প্যাক করবে।",
+    "assetFolderHintLabel": "ইনজেক্ট করার জন্য অ্যাসেট ফাইল আপলোড করুন (<code>.png</code> <code>.skel</code> <code>.atlas</code> সহ)",
+    "targetBundleHintLabel": "অ্যাসেট ইনজেক্ট করতে টার্গেট গেমের <code>.bundle</code> ফাইল আপলোড করুন",
     "assetFolder": "অ্যাসেট ফাইল",
     "assetFolderHint": "অ্যাসেট ফাইল নির্বাচন করতে টেনে আনুন বা ক্লিক করুন",
     "targetBundle": "টার্গেট বান্ডেল",
@@ -131,6 +135,7 @@
   "extract": {
     "title": "অ্যাসেট এক্সট্র্যাক্ট",
     "description": "বান্ডেল ফাইল আপলোড করুন, সিস্টেম নির্দিষ্ট অ্যাসেট ধরন এক্সট্র্যাক্ট করবে।",
+    "bundleFileHintLabel": "গেমের <code>.bundle</code> ফাইল আপলোড করুন, সিস্টেম রিসোর্স এক্সট্র্যাক্ট করে ডাউনলোডের জন্য প্যাক করবে",
     "bundleFile": "বান্ডেল ফাইল",
     "bundleFileHint": "বান্ডেল ফাইল নির্বাচন করতে টেনে আনুন বা ক্লিক করুন",
     "assetTypes": "অ্যাসেট ধরন",
@@ -150,6 +155,8 @@
   "crc": {
     "title": "CRC টুল",
     "description": "পরিবর্তিত বান্ডেল ফাইল এবং মূল বান্ডেল ফাইল আপলোড করুন, সিস্টেম পরিবর্তিত ফাইলের CRC মান মূলের সাথে মিলিয়ে সংশোধন করবে।",
+    "modifiedFileHintLabel": "CRC সংশোধন প্রয়োজন এমন পরিবর্তিত <code>.bundle</code> ফাইল আপলোড করুন",
+    "originalFileHintLabel": "CRC মান প্রদানের জন্য মূল অপরিবর্তিত <code>.bundle</code> ফাইল আপলোড করুন",
     "modifiedFile": "পরিবর্তিত ফাইল",
     "modifiedFileHint": "পরিবর্তিত বান্ডেল ফাইল নির্বাচন করতে টেনে আনুন বা ক্লিক করুন (CRC সংশোধন প্রয়োজন)",
     "originalFile": "মূল ফাইল",
@@ -171,6 +178,7 @@
   "footer": {
     "poweredBy": "Powered by",
     "upstream": "BA-Modding-Toolkit",
+    "repository": "রিপোজিটরি",
     "madeWith": "Made with",
     "sessionId": "সেশন ID",
     "expiresAt": "মেয়াদ শেষ",

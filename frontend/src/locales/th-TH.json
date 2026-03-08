@@ -84,6 +84,8 @@
   "update": {
     "title": "อัปเดต Mod",
     "description": "อัปโหลดไฟล์ Mod เก่าและไฟล์ทรัพยากรเกมใหม่ ระบบจะย้ายทรัพยากรจาก Mod เก่าไปยังไฟล์ใหม่",
+    "oldModHintLabel": "อัปโหลดไฟล์ <code>.bundle</code> ของ Mod เก่าเพื่อดึงทรัพยากร",
+    "targetBundleHintLabel": "อัปโหลดไฟล์ <code>.bundle</code> ของเกมเวอร์ชันใหม่เพื่อฉีดทรัพยากร (รองรับการแปลง Android-Steam)",
     "oldMod": "ไฟล์ Mod เก่า",
     "oldModHint": "ลากหรือคลิกเพื่อเลือกไฟล์ Mod เก่า (.bundle)",
     "targetBundle": "Bundle เป้าหมาย",
@@ -110,6 +112,8 @@
   "pack": {
     "title": "แพ็ก Asset",
     "description": "อัปโหลดไฟล์ Asset และ Bundle เป้าหมาย ระบบจะแพ็ก Asset ลงใน Bundle เป้าหมาย",
+    "assetFolderHintLabel": "อัปโหลดไฟล์ Asset ที่ต้องการฉีด (รวม <code>.png</code> <code>.skel</code> <code>.atlas</code>)",
+    "targetBundleHintLabel": "อัปโหลดไฟล์ <code>.bundle</code> ของเกมเป้าหมายเพื่อฉีด Asset",
     "assetFolder": "ไฟล์ Asset",
     "assetFolderHint": "ลากหรือคลิกเพื่อเลือกไฟล์ Asset",
     "targetBundle": "Bundle เป้าหมาย",
@@ -130,7 +134,8 @@
   },
   "extract": {
     "title": "แยก Asset",
-    "description": "อัปโหลดไฟล์ Bundle ระบบจะแยกประเภท Asset ที่ระบุ",
+    "description": "อัปโหลดไฟล์ Bundle ระบบจะแยก Asset ตามประเภทที่ระบุ",
+    "bundleFileHintLabel": "อัปโหลดไฟล์ <code>.bundle</code> ของเกม ระบบจะแยกทรัพยากรและแพ็กเพื่อดาวน์โหลด",
     "bundleFile": "ไฟล์ Bundle",
     "bundleFileHint": "ลากหรือคลิกเพื่อเลือกไฟล์ Bundle",
     "assetTypes": "ประเภท Asset",
@@ -150,6 +155,8 @@
   "crc": {
     "title": "เครื่องมือ CRC",
     "description": "อัปโหลดไฟล์ Bundle ที่แก้ไขและไฟล์ Bundle ต้นฉบับ ระบบจะแก้ไขค่า CRC ของไฟล์ที่แก้ไขให้ตรงกับต้นฉบับ",
+    "modifiedFileHintLabel": "อัปโหลดไฟล์ <code>.bundle</code> ที่แก้ไขแล้วซึ่งต้องการแก้ไข CRC",
+    "originalFileHintLabel": "อัปโหลดไฟล์ <code>.bundle</code> ต้นฉบับที่ยังไม่ได้แก้ไขเพื่อให้ค่า CRC",
     "modifiedFile": "ไฟล์ที่แก้ไข",
     "modifiedFileHint": "ลากหรือคลิกเพื่อเลือกไฟล์ Bundle ที่แก้ไข (ต้องการแก้ไข CRC)",
     "originalFile": "ไฟล์ต้นฉบับ",
@@ -171,6 +178,7 @@
   "footer": {
     "poweredBy": "Powered by",
     "upstream": "BA-Modding-Toolkit",
+    "repository": "ที่เก็บโค้ด",
     "madeWith": "Made with",
     "sessionId": "ID เซสชัน",
     "expiresAt": "หมดอายุ",

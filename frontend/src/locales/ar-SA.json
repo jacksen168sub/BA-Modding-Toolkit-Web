@@ -84,6 +84,8 @@
   "update": {
     "title": "تحديث المود",
     "description": "ارفع ملف المود القديم وملف موارد اللعبة الجديد، سيقوم النظام بنقل موارد المود القديم إلى الملف الجديد.",
+    "oldModHintLabel": "ارفع ملف <code>.bundle</code> للمود القديم لاستخراج الموارد",
+    "targetBundleHintLabel": "ارفع ملف <code>.bundle</code> للإصدار الجديد من اللعبة لحقن الموارد (يدعم التحويل بين Android-Steam)",
     "oldMod": "ملف المود القديم",
     "oldModHint": "اسحب أو انقر لاختيار ملف المود القديم (.bundle)",
     "targetBundle": "الحزمة المستهدفة",
@@ -110,6 +112,8 @@
   "pack": {
     "title": "تجميع الأصول",
     "description": "ارفع ملفات الأصول والحزمة المستهدفة، سيقوم النظام بتجميع الأصول في الحزمة المستهدفة.",
+    "assetFolderHintLabel": "ارفع ملفات الأصول لحقنها (بما في ذلك <code>.png</code> <code>.skel</code> <code>.atlas</code>)",
+    "targetBundleHintLabel": "ارفع ملف <code>.bundle</code> للعبة المستهدفة لحقن الأصول",
     "assetFolder": "ملفات الأصول",
     "assetFolderHint": "اسحب أو انقر لاختيار ملفات الأصول",
     "targetBundle": "الحزمة المستهدفة",
@@ -131,6 +135,7 @@
   "extract": {
     "title": "استخراج الأصول",
     "description": "ارفع ملف حزمة، سيقوم النظام باستخراج أنواع الأصول المحددة.",
+    "bundleFileHintLabel": "ارفع ملف <code>.bundle</code> للعبة، سيقوم النظام باستخراج الموارد وتجميعها للتنزيل",
     "bundleFile": "ملف الحزمة",
     "bundleFileHint": "اسحب أو انقر لاختيار ملف الحزمة",
     "assetTypes": "أنواع الأصول",
@@ -150,6 +155,8 @@
   "crc": {
     "title": "أداة CRC",
     "description": "ارفع ملف الحزمة المعدل وملف الحزمة الأصلي، سيقوم النظام بتصحيح قيمة CRC للملف المعدل لتطابق الأصلي.",
+    "modifiedFileHintLabel": "ارفع ملف <code>.bundle</code> المعدل الذي يحتاج إلى تصحيح CRC",
+    "originalFileHintLabel": "ارفع ملف <code>.bundle</code> الأصلي غير المعدل لتوفير قيمة CRC",
     "modifiedFile": "الملف المعدل",
     "modifiedFileHint": "اسحب أو انقر لاختيار ملف الحزمة المعدل (يحتاج تصحيح CRC)",
     "originalFile": "الملف الأصلي",
@@ -171,6 +178,7 @@
   "footer": {
     "poweredBy": "Powered by",
     "upstream": "BA-Modding-Toolkit",
+    "repository": "المستودع",
     "madeWith": "Made with",
     "sessionId": "معرف الجلسة",
     "expiresAt": "ينتهي في",

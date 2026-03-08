@@ -84,6 +84,8 @@
   "update": {
     "title": "Mod 업데이트",
     "description": "이전 Mod 파일과 새 게임 리소스 파일을 업로드하면 이전 Mod의 리소스가 새 파일로 마이그레이션됩니다.",
+    "oldModHintLabel": "이전 Mod의 <code>.bundle</code> 파일을 업로드하여 리소스 추출",
+    "targetBundleHintLabel": "새 버전 게임의 <code>.bundle</code> 파일을 업로드하여 리소스 주입 (안드로이드-Steam 상호 변환 지원)",
     "oldMod": "이전 Mod 파일",
     "oldModHint": "이전 Mod 파일을 드래그 앤 드롭 또는 클릭하여 선택 (.bundle)",
     "targetBundle": "대상 번들",
@@ -110,6 +112,8 @@
   "pack": {
     "title": "에셋 패킹",
     "description": "에셋 파일과 대상 번들을 업로드하면 에셋이 대상 번들에 패킹됩니다.",
+    "assetFolderHintLabel": "주입할 에셋 파일 업로드 (<code>.png</code> <code>.skel</code> <code>.atlas</code> 포함)",
+    "targetBundleHintLabel": "대상 게임의 <code>.bundle</code> 파일을 업로드하여 에셋 주입",
     "assetFolder": "에셋 파일",
     "assetFolderHint": "에셋 파일을 드래그 앤 드롭 또는 클릭하여 선택",
     "targetBundle": "대상 번들",
@@ -131,6 +135,7 @@
   "extract": {
     "title": "에셋 추출",
     "description": "번들 파일을 업로드하면 지정된 에셋 유형이 추출됩니다.",
+    "bundleFileHintLabel": "게임의 <code>.bundle</code> 파일을 업로드하면 시스템이 리소스를 추출하여 다운로드 가능하게 패킹합니다",
     "bundleFile": "번들 파일",
     "bundleFileHint": "번들 파일을 드래그 앤 드롭 또는 클릭하여 선택",
     "assetTypes": "에셋 유형",
@@ -150,6 +155,8 @@
   "crc": {
     "title": "CRC 도구",
     "description": "수정된 번들 파일과 원본 번들 파일을 업로드하면 수정된 파일의 CRC 값이 원본과 일치하도록 수정됩니다.",
+    "modifiedFileHintLabel": "CRC 수정이 필요한 수정된 <code>.bundle</code> 파일을 업로드",
+    "originalFileHintLabel": "CRC 값을 제공할 원본 미수정 <code>.bundle</code> 파일을 업로드",
     "modifiedFile": "수정된 파일",
     "modifiedFileHint": "수정된 번들 파일을 드래그 앤 드롭 또는 클릭하여 선택 (CRC 수정 필요)",
     "originalFile": "원본 파일",
@@ -171,6 +178,7 @@
   "footer": {
     "poweredBy": "Powered by",
     "upstream": "BA-Modding-Toolkit",
+    "repository": "저장소",
     "madeWith": "Made with",
     "sessionId": "세션 ID",
     "expiresAt": "만료 시간",

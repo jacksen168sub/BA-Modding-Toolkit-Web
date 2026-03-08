@@ -84,6 +84,8 @@
   "update": {
     "title": "Mod Update",
     "description": "Upload old Mod file and new game resource file, the system will migrate resources from old Mod to new file.",
+    "oldModHintLabel": "Upload old Mod's <code>.bundle</code> file to extract resources",
+    "targetBundleHintLabel": "Upload new game's <code>.bundle</code> file to inject resources (Android-Steam cross-platform supported)",
     "oldMod": "Old Mod File",
     "oldModHint": "Drop or click to select old Mod file (.bundle)",
     "targetBundle": "Target Bundle",
@@ -110,6 +112,8 @@
   "pack": {
     "title": "Asset Pack",
     "description": "Upload asset files and target Bundle, the system will pack assets into the target Bundle.",
+    "assetFolderHintLabel": "Upload asset files to inject (includes <code>.png</code> <code>.skel</code> <code>.atlas</code>)",
+    "targetBundleHintLabel": "Upload target game's <code>.bundle</code> file to inject assets into",
     "assetFolder": "Asset Files",
     "assetFolderHint": "Drop or click to select asset files",
     "targetBundle": "Target Bundle",
@@ -131,6 +135,7 @@
   "extract": {
     "title": "Asset Extract",
     "description": "Upload Bundle file, the system will extract specified asset types from it.",
+    "bundleFileHintLabel": "Upload game's <code>.bundle</code> file, the system will extract and package resources for download",
     "bundleFile": "Bundle File",
     "bundleFileHint": "Drop or click to select Bundle file",
     "assetTypes": "Asset Types",
@@ -150,6 +155,8 @@
   "crc": {
     "title": "CRC Tool",
     "description": "Upload the modified Bundle file and the original Bundle file. The system will correct the CRC value of the modified file to match the original.",
+    "modifiedFileHintLabel": "Upload modified <code>.bundle</code> file that needs CRC fix",
+    "originalFileHintLabel": "Upload original unmodified game <code>.bundle</code> file to provide CRC value",
     "modifiedFile": "Modified File",
     "modifiedFileHint": "Drop or click to select modified Bundle file (needs CRC fix)",
     "originalFile": "Original File",
@@ -171,6 +178,7 @@
   "footer": {
     "poweredBy": "Powered by",
     "upstream": "BA-Modding-Toolkit",
+    "repository": "Repository",
     "madeWith": "Made with",
     "sessionId": "Session ID",
     "expiresAt": "Expires At",

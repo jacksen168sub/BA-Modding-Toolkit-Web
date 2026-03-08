@@ -84,6 +84,8 @@
   "update": {
     "title": "Mod 更新",
     "description": "上传旧版 Mod 文件和新版游戏资源文件，系统会将旧版 Mod 的资源迁移到新文件中。",
+    "oldModHintLabel": "上传旧版 Mod 的 <code>.bundle</code> 文件，以提取资源",
+    "targetBundleHintLabel": "上传新版游戏的 <code>.bundle</code> 文件，以注入资源（安卓-Steam 互转也适用）",
     "oldMod": "旧版 Mod 文件",
     "oldModHint": "拖放或点击选择旧版 Mod 文件 (.bundle)",
     "targetBundle": "目标资源文件",
@@ -110,6 +112,8 @@
   "pack": {
     "title": "资源打包",
     "description": "上传资源文件和目标 Bundle，系统会将资源打包到目标 Bundle 中。",
+    "assetFolderHintLabel": "上传要注入的资源文件（包含 <code>.png</code> <code>.skel</code> <code>.atlas</code>）",
+    "targetBundleHintLabel": "上传目标游戏的 <code>.bundle</code> 文件，以将资源注入到该文件",
     "assetFolder": "资源文件",
     "assetFolderHint": "拖放或点击选择资源文件",
     "targetBundle": "目标 Bundle",
@@ -131,6 +135,7 @@
   "extract": {
     "title": "资源解包",
     "description": "上传 Bundle 文件，系统会从中提取指定类型的资源。",
+    "bundleFileHintLabel": "上传游戏的 <code>.bundle</code> 文件，系统会从中提取资源打包以供下载",
     "bundleFile": "Bundle 文件",
     "bundleFileHint": "拖放或点击选择 Bundle 文件",
     "assetTypes": "资源类型",
@@ -150,6 +155,8 @@
   "crc": {
     "title": "CRC 校验",
     "description": "上传修改后的 Bundle 文件和原始 Bundle 文件，系统会将修改后文件的 CRC 值修正为与原始文件一致。",
+    "modifiedFileHintLabel": "上传修改后的 <code>.bundle</code>，需要修正CRC的文件",
+    "originalFileHintLabel": "上传游戏原始未被修改的 <code>.bundle</code> 文件，用于提供CRC值",
     "modifiedFile": "待修正的文件",
     "modifiedFileHint": "拖放或点击选择修改后的 Bundle 文件（需要修正 CRC）",
     "originalFile": "原始文件",
@@ -171,6 +178,7 @@
   "footer": {
     "poweredBy": "基于",
     "upstream": "BA-Modding-Toolkit",
+    "repository": "项目仓库",
     "madeWith": "制作",
     "sessionId": "会话ID",
     "expiresAt": "过期时间",

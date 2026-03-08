@@ -84,6 +84,8 @@
   "update": {
     "title": "Mise à jour Mod",
     "description": "Téléversez l'ancien fichier Mod et le nouveau fichier de ressources du jeu, le système migrera les ressources de l'ancien Mod vers le nouveau fichier.",
+    "oldModHintLabel": "Téléversez le fichier <code>.bundle</code> de l'ancien Mod pour extraire les ressources",
+    "targetBundleHintLabel": "Téléversez le fichier <code>.bundle</code> de la nouvelle version du jeu pour injecter les ressources (conversion Android-Steam prise en charge)",
     "oldMod": "Ancien Fichier Mod",
     "oldModHint": "Glissez-déposez ou cliquez pour sélectionner l'ancien fichier Mod (.bundle)",
     "targetBundle": "Bundle Cible",
@@ -110,6 +112,8 @@
   "pack": {
     "title": "Pack Assets",
     "description": "Téléversez les fichiers d'assets et le bundle cible, le système empaquetera les assets dans le bundle cible.",
+    "assetFolderHintLabel": "Téléversez les fichiers assets à injecter (incluant <code>.png</code> <code>.skel</code> <code>.atlas</code>)",
+    "targetBundleHintLabel": "Téléversez le fichier <code>.bundle</code> du jeu cible pour injecter les assets",
     "assetFolder": "Fichiers d'Assets",
     "assetFolderHint": "Glissez-déposez ou cliquez pour sélectionner les fichiers d'assets",
     "targetBundle": "Bundle Cible",
@@ -131,6 +135,7 @@
   "extract": {
     "title": "Extraction Assets",
     "description": "Téléversez un fichier bundle, le système extraira les types d'assets spécifiés.",
+    "bundleFileHintLabel": "Téléversez le fichier <code>.bundle</code> du jeu, le système extraira les ressources et les empaquettera pour téléchargement",
     "bundleFile": "Fichier Bundle",
     "bundleFileHint": "Glissez-déposez ou cliquez pour sélectionner un fichier bundle",
     "assetTypes": "Types d'Assets",
@@ -150,6 +155,8 @@
   "crc": {
     "title": "Outil CRC",
     "description": "Téléversez le fichier bundle modifié et le fichier bundle original, le système corrigera la valeur CRC du fichier modifié pour correspondre à l'original.",
+    "modifiedFileHintLabel": "Téléversez le fichier <code>.bundle</code> modifié nécessitant une correction CRC",
+    "originalFileHintLabel": "Téléversez le fichier <code>.bundle</code> original non modifié pour fournir la valeur CRC",
     "modifiedFile": "Fichier Modifié",
     "modifiedFileHint": "Glissez-déposez ou cliquez pour sélectionner le fichier bundle modifié (nécessite correction CRC)",
     "originalFile": "Fichier Original",
@@ -171,6 +178,7 @@
   "footer": {
     "poweredBy": "Powered by",
     "upstream": "BA-Modding-Toolkit",
+    "repository": "Dépôt",
     "madeWith": "Made with",
     "sessionId": "ID de Session",
     "expiresAt": "Expire le",

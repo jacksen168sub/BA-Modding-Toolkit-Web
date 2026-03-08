@@ -29,10 +29,10 @@
               <div class="el-upload__text">
                 {{ $t('crc.modifiedFileHint') }}
               </div>
-              <template #tip>
-                <div class="el-upload__tip">.bundle</div>
-              </template>
             </el-upload>
+            <el-alert type="info" :closable="false" class="upload-hint">
+              <span v-html="$t('crc.modifiedFileHintLabel')"></span>
+            </el-alert>
           </div>
         </el-form-item>
         
@@ -53,10 +53,10 @@
               <div class="el-upload__text">
                 {{ $t('crc.originalFileHint') }}
               </div>
-              <template #tip>
-                <div class="el-upload__tip">.bundle</div>
-              </template>
             </el-upload>
+            <el-alert type="info" :closable="false" class="upload-hint">
+              <span v-html="$t('crc.originalFileHintLabel')"></span>
+            </el-alert>
           </div>
         </el-form-item>
         
@@ -215,6 +215,21 @@ onUnmounted(() => {
 
 :deep(.el-upload-dragger) {
   width: 100%;
+}
+
+.upload-hint {
+  margin-top: 12px;
+}
+
+.upload-hint :deep(.el-alert__content) {
+  padding: 0;
+}
+
+.upload-hint :deep(code) {
+  background-color: rgba(0, 0, 0, 0.06);
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-family: monospace;
 }
 
 /* 移动端适配 */
