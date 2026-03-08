@@ -51,6 +51,9 @@
     "detailTitle": "Детали Задачи",
     "empty": "Нет задач",
     "queueStatus": "Очередь: {pending} ожидание / {processing} в работе (макс {max})",
+    "queuePosition": "Очередь #{position}",
+    "userQueue": "Ваша очередь: {count} задач",
+    "globalQueue": "Общая очередь: {count} задач",
     "types": {
       "update": "Обновление Мода",
       "pack": "Упаковка Ассетов",

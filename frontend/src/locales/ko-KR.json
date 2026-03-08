@@ -51,6 +51,9 @@
     "detailTitle": "작업 상세",
     "empty": "작업 없음",
     "queueStatus": "대기열: {pending} 대기 중 / {processing} 실행 중 (최대 {max})",
+    "queuePosition": "대기 #{position}",
+    "userQueue": "내 대기열: {count}개",
+    "globalQueue": "전체 대기열: {count}개",
     "types": {
       "update": "Mod 업데이트",
       "pack": "에셋 패킹",

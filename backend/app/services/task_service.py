@@ -55,6 +55,51 @@ class TaskService:
         """Count tasks with specific status."""
         return self.db.query(Task).filter(Task.status == status).count()
     
+    def get_queue_info(self, task_id: str, session_uuid: str) -> dict:
+        """
+        Get queue position info for a task.
+        Returns user-level and global queue positions for pending/processing tasks.
+        """
+        task = self.get(task_id)
+        if not task:
+            return None
+        
+        # Only calculate queue info for pending or processing tasks
+        if task.status not in [TaskStatus.PENDING, TaskStatus.PROCESSING]:
+            return {
+                "user_position": None,
+                "user_queue_length": 0,
+                "global_position": None,
+                "global_queue_length": 0
+            }
+        
+        # Get all pending and processing tasks, ordered by creation time
+        queued_tasks = self.db.query(Task).filter(
+            Task.status.in_([TaskStatus.PENDING, TaskStatus.PROCESSING])
+        ).order_by(Task.created_at.asc()).all()
+        
+        # Calculate global queue position
+        global_position = None
+        for i, t in enumerate(queued_tasks, 1):
+            if t.id == task_id:
+                global_position = i
+                break
+        
+        # Calculate user-level queue position (tasks for this session)
+        user_queued_tasks = [t for t in queued_tasks if t.session_uuid == session_uuid]
+        user_position = None
+        for i, t in enumerate(user_queued_tasks, 1):
+            if t.id == task_id:
+                user_position = i
+                break
+        
+        return {
+            "user_position": user_position,
+            "user_queue_length": len(user_queued_tasks),
+            "global_position": global_position,
+            "global_queue_length": len(queued_tasks)
+        }
+    
     def update_status(
         self,
         task_id: str,

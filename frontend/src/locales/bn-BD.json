@@ -51,6 +51,9 @@
     "detailTitle": "কাজের বিস্তারিত",
     "empty": "কোনো কাজ নেই",
     "queueStatus": "সারি: {pending} অপেক্ষমান / {processing} চলমান (সর্বোচ্চ {max})",
+    "queuePosition": "সারিতে #{position}",
+    "userQueue": "আপনার সারি: {count}টি কাজ",
+    "globalQueue": "গ্লোবাল সারি: {count}টি কাজ",
     "types": {
       "update": "মড আপডেট",
       "pack": "অ্যাসেট প্যাক",

@@ -51,6 +51,9 @@
     "detailTitle": "Task Details",
     "empty": "No tasks yet",
     "queueStatus": "Queue: {pending} pending / {processing} running (max {max})",
+    "queuePosition": "Queue #{position}",
+    "userQueue": "Your queue: {count} tasks",
+    "globalQueue": "Global queue: {count} tasks",
     "types": {
       "update": "Mod Update",
       "pack": "Asset Pack",

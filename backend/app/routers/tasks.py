@@ -33,7 +33,7 @@ def extract_character_name(filename: str) -> str:
 from ..models.database import get_db
 from ..models.task import TaskType, TaskStatus
 from ..models.schemas import (
-    TaskResponse, TaskBrief, TaskCreate,
+    TaskResponse, TaskBrief, TaskCreate, QueueInfo,
     UpdateTaskCreate, PackTaskCreate, ExtractTaskCreate, CrcTaskCreate,
     MessageResponse
 )
@@ -50,9 +50,17 @@ task_semaphore = asyncio.Semaphore(settings.MAX_CONCURRENT_TASKS)
 
 
 def get_task_response(task, db: Session) -> TaskResponse:
-    """Build task response with files."""
+    """Build task response with files and queue info."""
     file_service = FileService(db)
+    task_service = TaskService(db)
     files = file_service.get_by_task(task.id)
+    
+    # Get queue info for pending/processing tasks
+    queue_info = None
+    if task.status in [TaskStatus.PENDING, TaskStatus.PROCESSING]:
+        queue_data = task_service.get_queue_info(task.id, task.session_uuid)
+        if queue_data:
+            queue_info = QueueInfo(**queue_data)
     
     return TaskResponse(
         id=task.id,
@@ -78,7 +86,8 @@ def get_task_response(task, db: Session) -> TaskResponse:
                 "download_url": f"/api/files/download/{f.id}"
             }
             for f in files
-        ]
+        ],
+        queue_info=queue_info
     )
 
 
@@ -542,6 +551,13 @@ def list_session_tasks(session_uuid: str, db: Session = Depends(get_db)):
             # Extract name from first file's original name
             name = extract_character_name(files[0].original_name)
         
+        # Get queue info for pending/processing tasks
+        queue_info = None
+        if task.status in [TaskStatus.PENDING, TaskStatus.PROCESSING]:
+            queue_data = task_service.get_queue_info(task.id, session_uuid)
+            if queue_data:
+                queue_info = QueueInfo(**queue_data)
+        
         result.append(TaskBrief(
             id=task.id,
             type=task.type,
@@ -562,7 +578,8 @@ def list_session_tasks(session_uuid: str, db: Session = Depends(get_db)):
                     "download_url": f"/api/files/download/{f.id}"
                 }
                 for f in files
-            ]
+            ],
+            queue_info=queue_info
         ))
     
     return result

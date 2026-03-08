@@ -51,6 +51,9 @@
     "detailTitle": "कार्य विवरण",
     "empty": "कोई कार्य नहीं",
     "queueStatus": "कतार: {pending} प्रतीक्षारत / {processing} चल रहा है (अधिकतम {max})",
+    "queuePosition": "कतार में #{position}",
+    "userQueue": "आपकी कतार: {count} कार्य",
+    "globalQueue": "वैश्विक कतार: {count} कार्य",
     "types": {
       "update": "मॉड अपडेट",
       "pack": "एसेट पैक",
