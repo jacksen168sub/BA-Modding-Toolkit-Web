@@ -57,6 +57,7 @@ class TaskResponse(BaseModel):
     session_uuid: str
     type: TaskType
     status: TaskStatus
+    name: Optional[str] = None  # Character name extracted from filename
     options: dict
     error_message: Optional[str]
     cli_log: Optional[str] = None  # CLI command output log
@@ -74,6 +75,7 @@ class TaskBrief(BaseModel):
     id: str
     type: TaskType
     status: TaskStatus
+    name: Optional[str] = None  # Character name extracted from filename
     created_at: datetime
     completed_at: Optional[datetime]
     options: dict = {}  # 包含文件名信息

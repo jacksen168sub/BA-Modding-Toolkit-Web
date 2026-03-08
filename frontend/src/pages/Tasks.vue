@@ -20,7 +20,7 @@
         <el-card v-for="(task, index) in tasks" :key="task.id" class="task-card-mobile" shadow="hover" @click="showTaskDetail(task.id)">
           <div class="task-card-row">
             <span class="label">{{ $t('tasks.name') }}:</span>
-            <span class="task-name">{{ extractName(task) }}</span>
+            <span class="task-name">{{ task.name || 'unknown' }}</span>
           </div>
           <div class="task-card-row">
             <span class="label">{{ $t('tasks.type') }}:</span>
@@ -47,7 +47,7 @@
       <el-table :data="tasks" stripe v-loading="loading" v-if="!isMobile">
         <el-table-column :label="$t('tasks.name')">
           <template #default="{ row }">
-            <span class="task-name">{{ extractName(row) }}</span>
+            <span class="task-name">{{ row.name || 'unknown' }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="type" :label="$t('tasks.type')">
@@ -130,52 +130,6 @@ const statusMap = {
 
 function getTypeText(type) {
   return t(typeMap[type] || type)
-}
-
-// 从文件名中提取角色名称
-function extractName(task) {
-  // 获取上传的文件名
-  let filename = null
-  
-  if (task.type === 'update') {
-    // update 任务使用旧版 mod 文件名
-    filename = task.options?.old_bundle_file_name || task.files?.[0]?.original_name
-  } else if (task.type === 'pack') {
-    // pack 任务使用目标 bundle 文件名
-    filename = task.options?.target_bundle_file_name || task.files?.[0]?.original_name
-  } else if (task.type === 'extract' || task.type === 'crc') {
-    // extract/crc 任务使用 bundle 文件名
-    filename = task.options?.bundle_file_name || task.files?.[0]?.original_name
-  }
-  
-  if (!filename) return 'unknown'
-  
-  // 提取模式:
-  // spinelobbies-XXX-_mxdependency
-  // spinecharacters-XXX-_mxprolog
-  // spinebackground-XXX-_mxdependency
-  const patterns = [
-    /spinelobbies-([a-zA-Z0-9_-]+?)-_mxdependency/i,
-    /spinecharacters-([a-zA-Z0-9_-]+?)-_mxprolog/i,
-    /spinebackground-([a-zA-Z0-9_-]+?)-_mxdependency/i
-  ]
-  
-  for (const pattern of patterns) {
-    const match = filename.match(pattern)
-    if (match) {
-      let name = match[1]
-      // 格式化名称: xxx_yyy -> xxx(yyy)
-      const underscoreIndex = name.lastIndexOf('_')
-      if (underscoreIndex > 0) {
-        const main = name.substring(0, underscoreIndex)
-        const suffix = name.substring(underscoreIndex + 1)
-        return `${main}(${suffix})`
-      }
-      return name
-    }
-  }
-  
-  return 'unknown'
 }
 
 function getStatusText(status) {

@@ -36,6 +36,7 @@ class Task(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     completed_at = Column(DateTime)
     expires_at = Column(DateTime, nullable=False)
+    name = Column(String(255), nullable=True)  # Character name extracted from filename
     
     # Relationships
     session = relationship("Session", back_populates="tasks")
