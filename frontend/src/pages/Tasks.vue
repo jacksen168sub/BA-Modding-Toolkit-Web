@@ -30,9 +30,11 @@
             <span class="label">{{ $t('tasks.status') }}:</span>
             <div class="status-with-queue">
               <el-tag :type="getStatusType(task.status)" size="small">{{ getStatusText(task.status) }}</el-tag>
-              <el-tag v-if="task.status === 'pending' && getQueuePosition(index) > 0" type="info" size="small" class="position-tag">
-                #{{ getQueuePosition(index) }}
-              </el-tag>
+              <el-tooltip v-if="task.queue_info" :content="getQueueTooltip(task.queue_info)" placement="top">
+                <el-tag type="info" size="small" class="position-tag">
+                  {{ $t('tasks.queuePosition', { position: task.queue_info.user_position }) }}
+                </el-tag>
+              </el-tooltip>
             </div>
           </div>
           <div class="task-card-row">
@@ -56,14 +58,16 @@
           </template>
         </el-table-column>
         <el-table-column prop="status" :label="$t('tasks.status')">
-          <template #default="{ row, $index }">
+          <template #default="{ row }">
             <div class="status-with-queue">
               <el-tag :type="getStatusType(row.status)">
                 {{ getStatusText(row.status) }}
               </el-tag>
-              <el-tag v-if="row.status === 'pending' && getQueuePosition($index) > 0" type="info" size="small" class="position-tag">
-                #{{ getQueuePosition($index) }}
-              </el-tag>
+              <el-tooltip v-if="row.queue_info" :content="getQueueTooltip(row.queue_info)" placement="top">
+                <el-tag type="info" size="small" class="position-tag">
+                  {{ $t('tasks.queuePosition', { position: row.queue_info.user_position }) }}
+                </el-tag>
+              </el-tooltip>
             </div>
           </template>
         </el-table-column>
@@ -108,6 +112,7 @@ const tasks = ref([])
 const dialogVisible = ref(false)
 const selectedTask = ref(null)
 const queueStatus = ref({ pending: 0, processing: 0, queueLength: 0, max_concurrent: 2 })
+let refreshInterval = null
 
 // 响应式检测移动端
 const windowWidth = ref(window.innerWidth)
@@ -144,32 +149,22 @@ function formatTime(time) {
   return new Date(time).toLocaleString()
 }
 
-// 计算当前任务在队列中的位置
-function getQueuePosition(index) {
-  // 只对 pending 状态的任务计算位置
-  const task = tasks.value[index]
-  if (task.status !== 'pending') return 0
-  
-  // 计算在这个任务之前有多少个 pending 任务
-  let position = 0
-  for (let i = 0; i < tasks.value.length; i++) {
-    if (tasks.value[i].status === 'pending') {
-      position++
-      if (i === index) break
-    }
-  }
-  return position
+// Get tooltip text for queue info
+function getQueueTooltip(queueInfo) {
+  const userQueue = t('tasks.userQueue', { count: queueInfo.user_queue_length })
+  const globalQueue = t('tasks.globalQueue', { count: queueInfo.global_queue_length })
+  return `${userQueue}\n${globalQueue}`
 }
 
-async function refreshTasks() {
-  loading.value = true
+async function refreshTasks(showLoading = true) {
+  if (showLoading) loading.value = true
   try {
     tasks.value = await tasksStore.fetchTasks(sessionStore.uuid)
     tasks.value = tasksStore.tasks
     // 获取队列状态
     queueStatus.value = await getQueueStatus()
   } finally {
-    loading.value = false
+    if (showLoading) loading.value = false
   }
 }
 
@@ -185,10 +180,15 @@ function handleResize() {
 onMounted(() => {
   refreshTasks()
   window.addEventListener('resize', handleResize)
+  // Auto refresh every 3 seconds (without loading indicator)
+  refreshInterval = setInterval(() => refreshTasks(false), 3000)
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
+  if (refreshInterval) {
+    clearInterval(refreshInterval)
+  }
 })
 </script>
 

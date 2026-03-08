@@ -52,6 +52,14 @@ class TaskCreate(BaseModel):
     options: dict = {}
 
 
+class QueueInfo(BaseModel):
+    """Queue position information for a task."""
+    user_position: Optional[int] = None  # Position in user's own queue (1-based)
+    user_queue_length: int = 0  # Total pending tasks for this user
+    global_position: Optional[int] = None  # Position in global queue (1-based)
+    global_queue_length: int = 0  # Total pending tasks globally
+
+
 class TaskResponse(BaseModel):
     id: str
     session_uuid: str
@@ -65,6 +73,7 @@ class TaskResponse(BaseModel):
     completed_at: Optional[datetime]
     expires_at: datetime
     files: List[FileResponse] = []
+    queue_info: Optional[QueueInfo] = None  # Queue position info for pending/processing tasks
     
     class Config:
         from_attributes = True
@@ -80,6 +89,7 @@ class TaskBrief(BaseModel):
     completed_at: Optional[datetime]
     options: dict = {}  # 包含文件名信息
     files: List[FileResponse] = []
+    queue_info: Optional[QueueInfo] = None  # Queue position info for pending/processing tasks
     
     class Config:
         from_attributes = True

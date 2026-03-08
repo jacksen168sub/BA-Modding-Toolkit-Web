@@ -51,6 +51,9 @@
     "detailTitle": "Detalles de la Tarea",
     "empty": "Sin tareas",
     "queueStatus": "Cola: {pending} pendientes / {processing} en proceso (máx {max})",
+    "queuePosition": "Cola #{position}",
+    "userQueue": "Tu cola: {count} tareas",
+    "globalQueue": "Cola global: {count} tareas",
     "types": {
       "update": "Actualizar Mod",
       "pack": "Empaquetar Assets",

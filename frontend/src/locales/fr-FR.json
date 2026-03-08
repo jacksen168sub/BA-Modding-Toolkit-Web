@@ -51,6 +51,9 @@
     "detailTitle": "Détails de la Tâche",
     "empty": "Aucune tâche",
     "queueStatus": "File: {pending} en attente / {processing} en cours (max {max})",
+    "queuePosition": "File #{position}",
+    "userQueue": "Votre file: {count} tâches",
+    "globalQueue": "File globale: {count} tâches",
     "types": {
       "update": "Mise à jour Mod",
       "pack": "Pack Assets",

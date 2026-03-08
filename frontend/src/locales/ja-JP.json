@@ -51,6 +51,9 @@
     "detailTitle": "タスク詳細",
     "empty": "タスクはありません",
     "queueStatus": "キュー: {pending} 待機中 / {processing} 処理中 (最大 {max})",
+    "queuePosition": "待機 #{position}",
+    "userQueue": "あなたのキュー: {count} 件",
+    "globalQueue": "全体キュー: {count} 件",
     "types": {
       "update": "Mod更新",
       "pack": "アセットパック",

@@ -51,6 +51,9 @@
     "detailTitle": "รายละเอียดงาน",
     "empty": "ไม่มีงาน",
     "queueStatus": "คิว: {pending} รออยู่ / {processing} กำลังทำงาน (สูงสุด {max})",
+    "queuePosition": "ในคิว #{position}",
+    "userQueue": "คิวของคุณ: {count} งาน",
+    "globalQueue": "คิวทั้งหมด: {count} งาน",
     "types": {
       "update": "อัปเดต Mod",
       "pack": "แพ็ก Asset",

@@ -51,6 +51,9 @@
     "detailTitle": "任務詳情",
     "empty": "暫無任務",
     "queueStatus": "佇列: {pending} 排隊 / {processing} 執行中 (最大 {max})",
+    "queuePosition": "排隊 #{position}",
+    "userQueue": "你的佇列: {count} 個任務",
+    "globalQueue": "全域佇列: {count} 個任務",
     "types": {
       "update": "Mod 更新",
       "pack": "資源打包",

@@ -51,6 +51,9 @@
     "detailTitle": "تفاصيل المهمة",
     "empty": "لا توجد مهام",
     "queueStatus": "قائمة الانتظار: {pending} قيد الانتظار / {processing} قيد التنفيذ (الحد الأقصى {max})",
+    "queuePosition": "في الانتظار #{position}",
+    "userQueue": "قائمتك: {count} مهام",
+    "globalQueue": "القائمة العامة: {count} مهام",
     "types": {
       "update": "تحديث المود",
       "pack": "تجميع الأصول",

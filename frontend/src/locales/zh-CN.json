@@ -51,6 +51,9 @@
     "detailTitle": "任务详情",
     "empty": "暂无任务",
     "queueStatus": "队列: {pending} 排队 / {processing} 执行中 (最大 {max})",
+    "queuePosition": "排队 #{position}",
+    "userQueue": "你的队列: {count} 个任务",
+    "globalQueue": "全局队列: {count} 个任务",
     "types": {
       "update": "Mod 更新",
       "pack": "资源打包",
