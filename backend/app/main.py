@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 jacksen168sub
+
 import asyncio
 from pathlib import Path
 from contextlib import asynccontextmanager

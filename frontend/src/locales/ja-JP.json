@@ -84,6 +84,8 @@
   "update": {
     "title": "Mod更新",
     "description": "古いModファイルと新しいゲームリソースファイルをアップロードすると、古いModのリソースが新しいファイルに移行されます。",
+    "oldModHintLabel": "古いModの <code>.bundle</code> ファイルをアップロードしてリソースを抽出",
+    "targetBundleHintLabel": "新版ゲームの <code>.bundle</code> ファイルをアップロードしてリソースを注入（Android-Steam相互変換対応）",
     "oldMod": "古いModファイル",
     "oldModHint": "古いModファイルをドラッグ＆ドロップまたはクリックして選択 (.bundle)",
     "targetBundle": "ターゲットバンドル",
@@ -110,6 +112,8 @@
   "pack": {
     "title": "アセットパック",
     "description": "アセットファイルとターゲットバンドルをアップロードすると、アセットがターゲットバンドルにパックされます。",
+    "assetFolderHintLabel": "注入するアセットファイルをアップロード（<code>.png</code> <code>.skel</code> <code>.atlas</code> を含む）",
+    "targetBundleHintLabel": "ターゲットゲームの <code>.bundle</code> ファイルをアップロードしてアセットを注入",
     "assetFolder": "アセットファイル",
     "assetFolderHint": "アセットファイルをドラッグ＆ドロップまたはクリックして選択",
     "targetBundle": "ターゲットバンドル",
@@ -131,6 +135,7 @@
   "extract": {
     "title": "アセット抽出",
     "description": "バンドルファイルをアップロードすると、指定されたアセットタイプが抽出されます。",
+    "bundleFileHintLabel": "ゲームの <code>.bundle</code> ファイルをアップロードすると、リソースが抽出されダウンロード可能になります",
     "bundleFile": "バンドルファイル",
     "bundleFileHint": "バンドルファイルをドラッグ＆ドロップまたはクリックして選択",
     "assetTypes": "アセットタイプ",
@@ -150,6 +155,8 @@
   "crc": {
     "title": "CRCツール",
     "description": "変更されたバンドルファイルと元のバンドルファイルをアップロードすると、変更されたファイルのCRC値が元のファイルと一致するように修正されます。",
+    "modifiedFileHintLabel": "CRC修正が必要な変更後の <code>.bundle</code> ファイルをアップロード",
+    "originalFileHintLabel": "CRC値を提供するための元の未変更の <code>.bundle</code> ファイルをアップロード",
     "modifiedFile": "変更されたファイル",
     "modifiedFileHint": "変更されたバンドルファイルをドラッグ＆ドロップまたはクリックして選択（CRC修正が必要）",
     "originalFile": "元のファイル",
@@ -171,6 +178,7 @@
   "footer": {
     "poweredBy": "Powered by",
     "upstream": "BA-Modding-Toolkit",
+    "repository": "リポジトリ",
     "madeWith": "Made with",
     "sessionId": "セッションID",
     "expiresAt": "有効期限",

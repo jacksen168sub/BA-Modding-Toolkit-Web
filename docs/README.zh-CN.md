@@ -179,4 +179,4 @@ BA-Modding-Toolkit-Web/
 
 ## License
 
-MIT
+GNU General Public License v3.0

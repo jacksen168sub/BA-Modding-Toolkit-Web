@@ -84,6 +84,8 @@
   "update": {
     "title": "Actualizar Mod",
     "description": "Sube el archivo Mod antiguo y el nuevo archivo de recursos del juego, el sistema migrará los recursos del Mod antiguo al nuevo archivo.",
+    "oldModHintLabel": "Sube el archivo <code>.bundle</code> del Mod antiguo para extraer recursos",
+    "targetBundleHintLabel": "Sube el archivo <code>.bundle</code> de la nueva versión del juego para inyectar recursos (conversión Android-Steam soportada)",
     "oldMod": "Archivo Mod Antiguo",
     "oldModHint": "Arrastra o haz clic para seleccionar el archivo Mod antiguo (.bundle)",
     "targetBundle": "Bundle Objetivo",
@@ -110,6 +112,8 @@
   "pack": {
     "title": "Empaquetar Assets",
     "description": "Sube archivos de assets y el bundle objetivo, el sistema empaquetará los assets en el bundle objetivo.",
+    "assetFolderHintLabel": "Sube los archivos de assets a inyectar (incluyendo <code>.png</code> <code>.skel</code> <code>.atlas</code>)",
+    "targetBundleHintLabel": "Sube el archivo <code>.bundle</code> del juego objetivo para inyectar assets",
     "assetFolder": "Archivos de Assets",
     "assetFolderHint": "Arrastra o haz clic para seleccionar archivos de assets",
     "targetBundle": "Bundle Objetivo",
@@ -131,6 +135,7 @@
   "extract": {
     "title": "Extraer Assets",
     "description": "Sube un archivo bundle, el sistema extraerá los tipos de assets especificados.",
+    "bundleFileHintLabel": "Sube el archivo <code>.bundle</code> del juego, el sistema extraerá los recursos y los empaquetará para descargar",
     "bundleFile": "Archivo Bundle",
     "bundleFileHint": "Arrastra o haz clic para seleccionar archivo bundle",
     "assetTypes": "Tipos de Assets",
@@ -150,6 +155,8 @@
   "crc": {
     "title": "Herramienta CRC",
     "description": "Sube el archivo bundle modificado y el archivo bundle original, el sistema corregirá el valor CRC del archivo modificado para que coincida con el original.",
+    "modifiedFileHintLabel": "Sube el archivo <code>.bundle</code> modificado que necesita corrección CRC",
+    "originalFileHintLabel": "Sube el archivo <code>.bundle</code> original sin modificar para proporcionar el valor CRC",
     "modifiedFile": "Archivo Modificado",
     "modifiedFileHint": "Arrastra o haz clic para seleccionar archivo bundle modificado (necesita corrección CRC)",
     "originalFile": "Archivo Original",
@@ -171,6 +178,7 @@
   "footer": {
     "poweredBy": "Powered by",
     "upstream": "BA-Modding-Toolkit",
+    "repository": "Repositorio",
     "madeWith": "Made with",
     "sessionId": "ID de Sesión",
     "expiresAt": "Expira",

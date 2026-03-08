@@ -179,4 +179,4 @@ The interface supports multiple languages:
 
 ## License
 
-MIT
+GNU General Public License v3.0

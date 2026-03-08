@@ -84,6 +84,8 @@
   "update": {
     "title": "मॉड अपडेट",
     "description": "पुरानी मॉड फ़ाइल और नई गेम संसाधन फ़ाइल अपलोड करें, सिस्टम पुराने मॉड के संसाधनों को नई फ़ाइल में स्थानांतरित करेगा।",
+    "oldModHintLabel": "संसाधन निकालने के लिए पुराने मॉड की <code>.bundle</code> फ़ाइल अपलोड करें",
+    "targetBundleHintLabel": "संसाधन इंजेक्ट करने के लिए नए गेम संस्करण की <code>.bundle</code> फ़ाइल अपलोड करें (Android-Steam रूपांतरण समर्थित)",
     "oldMod": "पुरानी मॉड फ़ाइल",
     "oldModHint": "पुरानी मॉड फ़ाइल चुनने के लिए खींचें या क्लिक करें (.bundle)",
     "targetBundle": "लक्ष्य बंडल",
@@ -110,6 +112,8 @@
   "pack": {
     "title": "एसेट पैक",
     "description": "एसेट फ़ाइलें और लक्ष्य बंडल अपलोड करें, सिस्टम एसेट को लक्ष्य बंडल में पैक करेगा।",
+    "assetFolderHintLabel": "इंजेक्ट करने के लिए एसेट फ़ाइलें अपलोड करें (<code>.png</code> <code>.skel</code> <code>.atlas</code> सहित)",
+    "targetBundleHintLabel": "एसेट इंजेक्ट करने के लिए लक्ष्य गेम की <code>.bundle</code> फ़ाइल अपलोड करें",
     "assetFolder": "एसेट फ़ाइलें",
     "assetFolderHint": "एसेट फ़ाइलें चुनने के लिए खींचें या क्लिक करें",
     "targetBundle": "लक्ष्य बंडल",
@@ -130,7 +134,8 @@
   },
   "extract": {
     "title": "एसेट निकालें",
-    "description": "बंडल फ़ाइल अपलोड करें, सिस्टम निर्दिष्ट एसेट प्रकार निकालेगा।",
+    "description": "बंडल फ़ाइल अपलोड करें, सिस्टम निर्दिष्ट प्रकार के एसेट निकालेगा।",
+    "bundleFileHintLabel": "गेम की <code>.bundle</code> फ़ाइल अपलोड करें, सिस्टम संसाधन निकालकर डाउनलोड के लिए पैक करेगा",
     "bundleFile": "बंडल फ़ाइल",
     "bundleFileHint": "बंडल फ़ाइल चुनने के लिए खींचें या क्लिक करें",
     "assetTypes": "एसेट प्रकार",
@@ -150,6 +155,8 @@
   "crc": {
     "title": "CRC टूल",
     "description": "संशोधित बंडल फ़ाइल और मूल बंडल फ़ाइल अपलोड करें, सिस्टम संशोधित फ़ाइल के CRC मान को मूल से मिलाने के लिए सुधारेगा।",
+    "modifiedFileHintLabel": "CRC सुधार की आवश्यकता वाली संशोधित <code>.bundle</code> फ़ाइल अपलोड करें",
+    "originalFileHintLabel": "CRC मान प्रदान करने के लिए मूल असंशोधित <code>.bundle</code> फ़ाइल अपलोड करें",
     "modifiedFile": "संशोधित फ़ाइल",
     "modifiedFileHint": "संशोधित बंडल फ़ाइल चुनने के लिए खींचें या क्लिक करें (CRC सुधार आवश्यक)",
     "originalFile": "मूल फ़ाइल",
@@ -171,6 +178,7 @@
   "footer": {
     "poweredBy": "Powered by",
     "upstream": "BA-Modding-Toolkit",
+    "repository": "रिपॉजिटरी",
     "madeWith": "Made with",
     "sessionId": "सेशन ID",
     "expiresAt": "समाप्ति",
