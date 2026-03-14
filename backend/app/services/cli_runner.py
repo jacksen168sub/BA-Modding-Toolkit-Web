@@ -42,6 +42,7 @@ class CLIRunner:
         env = os.environ.copy()
         env["PYTHONUNBUFFERED"] = "1"
         env["PYTHONIOENCODING"] = "utf-8"
+        env["BAMT_LANG"] = "en-US"  # Force CLI to use English for logs
         
         result = subprocess.run(
             cmd,
@@ -102,6 +103,7 @@ class CLIRunner:
         # 添加环境变量确保日志实时输出
         env = os.environ.copy()
         env["PYTHONUNBUFFERED"] = "1"
+        env["BAMT_LANG"] = "en-US"  # Force CLI to use English for logs
         
         process = await asyncio.create_subprocess_exec(
             *cmd,

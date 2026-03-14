@@ -194,6 +194,15 @@ async function submitTask() {
     currentTask.value = task
     ElMessage.success(t('pack.taskSubmitted'))
     
+    // 立即清空已上传文件，让用户可以开始下一个任务的上传
+    assetFiles.value = []
+    targetFile.value = null
+    assetFileList.value = []
+    targetFileList.value = []
+    assetUploadRef.value?.clearFiles()
+    targetUploadRef.value?.clearFiles()
+    submitting.value = false
+    
     await tasksStore.pollTask(task.id, 3000, 200)
     currentTask.value = tasksStore.currentTask
     
@@ -205,7 +214,6 @@ async function submitTask() {
     
   } catch (e) {
     ElMessage.error(t('pack.taskSubmitFailed'))
-  } finally {
     submitting.value = false
   }
 }

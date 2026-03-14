@@ -142,6 +142,12 @@ async function submitTask() {
     currentTask.value = task
     ElMessage.success(t('extract.taskSubmitted'))
     
+    // 立即清空已上传文件，让用户可以开始下一个任务的上传
+    bundleFiles.value = []
+    bundleFileList.value = []
+    bundleUploadRef.value?.clearFiles()
+    submitting.value = false
+    
     await tasksStore.pollTask(task.id, 3000, 200)
     currentTask.value = tasksStore.currentTask
     
@@ -153,7 +159,6 @@ async function submitTask() {
     
   } catch (e) {
     ElMessage.error(t('extract.taskSubmitFailed'))
-  } finally {
     submitting.value = false
   }
 }

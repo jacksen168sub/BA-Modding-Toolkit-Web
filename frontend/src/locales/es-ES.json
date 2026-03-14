@@ -74,6 +74,7 @@
     "createdAt": "Creado",
     "completedAt": "Completado",
     "cliLog": "Registro CLI",
+    "errorLog": "Registro de errores",
     "copyLog": "Copiar Registro",
     "logCopied": "Registro copiado al portapapeles",
     "outputFiles": "Archivos de Salida",

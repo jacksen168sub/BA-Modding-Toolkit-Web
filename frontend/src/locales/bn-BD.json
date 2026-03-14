@@ -74,6 +74,7 @@
     "createdAt": "তৈরি",
     "completedAt": "সম্পন্ন",
     "cliLog": "CLI লগ",
+    "errorLog": "ত্রুটি লগ",
     "copyLog": "লগ কপি",
     "logCopied": "লগ ক্লিপবোর্ডে কপি করা হয়েছে",
     "outputFiles": "আউটপুট ফাইল",
