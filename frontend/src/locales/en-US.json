@@ -74,6 +74,7 @@
     "createdAt": "Created At",
     "completedAt": "Completed At",
     "cliLog": "CLI Log",
+    "errorLog": "Error Log",
     "copyLog": "Copy Log",
     "logCopied": "Log copied to clipboard",
     "outputFiles": "Output Files",

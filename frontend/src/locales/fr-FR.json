@@ -74,6 +74,7 @@
     "createdAt": "Créé le",
     "completedAt": "Terminé le",
     "cliLog": "Journal CLI",
+    "errorLog": "Journal des erreurs",
     "copyLog": "Copier le Journal",
     "logCopied": "Journal copié dans le presse-papiers",
     "outputFiles": "Fichiers de Sortie",

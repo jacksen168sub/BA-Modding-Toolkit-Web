@@ -74,6 +74,7 @@
     "createdAt": "Создано",
     "completedAt": "Завершено",
     "cliLog": "Журнал CLI",
+    "errorLog": "Журнал ошибок",
     "copyLog": "Копировать Журнал",
     "logCopied": "Журнал скопирован в буфер обмена",
     "outputFiles": "Выходные Файлы",

@@ -74,6 +74,7 @@
     "createdAt": "تاريخ الإنشاء",
     "completedAt": "تاريخ الإكمال",
     "cliLog": "سجل CLI",
+    "errorLog": "سجل الأخطاء",
     "copyLog": "نسخ السجل",
     "logCopied": "تم نسخ السجل إلى الحافظة",
     "outputFiles": "ملفات الإخراج",

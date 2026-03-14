@@ -74,6 +74,7 @@
     "createdAt": "创建时间",
     "completedAt": "完成时间",
     "cliLog": "CLI 日志",
+    "errorLog": "错误日志",
     "copyLog": "复制日志",
     "logCopied": "日志已复制到剪贴板",
     "outputFiles": "输出文件",

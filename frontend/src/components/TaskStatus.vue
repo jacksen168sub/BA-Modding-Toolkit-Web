@@ -15,18 +15,14 @@
       </el-descriptions-item>
     </el-descriptions>
     
-    <div v-if="task.error_message" class="error-message">
-      <el-alert type="error" :title="task.error_message" show-icon />
-    </div>
-    
-    <!-- CLI 日志 -->
-    <div v-if="task.cli_log" class="cli-log">
+    <!-- CLI 日志 / 错误信息 -->
+    <div v-if="displayLog" class="cli-log" :class="{ 'has-error': task.status === 'failed' }">
       <div class="cli-log-header">
-        <h4>{{ $t('taskDetail.cliLog') }}</h4>
+        <h4>{{ task.status === 'failed' ? $t('taskDetail.errorLog') : $t('taskDetail.cliLog') }}</h4>
         <el-button size="small" @click="copyLog">{{ $t('taskDetail.copyLog') }}</el-button>
       </div>
       <el-input
-        v-model="task.cli_log"
+        :model-value="displayLogContent"
         type="textarea"
         :rows="isMobile ? 8 : 10"
         readonly
@@ -98,6 +94,25 @@ const statusType = computed(() => statusMap[props.task?.status]?.type || 'info')
 const statusText = computed(() => t(statusMap[props.task?.status]?.text || 'unknown'))
 const taskTypeText = computed(() => t(typeMap[props.task?.type] || props.task?.type))
 
+// 是否显示日志区域（有 cli_log 或失败时有 error_message）
+const displayLog = computed(() => {
+  if (!props.task) return false
+  return !!(props.task.cli_log || (props.task.status === 'failed' && props.task.error_message))
+})
+
+// 合并显示的日志内容
+const displayLogContent = computed(() => {
+  if (!props.task) return ''
+  const parts = []
+  if (props.task.status === 'failed' && props.task.error_message) {
+    parts.push('[ERROR] ' + props.task.error_message)
+  }
+  if (props.task.cli_log) {
+    parts.push(props.task.cli_log)
+  }
+  return parts.join('\n\n')
+})
+
 function formatTime(time) {
   return new Date(time).toLocaleString()
 }
@@ -113,8 +128,8 @@ function downloadFile(fileId) {
 }
 
 function copyLog() {
-  if (props.task?.cli_log) {
-    navigator.clipboard.writeText(props.task.cli_log)
+  if (displayLogContent.value) {
+    navigator.clipboard.writeText(displayLogContent.value)
     ElMessage.success(t('taskDetail.logCopied'))
   }
 }
@@ -170,6 +185,10 @@ onUnmounted(() => {
 .log-textarea :deep(textarea) {
   background-color: #1e1e1e;
   color: #d4d4d4;
+}
+
+.cli-log.has-error .log-textarea :deep(textarea) {
+  border-color: #f56c6c;
 }
 
 .output-files {

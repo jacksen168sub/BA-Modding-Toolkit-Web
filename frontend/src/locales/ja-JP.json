@@ -74,6 +74,7 @@
     "createdAt": "作成日時",
     "completedAt": "完了日時",
     "cliLog": "CLIログ",
+    "errorLog": "エラーログ",
     "copyLog": "ログをコピー",
     "logCopied": "ログをクリップボードにコピーしました",
     "outputFiles": "出力ファイル",
