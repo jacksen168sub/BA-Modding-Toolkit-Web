@@ -1,5 +1,6 @@
 import uuid as uuid_lib
 import shutil
+import re
 from pathlib import Path
 from typing import Optional, List
 from datetime import datetime
@@ -14,15 +15,44 @@ class FileService:
     def __init__(self, db: Session):
         self.db = db
     
+    def _validate_session_uuid(self, session_uuid: str) -> None:
+        """Validate session UUID format to prevent path traversal."""
+        if not re.match(r'^[a-f0-9-]{36}$', session_uuid, re.IGNORECASE):
+            raise ValueError(f"Invalid session UUID format: {session_uuid}")
+    
     def _get_user_upload_dir(self, session_uuid: str) -> Path:
         """Get user's upload directory path."""
+        self._validate_session_uuid(session_uuid)
+        
         path = settings.upload_path / session_uuid
+        
+        # Resolve and validate path is within allowed directory
+        path = path.resolve()
+        allowed_dir = settings.upload_path.resolve()
+        
+        try:
+            path.relative_to(allowed_dir)
+        except ValueError:
+            raise ValueError(f"Path traversal attempt detected: {session_uuid}")
+        
         path.mkdir(parents=True, exist_ok=True)
         return path
     
     def _get_user_output_dir(self, session_uuid: str) -> Path:
         """Get user's output directory path."""
+        self._validate_session_uuid(session_uuid)
+        
         path = settings.output_path / session_uuid
+        
+        # Resolve and validate path is within allowed directory
+        path = path.resolve()
+        allowed_dir = settings.output_path.resolve()
+        
+        try:
+            path.relative_to(allowed_dir)
+        except ValueError:
+            raise ValueError(f"Path traversal attempt detected: {session_uuid}")
+        
         path.mkdir(parents=True, exist_ok=True)
         return path
     

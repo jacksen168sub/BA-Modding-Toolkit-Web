@@ -20,6 +20,14 @@ async def upload_file(
     db: Session = Depends(get_db)
 ):
     """Upload a file and associate with session."""
+    # Validate session UUID format
+    import re
+    if not re.match(r'^[a-f0-9-]{36}$', session_uuid, re.IGNORECASE):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid session UUID format"
+        )
+    
     # Validate session
     session_service = SessionService(db)
     session = session_service.get(session_uuid)
