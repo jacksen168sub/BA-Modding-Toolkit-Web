@@ -48,6 +48,12 @@ class Settings(BaseSettings):
     # Concurrency settings
     MAX_CONCURRENT_TASKS: int = 2  # Maximum concurrent tasks
     
+    # CORS settings
+    CORS_ORIGINS: str = "*"  # Comma-separated list of allowed origins, e.g., "https://example.com,https://www.example.com"
+    CORS_ALLOW_CREDENTIALS: bool = True
+    CORS_ALLOW_METHODS: str = "*"  # Comma-separated list, e.g., "GET,POST,DELETE"
+    CORS_ALLOW_HEADERS: str = "*"  # Comma-separated list, e.g., "Content-Type,Authorization"
+    
     @property
     def upload_path(self) -> Path:
         return self.PROJECT_ROOT / self.UPLOAD_DIR
@@ -59,6 +65,27 @@ class Settings(BaseSettings):
     @property
     def temp_path(self) -> Path:
         return self.PROJECT_ROOT / self.TEMP_DIR
+    
+    @property
+    def cors_origins_list(self) -> list[str]:
+        """Parse CORS_ORIGINS into a list."""
+        if self.CORS_ORIGINS == "*":
+            return ["*"]
+        return [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
+    
+    @property
+    def cors_allow_methods_list(self) -> list[str]:
+        """Parse CORS_ALLOW_METHODS into a list."""
+        if self.CORS_ALLOW_METHODS == "*":
+            return ["*"]
+        return [method.strip() for method in self.CORS_ALLOW_METHODS.split(",") if method.strip()]
+    
+    @property
+    def cors_allow_headers_list(self) -> list[str]:
+        """Parse CORS_ALLOW_HEADERS into a list."""
+        if self.CORS_ALLOW_HEADERS == "*":
+            return ["*"]
+        return [header.strip() for header in self.CORS_ALLOW_HEADERS.split(",") if header.strip()]
 
     class Config:
         env_file = ".env"

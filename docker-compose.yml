@@ -17,4 +17,9 @@ services:
     environment:
       - DATABASE_URL=sqlite:///./data/bamt.db
       - DEBUG=false
+      # CORS settings (optional, defaults to allow all origins)
+      # - CORS_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
+      # - CORS_ALLOW_CREDENTIALS=true
+      # - CORS_ALLOW_METHODS=GET,POST,DELETE
+      # - CORS_ALLOW_HEADERS=Content-Type,Authorization
     restart: unless-stopped
