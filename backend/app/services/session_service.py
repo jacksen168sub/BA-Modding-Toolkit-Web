@@ -1,4 +1,5 @@
 import uuid as uuid_lib
+import re
 from typing import Optional
 from sqlalchemy.orm import Session
 
@@ -10,10 +11,17 @@ class SessionService:
     def __init__(self, db: Session):
         self.db = db
     
+    def _validate_uuid(self, uuid: str) -> None:
+        """Validate UUID format to prevent path traversal."""
+        if not re.match(r'^[a-f0-9-]{36}$', uuid, re.IGNORECASE):
+            raise ValueError(f"Invalid UUID format: {uuid}")
+    
     def create(self, uuid: Optional[str] = None) -> Session:
         """Create a new session."""
         if uuid is None:
             uuid = str(uuid_lib.uuid4())
+        
+        self._validate_uuid(uuid)
         
         session = Session(uuid=uuid)
         self.db.add(session)
@@ -23,10 +31,12 @@ class SessionService:
     
     def get(self, uuid: str) -> Optional[Session]:
         """Get session by UUID."""
+        self._validate_uuid(uuid)
         return self.db.query(Session).filter(Session.uuid == uuid).first()
     
     def get_or_create(self, uuid: str) -> Session:
         """Get existing session or create new one."""
+        self._validate_uuid(uuid)
         session = self.get(uuid)
         if session:
             session.refresh()
