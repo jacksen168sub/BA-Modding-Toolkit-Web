@@ -116,13 +116,22 @@ a:hover {
 
 /* Element Plus 移动端优化 */
 @media (max-width: 768px) {
-  .el-menu--horizontal {
-    justify-content: space-around;
+  .el-dialog {
+    margin: 10px auto !important;
+    max-height: 90vh;
+    overflow-y: auto;
   }
-  
-  .el-menu--horizontal > .el-menu-item,
-  .el-menu--horizontal > .el-sub-menu .el-sub-menu__title {
-    padding: 0 10px;
+
+  .el-table {
+    font-size: 13px;
+  }
+
+  .el-table th {
+    padding: 8px 0;
+  }
+
+  .el-table td {
+    padding: 8px 0;
   }
 }
 

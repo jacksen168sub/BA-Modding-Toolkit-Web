@@ -19,7 +19,8 @@
   "nav": {
     "home": "홈",
     "tools": "도구",
-    "tasks": "내 작업"
+    "tasks": "내 작업",
+    "settings": "설정"
   },
   "home": {
     "title": "BA Modding Toolkit Web",
@@ -296,5 +297,19 @@
     "switch": "언어",
     "zh": "简体中文",
     "en": "English"
+  },
+  "settings": {
+    "title": "설정",
+    "session": "세션",
+    "sessionId": "세션 ID",
+    "expiresAt": "만료 시간",
+    "refreshSession": "세션 새로고침",
+    "resetSession": "세션 초기화",
+    "sessionHint": "새로고침하면 세션 만료 시간이 연장됩니다. 초기화하면 새 세션 ID가 생성되며 이전 작업 및 파일에 접근할 수 없습니다.",
+    "refreshSuccess": "세션이 새로고침되었습니다",
+    "refreshFailed": "세션 새로고침에 실패했습니다",
+    "resetConfirm": "새 세션이 생성됩니다. 현재 세션의 작업과 파일에 더 이상 접근할 수 없습니다. 계속하시겠습니까?",
+    "resetSuccess": "세션이 초기화되었습니다",
+    "version": "버전"
   }
 }

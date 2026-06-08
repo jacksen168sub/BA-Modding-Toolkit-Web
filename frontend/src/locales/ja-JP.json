@@ -19,7 +19,8 @@
   "nav": {
     "home": "ホーム",
     "tools": "ツール",
-    "tasks": "マイタスク"
+    "tasks": "マイタスク",
+    "settings": "設定"
   },
   "home": {
     "title": "BA Modding Toolkit Web",
@@ -296,5 +297,19 @@
     "switch": "言語",
     "zh": "简体中文",
     "en": "English"
+  },
+  "settings": {
+    "title": "設定",
+    "session": "セッション",
+    "sessionId": "セッションID",
+    "expiresAt": "有効期限",
+    "refreshSession": "セッションを更新",
+    "resetSession": "セッションをリセット",
+    "sessionHint": "更新するとセッションの有効期限が延長されます。リセットすると新しいセッションIDが作成され、以前のタスクやファイルにアクセスできなくなります。",
+    "refreshSuccess": "セッションを更新しました",
+    "refreshFailed": "セッションの更新に失敗しました",
+    "resetConfirm": "新しいセッションを作成します。現在のセッションのタスクやファイルにアクセスできなくなります。続行しますか？",
+    "resetSuccess": "セッションをリセットしました",
+    "version": "バージョン"
   }
 }

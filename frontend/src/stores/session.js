@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { getSessionUUID } from '@/utils/uuid'
+import { getSessionUUID, setSessionUUID as setUUIDUtil, clearSessionUUID as clearUUIDUtil, generateUUID } from '@/utils/uuid'
 import { getSession, refreshSession } from '@/api/session'
 
 export const useSessionStore = defineStore('session', () => {

@@ -19,7 +19,8 @@
   "nav": {
     "home": "Accueil",
     "tools": "Outils",
-    "tasks": "Mes Tâches"
+    "tasks": "Mes Tâches",
+    "settings": "Paramètres"
   },
   "home": {
     "title": "BA Modding Toolkit Web",
@@ -296,5 +297,19 @@
     "switch": "Langue",
     "zh": "简体中文",
     "en": "English"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "session": "Session",
+    "sessionId": "ID de Session",
+    "expiresAt": "Expire le",
+    "refreshSession": "Actualiser la Session",
+    "resetSession": "Réinitialiser la Session",
+    "sessionHint": "L'actualisation prolonge la validité de la session. La réinitialisation crée un nouvel ID de session ; les tâches et fichiers précédents ne seront plus accessibles.",
+    "refreshSuccess": "Session actualisée",
+    "refreshFailed": "Échec de l'actualisation de la session",
+    "resetConfirm": "Une nouvelle session sera créée. Les tâches et fichiers de la session actuelle ne seront plus accessibles. Continuer ?",
+    "resetSuccess": "Session réinitialisée",
+    "version": "Version"
   }
 }
