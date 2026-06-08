@@ -10,7 +10,7 @@ router = APIRouter(tags=["Version"])
 # Cache version info
 _version_info = None
 
-VERSION_FILE = Path(__file__).parent.parent / "version.json"
+VERSION_FILE = Path(__file__).parent.parent.parent / "version.json"
 PYPROJECT_FILE = Path(__file__).parent.parent.parent / "pyproject.toml"
 
 
