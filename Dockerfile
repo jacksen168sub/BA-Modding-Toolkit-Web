@@ -68,6 +68,9 @@ COPY --from=upstream-builder /app/upstream /app/upstream
 # Copy backend app
 COPY backend/app ./app
 
+# Copy pyproject.toml for version fallback
+COPY backend/pyproject.toml ./pyproject.toml
+
 # Write version.json at build time (version source of truth)
 RUN echo "{\"version\":\"${GIT_TAG}\",\"tag\":\"${GIT_TAG}\",\"commit\":\"${GIT_COMMIT}\"}" > /app/version.json
 
