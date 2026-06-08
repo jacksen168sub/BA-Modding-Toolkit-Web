@@ -39,10 +39,6 @@ FROM python:3.12-slim
 # Build arguments for version info
 ARG GIT_TAG=""
 ARG GIT_COMMIT=""
-# Set version info as environment variables immediately after ARG
-# to prevent Docker cache from using stale values
-ENV GIT_TAG=${GIT_TAG}
-ENV GIT_COMMIT=${GIT_COMMIT}
 
 WORKDIR /app
 
@@ -71,6 +67,9 @@ COPY --from=upstream-builder /app/upstream /app/upstream
 
 # Copy backend app
 COPY backend/app ./app
+
+# Write version.json at build time (version source of truth)
+RUN echo "{\"version\":\"${GIT_TAG}\",\"tag\":\"${GIT_TAG}\",\"commit\":\"${GIT_COMMIT}\"}" > /app/version.json
 
 # Setup frontend (copy from build stage, works for all platforms)
 COPY --from=frontend-build /app/frontend/dist /var/www/html
