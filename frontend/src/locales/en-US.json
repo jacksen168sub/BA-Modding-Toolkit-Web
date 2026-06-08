@@ -19,7 +19,8 @@
   "nav": {
     "home": "Home",
     "tools": "Tools",
-    "tasks": "My Tasks"
+    "tasks": "My Tasks",
+    "settings": "Settings"
   },
   "home": {
     "title": "BA Modding Toolkit Web",
@@ -296,5 +297,19 @@
     "switch": "Language",
     "zh": "简体中文",
     "en": "English"
+  },
+  "settings": {
+    "title": "Settings",
+    "session": "Session",
+    "sessionId": "Session ID",
+    "expiresAt": "Expires At",
+    "refreshSession": "Refresh Session",
+    "resetSession": "Reset Session",
+    "sessionHint": "Refreshing extends the session expiry. Resetting creates a new session ID — previous tasks and files will no longer be accessible.",
+    "refreshSuccess": "Session refreshed",
+    "refreshFailed": "Failed to refresh session",
+    "resetConfirm": "This will create a new session. Tasks and files from the current session will no longer be accessible. Continue?",
+    "resetSuccess": "Session reset successfully",
+    "version": "Version"
   }
 }

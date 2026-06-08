@@ -19,7 +19,8 @@
   "nav": {
     "home": "首頁",
     "tools": "工具",
-    "tasks": "我的任務"
+    "tasks": "我的任務",
+    "settings": "設定"
   },
   "home": {
     "title": "BA Modding Toolkit Web",
@@ -296,5 +297,19 @@
     "switch": "語言",
     "zh": "简体中文",
     "en": "English"
+  },
+  "settings": {
+    "title": "設定",
+    "session": "工作階段",
+    "sessionId": "工作階段ID",
+    "expiresAt": "到期時間",
+    "refreshSession": "重新整理工作階段",
+    "resetSession": "重設工作階段",
+    "sessionHint": "重新整理可延長工作階段到期時間。重設會建立新的工作階段ID，先前的工作和檔案將無法存取。",
+    "refreshSuccess": "工作階段已重新整理",
+    "refreshFailed": "重新整理工作階段失敗",
+    "resetConfirm": "這將建立新的工作階段，目前工作階段的工作和檔案將無法存取。是否繼續？",
+    "resetSuccess": "工作階段已重設",
+    "version": "版本"
   }
 }
