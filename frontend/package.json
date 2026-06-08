@@ -10,8 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@esotericsoftware/spine-player": "4.2.*",
     "axios": "^1.6.0",
     "element-plus": "^2.5.0",
+    "jszip": "^3.10.1",
     "pinia": "^2.1.0",
     "vue": "^3.4.0",
     "vue-i18n": "^9.14.4",

@@ -123,7 +123,8 @@ const typeMap = {
   pack: 'tasks.types.pack',
   extract: 'tasks.types.extract',
   crc: 'tasks.types.crc',
-  jp_gl_convert: 'tasks.types.jp_gl_convert'
+  split: 'tasks.types.split',
+  merge: 'tasks.types.merge'
 }
 
 const statusMap = {

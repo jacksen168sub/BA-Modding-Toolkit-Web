@@ -24,6 +24,9 @@
         <el-menu-item index="/pack">{{ $t('home.features.pack') }}</el-menu-item>
         <el-menu-item index="/extract">{{ $t('home.features.extract') }}</el-menu-item>
         <el-menu-item index="/crc">{{ $t('home.features.crc') }}</el-menu-item>
+        <el-menu-item index="/split">{{ $t('home.features.split') }}</el-menu-item>
+        <el-menu-item index="/merge">{{ $t('home.features.merge') }}</el-menu-item>
+        <el-menu-item index="/spine-preview">{{ $t('home.features.spinePreview') }}</el-menu-item>
       </el-sub-menu>
       
       <el-menu-item index="/tasks">

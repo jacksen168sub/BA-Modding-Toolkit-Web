@@ -29,6 +29,20 @@ export function createCrcTask(data) {
 }
 
 /**
+ * Create split task
+ */
+export function createSplitTask(data) {
+  return api.post('/tasks/split', data)
+}
+
+/**
+ * Create merge task
+ */
+export function createMergeTask(data) {
+  return api.post('/tasks/merge', data)
+}
+
+/**
  * Get task status
  */
 export function getTask(taskId) {

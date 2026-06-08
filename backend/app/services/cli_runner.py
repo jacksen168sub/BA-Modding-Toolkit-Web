@@ -17,6 +17,27 @@ class CLIRunner:
         self.upstream_dir = self._find_upstream_dir()
         self.timeout = settings.CLI_TIMEOUT
     
+    # Patterns indicating CLI soft failures (exit code 0 but operation didn't produce expected output)
+    _SOFT_FAILURE_PATTERNS = [
+        "CRC Correction failed",
+        "Operation Failed",
+        "all_targets_unchanged",
+    ]
+    
+    def _check_soft_failure(self, stdout: str) -> str | None:
+        """Check CLI stdout for soft failure patterns (exit code 0 but operation failed).
+        
+        Returns the first matching error description, or None if no soft failure detected.
+        """
+        for pattern in self._SOFT_FAILURE_PATTERNS:
+            if pattern in stdout:
+                # Extract the line containing the error for context
+                for line in stdout.splitlines():
+                    if pattern in line:
+                        return line.strip()
+                return pattern
+        return None
+    
     def _find_upstream_dir(self) -> Path:
         """Find the upstream BA-Modding-Toolkit directory."""
         upstream_dir = settings.PROJECT_ROOT / "upstream" / "BA-Modding-Toolkit"
@@ -130,7 +151,9 @@ class CLIRunner:
         target_bundle: Optional[Path] = None,
         resource_dir: Optional[Path] = None,
         crc_correction: bool = True,
-        asset_types: List[str] = None
+        asset_types: List[str] = None,
+        strategy: str = "path_id",
+        compression: str = "lzma"
     ) -> Tuple[Path, str]:
         """
         Run mod update command asynchronously.
@@ -142,6 +165,8 @@ class CLIRunner:
             resource_dir: Path to game resource directory (optional)
             crc_correction: Whether to apply CRC fix
             asset_types: List of asset types to replace
+            strategy: Match strategy (path_id, cont_name_type, name_type)
+            compression: Compression method (lzma, lz4, original, none)
         
         Returns:
             Tuple of (output_path, full_log)
@@ -164,8 +189,8 @@ class CLIRunner:
         if asset_types:
             args.extend(["--asset-types"] + asset_types)
         
-        # Add compression parameter from config
-        args.extend(["--compression", settings.CLI_COMPRESSION])
+        args.extend(["--strategy", strategy])
+        args.extend(["--compression", compression])
         
         cmd = ["uv", "run", "bamt-cli"] + args
         returncode, stdout, stderr = await self._run_command(args)
@@ -180,6 +205,16 @@ class CLIRunner:
         if output_files:
             return output_files[0], full_log
         
+        # No output file — check for soft failure patterns in stdout
+        soft_error = self._check_soft_failure(stdout)
+        if soft_error:
+            if "CRC Correction failed" in soft_error:
+                raise RuntimeError(
+                    "Update failed: CRC correction failed. Try disabling CRC correction or using a different compression method.",
+                    full_log
+                )
+            raise RuntimeError(f"Update failed: {soft_error}", full_log)
+        
         raise FileNotFoundError("No output bundle generated", full_log)
     
     async def run_pack(
@@ -187,10 +222,14 @@ class CLIRunner:
         asset_folder: Path,
         target_bundle: Path,
         output_dir: Path,
-        crc_correction: bool = True
+        crc_correction: bool = True,
+        compression: str = "lzma"
     ) -> Tuple[Path, str]:
         """
         Run asset pack command asynchronously.
+        
+        Args:
+            compression: Compression method (lzma, lz4, original, none)
         
         Returns:
             Tuple of (output_path, full_log)
@@ -205,8 +244,7 @@ class CLIRunner:
         if not crc_correction:
             args.append("--no-crc")
         
-        # Add compression parameter from config
-        args.extend(["--compression", settings.CLI_COMPRESSION])
+        args.extend(["--compression", compression])
         
         cmd = ["uv", "run", "bamt-cli"] + args
         returncode, stdout, stderr = await self._run_command(args)
@@ -220,16 +258,32 @@ class CLIRunner:
         if output_files:
             return output_files[0], full_log
         
+        # No output file — check for soft failure patterns in stdout
+        soft_error = self._check_soft_failure(stdout)
+        if soft_error:
+            if "CRC Correction failed" in soft_error:
+                raise RuntimeError(
+                    "Pack failed: CRC correction failed. Try disabling CRC correction or using a different compression method.",
+                    full_log
+                )
+            raise RuntimeError(f"Pack failed: {soft_error}", full_log)
+        
         raise FileNotFoundError("No output bundle generated", full_log)
     
     async def run_extract(
         self,
         bundle_paths: List[Path],
         output_dir: Path,
-        asset_types: List[str] = None
+        asset_types: List[str] = None,
+        unpack_atlas: bool = False,
+        subdir: str = None
     ) -> Tuple[Path, str]:
         """
         Run asset extract command asynchronously.
+        
+        Args:
+            unpack_atlas: Unpack Atlas into individual PNG frames
+            subdir: Subdirectory name within output_dir
         
         Returns:
             Tuple of (output_dir, full_log)
@@ -242,6 +296,12 @@ class CLIRunner:
         
         if asset_types:
             args.extend(["--asset-types"] + asset_types)
+        
+        if unpack_atlas:
+            args.append("--unpack-atlas")
+        
+        if subdir:
+            args.extend(["--subdir", subdir])
         
         cmd = ["uv", "run", "bamt-cli"] + args
         returncode, stdout, stderr = await self._run_command(args)
@@ -257,7 +317,8 @@ class CLIRunner:
         self,
         modified_path: Path,
         original_path: Path,
-        no_backup: bool = False
+        no_backup: bool = False,
+        check_only: bool = False
     ) -> Tuple[Path, str]:
         """
         Run CRC correction command asynchronously.
@@ -265,14 +326,15 @@ class CLIRunner:
         Args:
             modified_path: Path to the modified file (to be fixed)
             original_path: Path to the original file (provides target CRC value)
-            no_backup: Do not create a backup (.bak) before fixing the file
+            no_backup: Do not create a backup (.backup) before fixing the file
+            check_only: Only calculate and compare CRC, do not modify any files
         
         Returns:
             Tuple of (output_path, full_log)
         
         Note:
             The CLI modifies the file in-place. If no_backup is False,
-            a .bak backup is created. The output_path points to the modified file.
+            a .backup backup is created. The output_path points to the modified file.
         """
         # Note: 'modified' is a positional argument, not --modified
         args = [
@@ -284,6 +346,9 @@ class CLIRunner:
         if no_backup:
             args.append("--no-backup")
         
+        if check_only:
+            args.append("--check-only")
+        
         cmd = ["uv", "run", "bamt-cli"] + args
         returncode, stdout, stderr = await self._run_command(args)
         
@@ -294,6 +359,118 @@ class CLIRunner:
         
         # CRC modifies the file in-place, return the modified file path
         return modified_path, full_log
+
+    async def run_split(
+        self,
+        legacy_bundle: Path,
+        modern_bundles: List[Path],
+        output_dir: Path,
+        crc_correction: bool = True,
+        asset_types: List[str] = None,
+        compression: str = "lzma"
+    ) -> Tuple[list, str]:
+        """
+        Run split command: distribute legacy bundle assets to multiple modern bundles (one-to-many).
+        Corresponds to `bamt-cli split`.
+        
+        Returns:
+            Tuple of (output_file_paths, full_log)
+        """
+        args = [
+            "split",
+            str(legacy_bundle),
+            "--output-dir", str(output_dir)
+        ]
+        
+        if modern_bundles:
+            args.extend(["--modern-files"] + [str(p) for p in modern_bundles])
+        
+        if not crc_correction:
+            args.append("--no-crc")
+        
+        if asset_types:
+            args.extend(["--asset-types"] + asset_types)
+        
+        args.extend(["--compression", compression])
+        
+        cmd = ["uv", "run", "bamt-cli"] + args
+        returncode, stdout, stderr = await self._run_command(args)
+        
+        full_log = self._build_log(cmd, stdout, stderr, returncode)
+        
+        if returncode != 0:
+            raise RuntimeError(f"Split failed: {stderr or stdout}", full_log)
+        
+        output_files = list(output_dir.glob("*.bundle"))
+        if not output_files:
+            # No output files — check for soft failure patterns in stdout
+            soft_error = self._check_soft_failure(stdout)
+            if soft_error:
+                if "CRC Correction failed" in soft_error:
+                    raise RuntimeError(
+                        "Split failed: CRC correction failed. Try disabling CRC correction or using a different compression method.",
+                        full_log
+                    )
+                raise RuntimeError(f"Split failed: {soft_error}", full_log)
+        
+        return output_files, full_log
+
+    async def run_merge(
+        self,
+        legacy_bundle: Path,
+        modern_bundles: List[Path],
+        output_dir: Path,
+        crc_correction: bool = True,
+        asset_types: List[str] = None,
+        compression: str = "lzma"
+    ) -> Tuple[Path, str]:
+        """
+        Run merge command: merge multiple modern bundle assets into a legacy bundle (many-to-one).
+        Corresponds to `bamt-cli merge`.
+        
+        Returns:
+            Tuple of (output_path, full_log)
+        """
+        args = [
+            "merge",
+            str(legacy_bundle),
+            "--output-dir", str(output_dir)
+        ]
+        
+        if modern_bundles:
+            args.extend(["--modern-files"] + [str(p) for p in modern_bundles])
+        
+        if not crc_correction:
+            args.append("--no-crc")
+        
+        if asset_types:
+            args.extend(["--asset-types"] + asset_types)
+        
+        args.extend(["--compression", compression])
+        
+        cmd = ["uv", "run", "bamt-cli"] + args
+        returncode, stdout, stderr = await self._run_command(args)
+        
+        full_log = self._build_log(cmd, stdout, stderr, returncode)
+        
+        if returncode != 0:
+            raise RuntimeError(f"Merge failed: {stderr or stdout}", full_log)
+        
+        output_files = list(output_dir.glob("*.bundle"))
+        if output_files:
+            return output_files[0], full_log
+        
+        # No output file — check for soft failure patterns in stdout
+        soft_error = self._check_soft_failure(stdout)
+        if soft_error:
+            if "CRC Correction failed" in soft_error:
+                raise RuntimeError(
+                    "Merge failed: CRC correction failed. Try disabling CRC correction or using a different compression method.",
+                    full_log
+                )
+            raise RuntimeError(f"Merge failed: {soft_error}", full_log)
+        
+        raise FileNotFoundError("No output bundle generated", full_log)
 
 
 # Global CLI runner instance

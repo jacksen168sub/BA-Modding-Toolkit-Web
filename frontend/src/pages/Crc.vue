@@ -59,7 +59,11 @@
             </el-alert>
           </div>
         </el-form-item>
-        
+
+        <el-form-item :label="$t('crc.checkOnly')">
+          <el-switch v-model="form.check_only" />
+        </el-form-item>
+
         <el-form-item>
           <el-button type="primary" @click="submitTask" :loading="submitting">
             {{ $t('common.submit') }}
@@ -104,7 +108,9 @@ const originalFileList = ref([])
 const sessionUuid = computed(() => sessionStore.uuid)
 const uploadUrl = '/api/files/upload'
 
-const form = reactive({})
+const form = reactive({
+  check_only: false
+})
 
 const allowedExtensions = ['.bundle']
 const maxSize = 500 * 1024 * 1024 // 500MB
@@ -156,7 +162,8 @@ async function submitTask() {
     const task = await createCrcTask({
       session_uuid: sessionStore.uuid,
       modified_file_id: modifiedFile.value.id,
-      original_file_id: originalFile.value.id
+      original_file_id: originalFile.value.id,
+      check_only: form.check_only
     })
     
     currentTask.value = task
@@ -192,6 +199,7 @@ function resetForm() {
   modifiedFileList.value = []
   originalFileList.value = []
   currentTask.value = null
+  form.check_only = false
 }
 
 function handleResize() {

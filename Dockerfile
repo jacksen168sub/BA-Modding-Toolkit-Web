@@ -23,8 +23,17 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     g++ \
-    nginx \
+    curl \
+    gnupg \
+    ca-certificates \
     supervisor \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install nginx from official repo (latest stable, avoids CVE-2026-42945 etc.)
+RUN curl -fsSL https://nginx.org/keys/nginx_signing.key | gpg --dearmor -o /usr/share/keyrings/nginx-archive-keyring.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/debian `cat /etc/os-release | grep -oP '(?<=VERSION_CODENAME=).*'` nginx" > /etc/apt/sources.list.d/nginx.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends nginx \
     && rm -rf /var/lib/apt/lists/*
 
 # Setup backend
