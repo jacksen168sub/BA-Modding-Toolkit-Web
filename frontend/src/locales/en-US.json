@@ -310,6 +310,7 @@
     "refreshFailed": "Failed to refresh session",
     "resetConfirm": "This will create a new session. Tasks and files from the current session will no longer be accessible. Continue?",
     "resetSuccess": "Session reset successfully",
-    "version": "Version"
+    "version": "Version",
+    "commit": "Commit"
   }
 }

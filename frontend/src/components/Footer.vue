@@ -5,7 +5,7 @@
         <a href="https://github.com/jacksen168sub/BA-Modding-Toolkit-Web" target="_blank" class="repo-link">
           {{ $t('footer.repository') }}
         </a>
-        <span v-if="version" class="version-info">| {{ $t('footer.version') }}: {{ version }}</span>
+        <span v-if="versionInfo" class="version-info">| {{ $t('footer.version') }}: {{ versionInfo.version }} {{ versionInfo.commit ? `(${versionInfo.commit})` : '' }}</span>
       </p>
       <p>
         <a href="https://github.com/Agent-0808/BA-Modding-Toolkit" target="_blank">
@@ -31,12 +31,12 @@ import { getVersion } from '@/api/version'
 
 const { t } = useI18n()
 const sessionStore = useSessionStore()
-const version = ref(null)
+const versionInfo = ref(null)
 
 onMounted(async () => {
   try {
     const data = await getVersion()
-    version.value = data.version
+    versionInfo.value = data
   } catch (e) {
     // Ignore version fetch errors
   }

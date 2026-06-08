@@ -310,6 +310,7 @@
     "refreshFailed": "重新整理工作階段失敗",
     "resetConfirm": "這將建立新的工作階段，目前工作階段的工作和檔案將無法存取。是否繼續？",
     "resetSuccess": "工作階段已重設",
-    "version": "版本"
+    "version": "版本",
+    "commit": "提交"
   }
 }

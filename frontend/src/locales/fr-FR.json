@@ -310,6 +310,7 @@
     "refreshFailed": "Échec de l'actualisation de la session",
     "resetConfirm": "Une nouvelle session sera créée. Les tâches et fichiers de la session actuelle ne seront plus accessibles. Continuer ?",
     "resetSuccess": "Session réinitialisée",
-    "version": "Version"
+    "version": "Version",
+    "commit": "Commit"
   }
 }

@@ -310,6 +310,7 @@
     "refreshFailed": "세션 새로고침에 실패했습니다",
     "resetConfirm": "새 세션이 생성됩니다. 현재 세션의 작업과 파일에 더 이상 접근할 수 없습니다. 계속하시겠습니까?",
     "resetSuccess": "세션이 초기화되었습니다",
-    "version": "버전"
+    "version": "버전",
+    "commit": "커밋"
   }
 }
