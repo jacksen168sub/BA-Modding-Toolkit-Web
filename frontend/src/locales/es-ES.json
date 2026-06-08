@@ -310,6 +310,7 @@
     "refreshFailed": "Error al actualizar la sesión",
     "resetConfirm": "Se creará una nueva sesión. Las tareas y archivos de la sesión actual ya no serán accesibles. ¿Continuar?",
     "resetSuccess": "Sesión restablecida",
-    "version": "Versión"
+    "version": "Versión",
+    "commit": "Commit"
   }
 }

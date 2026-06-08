@@ -41,10 +41,18 @@
 
       <!-- Version Section -->
       <div class="section">
-        <h3 class="section-title">{{ $t('settings.version') }}</h3>
         <div class="session-row">
           <span class="label">{{ $t('settings.version') }}</span>
-          <span class="value">{{ version || '—' }}</span>
+          <span class="value">{{ versionInfo.version || '—' }}</span>
+        </div>
+        <div v-if="versionInfo.commit" class="session-row">
+          <span class="label">{{ $t('settings.commit') }}</span>
+          <div class="session-value">
+            {{ versionInfo.commit }}
+            <el-button text type="primary" size="small" @click="copyCommit">
+              <el-icon><CopyDocument /></el-icon>
+            </el-button>
+          </div>
         </div>
       </div>
 
@@ -81,7 +89,7 @@ import { getVersion } from '@/api/version'
 
 const { t } = useI18n()
 const sessionStore = useSessionStore()
-const version = ref(null)
+const versionInfo = ref({})
 const refreshing = ref(false)
 const currentLocale = ref(getLocale())
 
@@ -103,7 +111,7 @@ const availableLocales = [
 onMounted(async () => {
   try {
     const data = await getVersion()
-    version.value = data.version
+    versionInfo.value = data
   } catch (e) {
     // Ignore
   }
@@ -115,6 +123,11 @@ function formatTime(time) {
 
 function copyUUID() {
   navigator.clipboard.writeText(sessionStore.uuid)
+  ElMessage.success(t('home.copied'))
+}
+
+function copyCommit() {
+  navigator.clipboard.writeText(versionInfo.value.commit || '')
   ElMessage.success(t('home.copied'))
 }
 
