@@ -30,6 +30,21 @@ const routes = [
     component: () => import('@/pages/Crc.vue')
   },
   {
+    path: '/split',
+    name: 'Split',
+    component: () => import('@/pages/Split.vue')
+  },
+  {
+    path: '/merge',
+    name: 'Merge',
+    component: () => import('@/pages/Merge.vue')
+  },
+  {
+    path: '/spine-preview',
+    name: 'SpinePreview',
+    component: () => import('@/pages/SpinePreview.vue')
+  },
+  {
     path: '/tasks',
     name: 'Tasks',
     component: () => import('@/pages/Tasks.vue')

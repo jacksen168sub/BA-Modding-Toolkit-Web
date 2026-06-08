@@ -13,7 +13,8 @@ class TaskType(str, Enum):
     PACK = "pack"
     EXTRACT = "extract"
     CRC = "crc"
-    JP_GL_CONVERT = "jp_gl_convert"
+    SPLIT = "split"
+    MERGE = "merge"
 
 
 class TaskStatus(str, Enum):

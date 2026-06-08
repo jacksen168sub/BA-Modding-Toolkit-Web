@@ -12,7 +12,11 @@
       </el-alert>
       
       <el-form :model="form" label-position="top" size="default">
-        <el-form-item :label="$t('extract.bundleFile')" required>
+        <el-form-item required>
+          <template #label>
+            {{ $t('extract.bundleFile') }}
+            <el-tag type="success" size="small" class="upload-badge">{{ $t('common.batchSupported') }}</el-tag>
+          </template>
           <div class="upload-area">
             <el-upload
               ref="bundleUploadRef"
@@ -87,7 +91,8 @@ const sessionUuid = computed(() => sessionStore.uuid)
 const uploadUrl = '/api/files/upload'
 
 const form = reactive({
-  asset_types: ['Texture2D', 'TextAsset', 'Mesh']
+  asset_types: ['Texture2D', 'TextAsset', 'Mesh'],
+  unpack_atlas: false
 })
 
 const allowedExtensions = ['.bundle']
@@ -136,7 +141,8 @@ async function submitTask() {
     const task = await createExtractTask({
       session_uuid: sessionStore.uuid,
       bundle_file_ids: bundleFiles.value.map(f => f.id),
-      asset_types: form.asset_types
+      asset_types: form.asset_types,
+      unpack_atlas: form.unpack_atlas
     })
     
     currentTask.value = task
@@ -168,6 +174,7 @@ function resetForm() {
   bundleFileList.value = []
   currentTask.value = null
   form.asset_types = ['Texture2D', 'TextAsset', 'Mesh']
+  form.unpack_atlas = false
 }
 
 function handleResize() {
@@ -221,5 +228,10 @@ onUnmounted(() => {
   .extract-page {
     padding: 0 4px;
   }
+}
+
+.upload-badge {
+  margin-left: 6px;
+  vertical-align: middle;
 }
 </style>

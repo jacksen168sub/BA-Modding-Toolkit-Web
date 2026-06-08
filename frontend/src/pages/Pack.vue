@@ -12,7 +12,11 @@
       </el-alert>
       
       <el-form :model="form" label-position="top" size="default">
-        <el-form-item :label="$t('pack.assetFolder')" required>
+        <el-form-item required>
+          <template #label>
+            {{ $t('pack.assetFolder') }}
+            <el-tag type="primary" size="small" class="upload-badge">{{ $t('common.multiSelect') }}</el-tag>
+          </template>
           <div class="upload-area">
             <el-upload
               ref="assetUploadRef"
@@ -66,6 +70,15 @@
           <span class="form-tip">{{ $t('pack.crcCorrectionDesc') }}</span>
         </el-form-item>
         
+        <el-form-item :label="$t('pack.compression')">
+          <el-select v-model="form.compression" style="width: 100%;">
+            <el-option label="LZMA" value="lzma" />
+            <el-option label="LZ4" value="lz4" />
+            <el-option label="Original" value="original" />
+            <el-option label="None" value="none" />
+          </el-select>
+        </el-form-item>
+
         <el-form-item>
           <el-button type="primary" @click="submitTask" :loading="submitting">
             {{ $t('common.submit') }}
@@ -111,10 +124,11 @@ const sessionUuid = computed(() => sessionStore.uuid)
 const uploadUrl = '/api/files/upload'
 
 const form = reactive({
-  crc_correction: true
+  crc_correction: true,
+  compression: 'lzma'
 })
 
-const assetExtensions = ['.png', '.skel', '.atlas']
+const assetExtensions = ['.png', '.skel', '.atlas', '.bytes']
 const bundleExtensions = ['.bundle']
 const maxSize = 500 * 1024 * 1024 // 500MB
 
@@ -188,7 +202,8 @@ async function submitTask() {
       session_uuid: sessionStore.uuid,
       asset_folder_files: assetFiles.value.map(f => f.id),
       target_bundle_file_id: targetFile.value.id,
-      crc_correction: form.crc_correction
+      crc_correction: form.crc_correction,
+      compression: form.compression
     })
     
     currentTask.value = task
@@ -225,6 +240,7 @@ function resetForm() {
   targetFileList.value = []
   currentTask.value = null
   form.crc_correction = true
+  form.compression = 'lzma'
 }
 
 function handleResize() {
@@ -290,5 +306,10 @@ onUnmounted(() => {
     margin-left: 0;
     margin-top: 5px;
   }
+}
+
+.upload-badge {
+  margin-left: 6px;
+  vertical-align: middle;
 }
 </style>
