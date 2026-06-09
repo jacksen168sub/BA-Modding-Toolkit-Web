@@ -18,13 +18,34 @@
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item command="/update">{{ $t('home.features.update') }}</el-dropdown-item>
-              <el-dropdown-item command="/pack">{{ $t('home.features.pack') }}</el-dropdown-item>
-              <el-dropdown-item command="/extract">{{ $t('home.features.extract') }}</el-dropdown-item>
-              <el-dropdown-item command="/crc">{{ $t('home.features.crc') }}</el-dropdown-item>
-              <el-dropdown-item command="/split">{{ $t('home.features.split') }}</el-dropdown-item>
-              <el-dropdown-item command="/merge">{{ $t('home.features.merge') }}</el-dropdown-item>
-              <el-dropdown-item command="/spine-preview">{{ $t('home.features.spinePreview') }}</el-dropdown-item>
+              <el-dropdown-item command="/update">
+                <el-icon class="feature-icon"><Refresh /></el-icon>
+                {{ $t('home.features.update') }}
+              </el-dropdown-item>
+              <el-dropdown-item command="/pack">
+                <el-icon class="feature-icon"><Box /></el-icon>
+                {{ $t('home.features.pack') }}
+              </el-dropdown-item>
+              <el-dropdown-item command="/extract">
+                <el-icon class="feature-icon"><FolderOpened /></el-icon>
+                {{ $t('home.features.extract') }}
+              </el-dropdown-item>
+              <el-dropdown-item command="/crc">
+                <el-icon class="feature-icon"><Key /></el-icon>
+                {{ $t('home.features.crc') }}
+              </el-dropdown-item> 
+              <el-dropdown-item command="/split">
+                <el-icon class="feature-icon"><Scissor /></el-icon>
+                {{ $t('home.features.split') }}
+              </el-dropdown-item> 
+              <el-dropdown-item command="/merge">
+                <el-icon class="feature-icon"><Connection /></el-icon>
+                {{ $t('home.features.merge') }}
+              </el-dropdown-item> 
+              <el-dropdown-item command="/spine-preview">
+                <el-icon class="feature-icon"><VideoPlay /></el-icon>
+                {{ $t('home.features.spinePreview') }}
+              </el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -95,25 +116,36 @@
         <div class="drawer-section">
           <div class="drawer-section-title">{{ $t('nav.tools') }}</div>
           <router-link to="/update" class="drawer-link" @click="drawerVisible = false">
-            {{ $t('home.features.update') }}
+            <el-icon class="feature-icon"><Refresh /></el-icon>
+            <span>{{ $t('home.features.update') }}</span>
           </router-link>
           <router-link to="/pack" class="drawer-link" @click="drawerVisible = false">
-            {{ $t('home.features.pack') }}
+            <el-icon class="feature-icon"><Box /></el-icon>
+            {{ $t('home.features.update') }}
           </router-link>
           <router-link to="/extract" class="drawer-link" @click="drawerVisible = false">
-            {{ $t('home.features.extract') }}
+            <el-icon class="feature-icon"><FolderOpened /></el-icon>
+            <span>{{ $t('home.features.pack') }}</span>
+          </router-link>
+          <router-link to="/extract" class="drawer-link" @click="drawerVisible = false">
+            <el-icon class="feature-icon"><FolderOpened /></el-icon>
+            <span>{{ $t('home.features.extract') }}</span>
           </router-link>
           <router-link to="/crc" class="drawer-link" @click="drawerVisible = false">
-            {{ $t('home.features.crc') }}
+            <el-icon class="feature-icon"><Key /></el-icon>
+            <span>{{ $t('home.features.crc') }}</span>
           </router-link>
           <router-link to="/split" class="drawer-link" @click="drawerVisible = false">
-            {{ $t('home.features.split') }}
+            <el-icon class="feature-icon"><Scissor /></el-icon>
+            <span>{{ $t('home.features.split') }}</span>
           </router-link>
           <router-link to="/merge" class="drawer-link" @click="drawerVisible = false">
-            {{ $t('home.features.merge') }}
+            <el-icon class="feature-icon"><Connection /></el-icon>
+            <span>{{ $t('home.features.merge') }}</span>
           </router-link>
           <router-link to="/spine-preview" class="drawer-link" @click="drawerVisible = false">
-            {{ $t('home.features.spinePreview') }}
+            <el-icon class="feature-icon"><VideoPlay /></el-icon>
+            <span>{{ $t('home.features.spinePreview') }}</span>
           </router-link>
         </div>
 
@@ -151,7 +183,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { HomeFilled, Tools, List, Platform, Setting, ArrowDown, Menu } from '@element-plus/icons-vue'
+import { HomeFilled, Tools, List, Platform, Setting, ArrowDown, Refresh, Box, FolderOpened, Key, Scissor, Connection, VideoPlay, Menu } from '@element-plus/icons-vue'
 import { setLocale, getLocale } from '@/i18n'
 
 const route = useRoute()
