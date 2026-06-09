@@ -272,13 +272,18 @@ function changeLocale(locale) {
 
 @media (max-width: 768px) {
   .session-row {
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
+    justify-content: flex-start;
     gap: 4px;
   }
 
   .session-actions {
     flex-direction: column;
+  }
+
+  .session-actions .el-button {
+    margin-left: unset;
   }
 
   .locale-option {
