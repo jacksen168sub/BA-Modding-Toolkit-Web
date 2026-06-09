@@ -18,31 +18,31 @@
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item command="/update">
+              <el-dropdown-item command="/update" :class="{ 'is-active-tool': route.path === '/update' }">
                 <el-icon class="feature-icon"><Refresh /></el-icon>
                 {{ $t('home.features.update') }}
               </el-dropdown-item>
-              <el-dropdown-item command="/pack">
+              <el-dropdown-item command="/pack" :class="{ 'is-active-tool': route.path === '/pack' }">
                 <el-icon class="feature-icon"><Box /></el-icon>
                 {{ $t('home.features.pack') }}
               </el-dropdown-item>
-              <el-dropdown-item command="/extract">
+              <el-dropdown-item command="/extract" :class="{ 'is-active-tool': route.path === '/extract' }">
                 <el-icon class="feature-icon"><FolderOpened /></el-icon>
                 {{ $t('home.features.extract') }}
               </el-dropdown-item>
-              <el-dropdown-item command="/crc">
+              <el-dropdown-item command="/crc" :class="{ 'is-active-tool': route.path === '/crc' }">
                 <el-icon class="feature-icon"><Key /></el-icon>
                 {{ $t('home.features.crc') }}
-              </el-dropdown-item> 
-              <el-dropdown-item command="/split">
+              </el-dropdown-item>
+              <el-dropdown-item command="/split" :class="{ 'is-active-tool': route.path === '/split' }">
                 <el-icon class="feature-icon"><Scissor /></el-icon>
                 {{ $t('home.features.split') }}
-              </el-dropdown-item> 
-              <el-dropdown-item command="/merge">
+              </el-dropdown-item>
+              <el-dropdown-item command="/merge" :class="{ 'is-active-tool': route.path === '/merge' }">
                 <el-icon class="feature-icon"><Connection /></el-icon>
                 {{ $t('home.features.merge') }}
-              </el-dropdown-item> 
-              <el-dropdown-item command="/spine-preview">
+              </el-dropdown-item>
+              <el-dropdown-item command="/spine-preview" :class="{ 'is-active-tool': route.path === '/spine-preview' }">
                 <el-icon class="feature-icon"><VideoPlay /></el-icon>
                 {{ $t('home.features.spinePreview') }}
               </el-dropdown-item>
@@ -107,7 +107,7 @@
       </template>
       <div class="drawer-content">
         <div class="drawer-section">
-          <router-link to="/" class="drawer-link" @click="drawerVisible = false">
+          <router-link to="/" class="drawer-link" :class="{ active: route.path === '/' }" @click="drawerVisible = false">
             <el-icon><HomeFilled /></el-icon>
             <span>{{ $t('nav.home') }}</span>
           </router-link>
@@ -115,46 +115,42 @@
 
         <div class="drawer-section">
           <div class="drawer-section-title">{{ $t('nav.tools') }}</div>
-          <router-link to="/update" class="drawer-link" @click="drawerVisible = false">
+          <router-link to="/update" class="drawer-link" :class="{ active: route.path === '/update' }" @click="drawerVisible = false">
             <el-icon class="feature-icon"><Refresh /></el-icon>
             <span>{{ $t('home.features.update') }}</span>
           </router-link>
-          <router-link to="/pack" class="drawer-link" @click="drawerVisible = false">
+          <router-link to="/pack" class="drawer-link" :class="{ active: route.path === '/pack' }" @click="drawerVisible = false">
             <el-icon class="feature-icon"><Box /></el-icon>
-            {{ $t('home.features.update') }}
-          </router-link>
-          <router-link to="/extract" class="drawer-link" @click="drawerVisible = false">
-            <el-icon class="feature-icon"><FolderOpened /></el-icon>
             <span>{{ $t('home.features.pack') }}</span>
           </router-link>
-          <router-link to="/extract" class="drawer-link" @click="drawerVisible = false">
+          <router-link to="/extract" class="drawer-link" :class="{ active: route.path === '/extract' }" @click="drawerVisible = false">
             <el-icon class="feature-icon"><FolderOpened /></el-icon>
             <span>{{ $t('home.features.extract') }}</span>
           </router-link>
-          <router-link to="/crc" class="drawer-link" @click="drawerVisible = false">
+          <router-link to="/crc" class="drawer-link" :class="{ active: route.path === '/crc' }" @click="drawerVisible = false">
             <el-icon class="feature-icon"><Key /></el-icon>
             <span>{{ $t('home.features.crc') }}</span>
           </router-link>
-          <router-link to="/split" class="drawer-link" @click="drawerVisible = false">
+          <router-link to="/split" class="drawer-link" :class="{ active: route.path === '/split' }" @click="drawerVisible = false">
             <el-icon class="feature-icon"><Scissor /></el-icon>
             <span>{{ $t('home.features.split') }}</span>
           </router-link>
-          <router-link to="/merge" class="drawer-link" @click="drawerVisible = false">
+          <router-link to="/merge" class="drawer-link" :class="{ active: route.path === '/merge' }" @click="drawerVisible = false">
             <el-icon class="feature-icon"><Connection /></el-icon>
             <span>{{ $t('home.features.merge') }}</span>
           </router-link>
-          <router-link to="/spine-preview" class="drawer-link" @click="drawerVisible = false">
+          <router-link to="/spine-preview" class="drawer-link" :class="{ active: route.path === '/spine-preview' }" @click="drawerVisible = false">
             <el-icon class="feature-icon"><VideoPlay /></el-icon>
             <span>{{ $t('home.features.spinePreview') }}</span>
           </router-link>
         </div>
 
         <div class="drawer-section">
-          <router-link to="/tasks" class="drawer-link" @click="drawerVisible = false">
+          <router-link to="/tasks" class="drawer-link" :class="{ active: route.path === '/tasks' }" @click="drawerVisible = false">
             <el-icon><List /></el-icon>
             <span>{{ $t('nav.tasks') }}</span>
           </router-link>
-          <router-link to="/settings" class="drawer-link" @click="drawerVisible = false">
+          <router-link to="/settings" class="drawer-link" :class="{ active: route.path === '/settings' }" @click="drawerVisible = false">
             <el-icon><Setting /></el-icon>
             <span>{{ $t('nav.settings') }}</span>
           </router-link>
@@ -185,11 +181,12 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { HomeFilled, Tools, List, Platform, Setting, ArrowDown, Refresh, Box, FolderOpened, Key, Scissor, Connection, VideoPlay, Menu } from '@element-plus/icons-vue'
 import { setLocale, getLocale } from '@/i18n'
+import i18n from '@/i18n'
 
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
-const currentLocale = ref(getLocale())
+const currentLocale = computed(() => i18n.global.locale.value)
 const drawerVisible = ref(false)
 
 const windowWidth = ref(window.innerWidth)
@@ -219,9 +216,7 @@ const currentLocaleLabel = computed(() => {
 })
 
 function handleLocaleSelect(locale) {
-  if (setLocale(locale)) {
-    currentLocale.value = locale
-  }
+  setLocale(locale)
   drawerVisible.value = false
 }
 
@@ -320,10 +315,7 @@ onUnmounted(() => {
   flex-shrink: 0;
 }
 
-.is-active-locale {
-  color: #409eff !important;
-  font-weight: 500;
-}
+
 
 /* ===== Mobile Layout ===== */
 .navbar-mobile {
@@ -417,6 +409,12 @@ onUnmounted(() => {
   color: #409eff;
 }
 
+.drawer-link.active {
+  background: #ecf5ff;
+  color: #409eff;
+  font-weight: 500;
+}
+
 .locale-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -445,6 +443,19 @@ onUnmounted(() => {
   border-color: #409eff;
   background: #ecf5ff;
   color: #409eff;
+  font-weight: 500;
+}
+</style>
+
+<style>
+/* 全局样式：el-dropdown-menu 通过 teleport 渲染到 body，scoped 样式无法作用 */
+.is-active-locale {
+  color: #409eff !important;
+  font-weight: 500;
+}
+
+.is-active-tool {
+  color: #409eff !important;
   font-weight: 500;
 }
 </style>

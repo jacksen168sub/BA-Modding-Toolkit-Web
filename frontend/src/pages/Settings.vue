@@ -78,20 +78,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Setting, CopyDocument, RefreshRight, SwitchButton } from '@element-plus/icons-vue'
 import { useSessionStore } from '@/stores/session'
 import { setSessionUUID, clearSessionUUID, generateUUID } from '@/utils/uuid'
 import { setLocale, getLocale } from '@/i18n'
+import i18n from '@/i18n'
 import { getVersion } from '@/api/version'
 
 const { t } = useI18n()
 const sessionStore = useSessionStore()
 const versionInfo = ref({})
 const refreshing = ref(false)
-const currentLocale = ref(getLocale())
+const currentLocale = computed(() => i18n.global.locale.value)
 
 const availableLocales = [
   { value: 'zh-CN', label: '简体中文' },
@@ -162,9 +163,7 @@ async function handleResetSession() {
 }
 
 function changeLocale(locale) {
-  if (setLocale(locale)) {
-    currentLocale.value = locale
-  }
+  setLocale(locale)
 }
 </script>
 
