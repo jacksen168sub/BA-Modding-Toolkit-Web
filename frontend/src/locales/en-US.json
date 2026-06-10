@@ -90,7 +90,8 @@
     "outputFiles": "Output Files",
     "fileName": "File Name",
     "fileSize": "Size",
-    "processing": "Processing, please wait..."
+    "processing": "Processing, please wait...",
+    "previewSpine": "Spine Preview"
   },
   "update": {
     "title": "Mod Update",
@@ -265,6 +266,7 @@
     "stepQueue": "Queue",
     "stepExtract": "Extract",
     "stepDownload": "Download",
+    "downloadingFile": "Downloading {index}/{total}",
     "stepLoad": "Load",
     "animations": "Animations",
     "loop": "Loop",

@@ -90,7 +90,8 @@
     "outputFiles": "Выходные Файлы",
     "fileName": "Имя Файла",
     "fileSize": "Размер",
-    "processing": "Обработка, пожалуйста подождите..."
+    "processing": "Обработка, пожалуйста подождите...",
+    "previewSpine": "Предпросмотр Spine"
   },
   "update": {
     "title": "Обновление Мода",
@@ -265,6 +266,7 @@
     "stepQueue": "Очередь",
     "stepExtract": "Извлечение",
     "stepDownload": "Скачивание",
+    "downloadingFile": "Скачивание {index}/{total}",
     "stepLoad": "Загрузка",
     "animations": "Анимации",
     "loop": "Зациклить",

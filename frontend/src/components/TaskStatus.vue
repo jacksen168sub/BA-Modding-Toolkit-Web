@@ -47,6 +47,14 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-button
+        v-if="canPreview"
+        type="success"
+        style="margin-top: 12px;"
+        @click="goPreview"
+      >
+        {{ $t('taskDetail.previewSpine') }}
+      </el-button>
     </div>
     
     <div v-if="task.status === 'processing'" class="progress">
@@ -59,10 +67,12 @@
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getDownloadUrl } from '@/api/files'
 
 const { t } = useI18n()
+const router = useRouter()
 
 const props = defineProps({
   task: {
@@ -95,6 +105,11 @@ const statusType = computed(() => statusMap[props.task?.status]?.type || 'info')
 const statusText = computed(() => t(statusMap[props.task?.status]?.text || 'unknown'))
 const taskTypeText = computed(() => t(typeMap[props.task?.type] || props.task?.type))
 
+const canPreview = computed(() => {
+  if (!props.task) return false
+  return props.task.type === 'extract' && props.task.status === 'completed' && props.task.files?.length > 0
+})
+
 // 是否显示日志区域（有 cli_log 或失败时有 error_message）
 const displayLog = computed(() => {
   if (!props.task) return false
@@ -126,6 +141,10 @@ function formatSize(bytes) {
 
 function downloadFile(fileId) {
   window.open(getDownloadUrl(fileId), '_blank')
+}
+
+function goPreview() {
+  router.push({ name: 'SpinePreview', query: { taskId: props.task.id } })
 }
 
 function copyLog() {

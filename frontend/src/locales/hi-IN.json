@@ -90,7 +90,8 @@
     "outputFiles": "आउटपुट फ़ाइलें",
     "fileName": "फ़ाइल नाम",
     "fileSize": "आकार",
-    "processing": "प्रक्रिया चल रही है, कृपया प्रतीक्षा करें..."
+    "processing": "प्रक्रिया चल रही है, कृपया प्रतीक्षा करें...",
+    "previewSpine": "Spine पूर्वावलोकन"
   },
   "update": {
     "title": "मॉड अपडेट",
@@ -265,6 +266,7 @@
     "stepQueue": "कतार",
     "stepExtract": "निष्कर्षण",
     "stepDownload": "डाउनलोड",
+    "downloadingFile": "डाउनलोड हो रहा है {index}/{total}",
     "stepLoad": "लोड",
     "animations": "एनिमेशन",
     "loop": "लूप",

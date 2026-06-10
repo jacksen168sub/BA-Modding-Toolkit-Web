@@ -90,7 +90,8 @@
     "outputFiles": "输出文件",
     "fileName": "文件名",
     "fileSize": "大小",
-    "processing": "处理中，请稍候..."
+    "processing": "处理中，请稍候...",
+    "previewSpine": "Spine 预览"
   },
   "update": {
     "title": "Mod 更新",
@@ -265,6 +266,7 @@
     "stepQueue": "排队",
     "stepExtract": "解包",
     "stepDownload": "下载",
+    "downloadingFile": "正在下载 {index}/{total}",
     "stepLoad": "加载",
     "animations": "动画列表",
     "loop": "循环播放",

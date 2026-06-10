@@ -90,7 +90,8 @@
     "outputFiles": "Fichiers de Sortie",
     "fileName": "Nom du Fichier",
     "fileSize": "Taille",
-    "processing": "En cours de traitement, veuillez patienter..."
+    "processing": "En cours de traitement, veuillez patienter...",
+    "previewSpine": "Aperçu Spine"
   },
   "update": {
     "title": "Mise à jour Mod",
@@ -265,6 +266,7 @@
     "stepQueue": "File d'attente",
     "stepExtract": "Extraire",
     "stepDownload": "Télécharger",
+    "downloadingFile": "Téléchargement {index}/{total}",
     "stepLoad": "Charger",
     "animations": "Animations",
     "loop": "Boucle",

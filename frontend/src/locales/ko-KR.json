@@ -90,7 +90,8 @@
     "outputFiles": "출력 파일",
     "fileName": "파일 이름",
     "fileSize": "크기",
-    "processing": "처리 중, 잠시 기다려 주세요..."
+    "processing": "처리 중, 잠시 기다려 주세요...",
+    "previewSpine": "Spine 미리보기"
   },
   "update": {
     "title": "Mod 업데이트",
@@ -265,6 +266,7 @@
     "stepQueue": "대기",
     "stepExtract": "추출",
     "stepDownload": "다운로드",
+    "downloadingFile": "다운로드 중 {index}/{total}",
     "stepLoad": "로드",
     "animations": "애니메이션 목록",
     "loop": "루프 재생",
