@@ -262,6 +262,7 @@
     "bundleFileHint": "Drag and drop or click to upload .bundle files",
     "startPreview": "Start Preview",
     "stepUpload": "Upload",
+    "stepQueue": "Queue",
     "stepExtract": "Extract",
     "stepDownload": "Download",
     "stepLoad": "Load",
@@ -282,7 +283,8 @@
     "offsetY": "Y Offset",
     "resetViewport": "Reset Viewport",
     "saveImage": "Save Image",
-    "saveImageFailed": "Failed to save image, canvas not found"
+    "saveImageFailed": "Failed to save image, canvas not found",
+    "queueWaiting": "Queued, position: {position}/{total}"
   },
   "footer": {
     "poweredBy": "Powered by",

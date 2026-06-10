@@ -262,6 +262,7 @@
     "bundleFileHint": "Arrastra y suelta o haz clic para subir archivos .bundle",
     "startPreview": "Iniciar vista previa",
     "stepUpload": "Subir",
+    "stepQueue": "Cola",
     "stepExtract": "Extraer",
     "stepDownload": "Descargar",
     "stepLoad": "Cargar",
@@ -282,7 +283,8 @@
     "offsetY": "Desplazamiento Y",
     "resetViewport": "Restablecer vista",
     "saveImage": "Guardar imagen",
-    "saveImageFailed": "Error al guardar imagen, canvas no encontrado"
+    "saveImageFailed": "Error al guardar imagen, canvas no encontrado",
+    "queueWaiting": "En cola, posición: {position}/{total}"
   },
   "footer": {
     "poweredBy": "Powered by",

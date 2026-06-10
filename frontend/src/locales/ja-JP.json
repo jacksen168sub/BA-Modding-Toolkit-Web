@@ -262,7 +262,8 @@
     "bundleFileHint": "ドラッグ＆ドロップまたはクリックして .bundle ファイルをアップロード",
     "startPreview": "プレビュー開始",
     "stepUpload": "アップロード",
-    "stepExtract": "展開",
+    "stepQueue": "待機",
+    "stepExtract": "抽出",
     "stepDownload": "ダウンロード",
     "stepLoad": "読み込み",
     "animations": "アニメーション一覧",
@@ -282,7 +283,8 @@
     "offsetY": "Y オフセット",
     "resetViewport": "ビューポートをリセット",
     "saveImage": "画像を保存",
-    "saveImageFailed": "画像の保存に失敗しました"
+    "saveImageFailed": "画像の保存に失敗しました",
+    "queueWaiting": "待機列に並んでいます、現在の位置：{position}/{total}"
   },
   "footer": {
     "poweredBy": "Powered by",

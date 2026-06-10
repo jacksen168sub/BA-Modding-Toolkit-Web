@@ -34,17 +34,25 @@ export const useTasksStore = defineStore('tasks', () => {
     }
   }
 
-  async function pollTask(taskId, interval = 3000, maxAttempts = 100) {
+  async function pollTask(taskId, interval = 3000, maxAttempts = 100, onProgress = null) {
     let attempts = 0
-    
+
     return new Promise((resolve, reject) => {
       const poll = async () => {
         attempts++
-        
+
         try {
           const task = await getTask(taskId)
           currentTask.value = task
-          
+
+          if (onProgress) {
+            const shouldAbort = onProgress(task)
+            if (shouldAbort) {
+              reject(new Error('Aborted'))
+              return
+            }
+          }
+
           if (task.status === 'completed') {
             resolve(task)
           } else if (task.status === 'failed') {
@@ -58,7 +66,7 @@ export const useTasksStore = defineStore('tasks', () => {
           reject(e)
         }
       }
-      
+
       poll()
     })
   }

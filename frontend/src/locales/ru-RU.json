@@ -262,6 +262,7 @@
     "bundleFileHint": "Перетащите или нажмите для загрузки .bundle файлов",
     "startPreview": "Начать предпросмотр",
     "stepUpload": "Загрузка",
+    "stepQueue": "Очередь",
     "stepExtract": "Извлечение",
     "stepDownload": "Скачивание",
     "stepLoad": "Загрузка",
@@ -282,7 +283,8 @@
     "offsetY": "Смещение Y",
     "resetViewport": "Сбросить вид",
     "saveImage": "Сохранить изображение",
-    "saveImageFailed": "Не удалось сохранить изображение, холст не найден"
+    "saveImageFailed": "Не удалось сохранить изображение, холст не найден",
+    "queueWaiting": "В очереди, позиция: {position}/{total}"
   },
   "footer": {
     "poweredBy": "Powered by",

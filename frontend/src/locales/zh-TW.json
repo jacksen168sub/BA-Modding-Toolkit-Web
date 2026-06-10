@@ -262,6 +262,7 @@
     "bundleFileHint": "拖曳或點擊上傳 .bundle 檔案",
     "startPreview": "開始預覽",
     "stepUpload": "上傳",
+    "stepQueue": "排隊",
     "stepExtract": "解包",
     "stepDownload": "下載",
     "stepLoad": "載入",
@@ -282,7 +283,8 @@
     "offsetY": "Y 偏移",
     "resetViewport": "重置視口",
     "saveImage": "儲存影像",
-    "saveImageFailed": "儲存影像失敗，未找到畫布"
+    "saveImageFailed": "儲存影像失敗，未找到畫布",
+    "queueWaiting": "排隊等待中，目前位置：{position}/{total}"
   },
   "footer": {
     "poweredBy": "基於",

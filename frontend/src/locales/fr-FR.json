@@ -262,6 +262,7 @@
     "bundleFileHint": "Glissez-déposez ou cliquez pour télécharger des fichiers .bundle",
     "startPreview": "Démarrer l'aperçu",
     "stepUpload": "Télécharger",
+    "stepQueue": "File d'attente",
     "stepExtract": "Extraire",
     "stepDownload": "Télécharger",
     "stepLoad": "Charger",
@@ -282,7 +283,8 @@
     "offsetY": "Décalage Y",
     "resetViewport": "Réinitialiser la vue",
     "saveImage": "Enregistrer l'image",
-    "saveImageFailed": "Échec de l'enregistrement, canvas introuvable"
+    "saveImageFailed": "Échec de l'enregistrement, canvas introuvable",
+    "queueWaiting": "En file d'attente, position : {position}/{total}"
   },
   "footer": {
     "poweredBy": "Powered by",
