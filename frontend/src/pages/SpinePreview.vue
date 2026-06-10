@@ -56,7 +56,10 @@
         <el-step :title="$t('spinePreview.stepLoad')" />
       </el-steps>
 
-      <el-progress v-if="downloadProgress > 0 && downloadProgress < 100" :percentage="downloadProgress" style="margin-top: 16px;" />
+      <div v-if="downloadProgress > 0 && downloadProgress < 100 && currentStep === 3" class="download-progress">
+        <span class="download-label">{{ $t('spinePreview.downloadingFile', { index: downloadIndex, total: downloadTotal }) }}</span>
+        <el-progress :percentage="downloadProgress" style="margin-top: 4px;" />
+      </div>
     </el-card>
 
     <!-- Player Section -->
@@ -123,19 +126,22 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onUnmounted } from 'vue'
+import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
 import { useSessionStore } from '@/stores/session'
 import { useTasksStore } from '@/stores/tasks'
-import { createExtractTask } from '@/api/tasks'
+import { createExtractTask, getTask } from '@/api/tasks'
 import { getDownloadUrl } from '@/api/files'
 import JSZip from 'jszip'
 import { SpinePlayer } from '@esotericsoftware/spine-player'
 import '@esotericsoftware/spine-player/dist/spine-player.css'
 
 const { t } = useI18n()
+const route = useRoute()
+const router = useRouter()
 const sessionStore = useSessionStore()
 const tasksStore = useTasksStore()
 
@@ -145,6 +151,8 @@ const bundleFileList = ref([])
 const loading = ref(false)
 const currentStep = ref(0)
 const downloadProgress = ref(0)
+const downloadIndex = ref(0)
+const downloadTotal = ref(0)
 const queueInfo = ref(null)
 const playerLoaded = ref(false)
 const spineContainerRef = ref()
@@ -257,10 +265,13 @@ async function startPreview() {
     // Step 3: Download
     currentStep.value = 3
     const charList = []
+    const files = completedTask.files
+    downloadTotal.value = files.length
 
-    for (const outputFile of completedTask.files) {
+    for (let i = 0; i < files.length; i++) {
       if (gen !== previewGeneration) return
-      const zipBuffer = await downloadFile(outputFile.id)
+      downloadIndex.value = i + 1
+      const zipBuffer = await downloadFile(files[i].id)
       const assets = await unzipToAssets(zipBuffer)
       const skelFile = Object.keys(assets).find(f => f.endsWith('.skel') || f.endsWith('.json'))
       if (!skelFile) continue
@@ -550,8 +561,71 @@ function resetForm() {
   loading.value = false
   currentStep.value = 0
   downloadProgress.value = 0
+  downloadIndex.value = 0
+  downloadTotal.value = 0
   queueInfo.value = null
 }
+
+async function previewFromTask(taskId) {
+  const gen = ++previewGeneration
+  loading.value = true
+
+  try {
+    currentStep.value = 2
+    const task = await getTask(taskId)
+    if (gen !== previewGeneration) return
+
+    if (task.status !== 'completed' || !task.files?.length) {
+      throw new Error(t('spinePreview.extractFailed'))
+    }
+
+    currentStep.value = 3
+    const charList = []
+    const files = task.files
+    downloadTotal.value = files.length
+
+    for (let i = 0; i < files.length; i++) {
+      if (gen !== previewGeneration) return
+      downloadIndex.value = i + 1
+      const zipBuffer = await downloadFile(files[i].id)
+      const assets = await unzipToAssets(zipBuffer)
+      const skelFile = Object.keys(assets).find(f => f.endsWith('.skel') || f.endsWith('.json'))
+      if (!skelFile) continue
+      charList.push({
+        name: extractCharacterName(assets),
+        assets
+      })
+    }
+
+    if (gen !== previewGeneration) return
+
+    if (charList.length === 0) {
+      throw new Error(t('spinePreview.noSpineAssets'))
+    }
+
+    characters.value = charList
+    currentCharacterIndex.value = 0
+
+    currentStep.value = 4
+    playerLoaded.value = true
+
+    await nextTick()
+    await loadCharacter(0)
+  } catch (e) {
+    if (gen !== previewGeneration) return
+    ElMessage.error(e.message || t('spinePreview.previewFailed'))
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  const taskId = route.query.taskId
+  if (taskId) {
+    // Clean the query param so refresh doesn't re-trigger
+    router.replace({ name: 'SpinePreview' })
+    previewFromTask(taskId)
+  }
+})
 
 onUnmounted(() => {
   if (player) {
@@ -586,6 +660,15 @@ onUnmounted(() => {
 
 .queue-info {
   margin-top: 16px;
+}
+
+.download-progress {
+  margin-top: 16px;
+}
+
+.download-label {
+  font-size: 13px;
+  color: #606266;
 }
 
 .preview-steps :deep(.el-step__head.is-process) {

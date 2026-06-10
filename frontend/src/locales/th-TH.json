@@ -90,7 +90,8 @@
     "outputFiles": "ไฟล์ผลลัพธ์",
     "fileName": "ชื่อไฟล์",
     "fileSize": "ขนาด",
-    "processing": "กำลังประมวลผล โปรดรอสักครู่..."
+    "processing": "กำลังประมวลผล โปรดรอสักครู่...",
+    "previewSpine": "ดูตัวอย่าง Spine"
   },
   "update": {
     "title": "อัปเดต Mod",
@@ -265,6 +266,7 @@
     "stepQueue": "คิว",
     "stepExtract": "แยก",
     "stepDownload": "ดาวน์โหลด",
+    "downloadingFile": "กำลังดาวน์โหลด {index}/{total}",
     "stepLoad": "โหลด",
     "animations": "ภาพเคลื่อนไหว",
     "loop": "วนซ้ำ",

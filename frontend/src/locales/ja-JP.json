@@ -90,7 +90,8 @@
     "outputFiles": "出力ファイル",
     "fileName": "ファイル名",
     "fileSize": "サイズ",
-    "processing": "処理中、お待ちください..."
+    "processing": "処理中、お待ちください...",
+    "previewSpine": "Spine プレビュー"
   },
   "update": {
     "title": "Mod更新",
@@ -265,6 +266,7 @@
     "stepQueue": "待機",
     "stepExtract": "抽出",
     "stepDownload": "ダウンロード",
+    "downloadingFile": "ダウンロード中 {index}/{total}",
     "stepLoad": "読み込み",
     "animations": "アニメーション一覧",
     "loop": "ループ再生",

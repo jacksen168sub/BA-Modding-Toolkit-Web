@@ -90,7 +90,8 @@
     "outputFiles": "ملفات الإخراج",
     "fileName": "اسم الملف",
     "fileSize": "الحجم",
-    "processing": "جاري المعالجة، يرجى الانتظار..."
+    "processing": "جاري المعالجة، يرجى الانتظار...",
+    "previewSpine": "معاينة Spine"
   },
   "update": {
     "title": "تحديث المود",
@@ -265,6 +266,7 @@
     "stepQueue": "انتظار",
     "stepExtract": "استخراج",
     "stepDownload": "تنزيل",
+    "downloadingFile": "جاري التنزيل {index}/{total}",
     "stepLoad": "تحميل",
     "animations": "الرسوم المتحركة",
     "loop": "تكرار",

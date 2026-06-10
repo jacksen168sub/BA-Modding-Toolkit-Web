@@ -90,7 +90,8 @@
     "outputFiles": "আউটপুট ফাইল",
     "fileName": "ফাইলের নাম",
     "fileSize": "আকার",
-    "processing": "প্রক্রিয়াধীন, অনুগ্রহ করে অপেক্ষা করুন..."
+    "processing": "প্রক্রিয়াধীন, অনুগ্রহ করে অপেক্ষা করুন...",
+    "previewSpine": "Spine প্রিভিউ"
   },
   "update": {
     "title": "মড আপডেট",
@@ -265,6 +266,7 @@
     "stepQueue": "সারি",
     "stepExtract": "এক্সট্র্যাক্ট",
     "stepDownload": "ডাউনলোড",
+    "downloadingFile": "ডাউনলোড হচ্ছে {index}/{total}",
     "stepLoad": "লোড",
     "animations": "অ্যানিমেশন",
     "loop": "লুপ",

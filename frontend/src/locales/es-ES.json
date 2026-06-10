@@ -90,7 +90,8 @@
     "outputFiles": "Archivos de Salida",
     "fileName": "Nombre del Archivo",
     "fileSize": "Tamaño",
-    "processing": "Procesando, por favor espere..."
+    "processing": "Procesando, por favor espere...",
+    "previewSpine": "Vista previa Spine"
   },
   "update": {
     "title": "Actualizar Mod",
@@ -265,6 +266,7 @@
     "stepQueue": "Cola",
     "stepExtract": "Extraer",
     "stepDownload": "Descargar",
+    "downloadingFile": "Descargando {index}/{total}",
     "stepLoad": "Cargar",
     "animations": "Animaciones",
     "loop": "Bucle",
