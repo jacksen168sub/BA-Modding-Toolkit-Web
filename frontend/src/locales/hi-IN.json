@@ -262,6 +262,7 @@
     "bundleFileHint": ".bundle फ़ाइलें अपलोड करने के लिए खींचें और छोड़ें या क्लिक करें",
     "startPreview": "पूर्वावलोकन शुरू करें",
     "stepUpload": "अपलोड",
+    "stepQueue": "कतार",
     "stepExtract": "निष्कर्षण",
     "stepDownload": "डाउनलोड",
     "stepLoad": "लोड",
@@ -282,7 +283,8 @@
     "offsetY": "Y ऑफ़सेट",
     "resetViewport": "व्यूपोर्ट रीसेट करें",
     "saveImage": "छवि सहेजें",
-    "saveImageFailed": "छवि सहेजना विफल, कैनवास नहीं मिला"
+    "saveImageFailed": "छवि सहेजना विफल, कैनवास नहीं मिला",
+    "queueWaiting": "कतार में प्रतीक्षा, स्थिति: {position}/{total}"
   },
   "footer": {
     "poweredBy": "Powered by",

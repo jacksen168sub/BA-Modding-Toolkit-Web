@@ -262,6 +262,7 @@
     "bundleFileHint": "اسحب وأفلت أو انقر لرفع ملفات .bundle",
     "startPreview": "بدء المعاينة",
     "stepUpload": "رفع",
+    "stepQueue": "انتظار",
     "stepExtract": "استخراج",
     "stepDownload": "تنزيل",
     "stepLoad": "تحميل",
@@ -282,7 +283,8 @@
     "offsetY": "إزاحة Y",
     "resetViewport": "إعادة تعيين العرض",
     "saveImage": "حفظ الصورة",
-    "saveImageFailed": "فشل حفظ الصورة، لم يتم العثور على اللوحة"
+    "saveImageFailed": "فشل حفظ الصورة، لم يتم العثور على اللوحة",
+    "queueWaiting": "في قائمة الانتظار، الموضع: {position}/{total}"
   },
   "footer": {
     "poweredBy": "Powered by",

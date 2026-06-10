@@ -262,6 +262,7 @@
     "bundleFileHint": ".bundle ফাইল আপলোড করতে টেনে আনুন বা ক্লিক করুন",
     "startPreview": "প্রিভিউ শুরু করুন",
     "stepUpload": "আপলোড",
+    "stepQueue": "সারি",
     "stepExtract": "এক্সট্র্যাক্ট",
     "stepDownload": "ডাউনলোড",
     "stepLoad": "লোড",
@@ -282,7 +283,8 @@
     "offsetY": "Y অফসেট",
     "resetViewport": "ভিউপোর্ট রিসেট",
     "saveImage": "ছবি সংরক্ষণ",
-    "saveImageFailed": "ছবি সংরক্ষণ ব্যর্থ, ক্যানভাস পাওয়া যায়নি"
+    "saveImageFailed": "ছবি সংরক্ষণ ব্যর্থ, ক্যানভাস পাওয়া যায়নি",
+    "queueWaiting": "সারিতে অপেক্ষা, অবস্থান: {position}/{total}"
   },
   "footer": {
     "poweredBy": "Powered by",

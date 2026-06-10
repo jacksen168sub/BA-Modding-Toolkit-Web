@@ -48,8 +48,9 @@
       </el-form>
 
       <!-- Progress -->
-      <el-steps v-if="loading" :active="currentStep" align-center style="margin-top: 20px;">
+      <el-steps v-if="loading" :active="currentStep" align-center class="preview-steps" style="margin-top: 20px;">
         <el-step :title="$t('spinePreview.stepUpload')" />
+        <el-step :title="$t('spinePreview.stepQueue')" :description="queueStepDesc" />
         <el-step :title="$t('spinePreview.stepExtract')" />
         <el-step :title="$t('spinePreview.stepDownload')" />
         <el-step :title="$t('spinePreview.stepLoad')" />
@@ -144,6 +145,7 @@ const bundleFileList = ref([])
 const loading = ref(false)
 const currentStep = ref(0)
 const downloadProgress = ref(0)
+const queueInfo = ref(null)
 const playerLoaded = ref(false)
 const spineContainerRef = ref()
 const animations = ref([])
@@ -158,9 +160,19 @@ const currentCharacterIndex = ref(0)
 
 let player = null
 let baseViewport = null
+let previewGeneration = 0
 
 const sessionUuid = computed(() => sessionStore.uuid)
 const uploadUrl = '/api/files/upload'
+
+// Step: 0=Upload, 1=Queue, 2=Extract, 3=Download, 4=Load
+const queueStepDesc = computed(() => {
+  if (currentStep.value !== 1 || !queueInfo.value) return ''
+  if (queueInfo.value.status === 'pending' && queueInfo.value.global_position) {
+    return t('spinePreview.queueWaiting', { position: queueInfo.value.global_position, total: queueInfo.value.global_queue_length })
+  }
+  return ''
+})
 
 const allowedExtensions = ['.bundle']
 const maxSize = 500 * 1024 * 1024
@@ -208,11 +220,12 @@ async function startPreview() {
     return
   }
 
+  const gen = ++previewGeneration
   loading.value = true
-  currentStep.value = 1
+  currentStep.value = 0
 
   try {
-    // Step 1: Extract
+    // Step 1: Queue -> Extract
     currentStep.value = 1
     const task = await createExtractTask({
       session_uuid: sessionStore.uuid,
@@ -221,18 +234,32 @@ async function startPreview() {
       unpack_atlas: false
     })
 
-    await tasksStore.pollTask(task.id, 3000, 200)
+    if (gen !== previewGeneration) return
+
+    await tasksStore.pollTask(task.id, 3000, 200, (task) => {
+      if (gen !== previewGeneration) return true
+      queueInfo.value = task.queue_info ? { ...task.queue_info, status: task.status } : null
+      if (task.status === 'pending') {
+        currentStep.value = 1
+      } else if (task.status === 'processing') {
+        currentStep.value = 2
+      }
+    })
+
+    if (gen !== previewGeneration) return
+
     const completedTask = tasksStore.currentTask
 
     if (completedTask?.status !== 'completed' || !completedTask.files?.length) {
       throw new Error(t('spinePreview.extractFailed'))
     }
 
-    // Step 2: Download & Unzip, group by character
-    currentStep.value = 2
+    // Step 3: Download
+    currentStep.value = 3
     const charList = []
 
     for (const outputFile of completedTask.files) {
+      if (gen !== previewGeneration) return
       const zipBuffer = await downloadFile(outputFile.id)
       const assets = await unzipToAssets(zipBuffer)
       const skelFile = Object.keys(assets).find(f => f.endsWith('.skel') || f.endsWith('.json'))
@@ -243,6 +270,8 @@ async function startPreview() {
       })
     }
 
+    if (gen !== previewGeneration) return
+
     if (charList.length === 0) {
       throw new Error(t('spinePreview.noSpineAssets'))
     }
@@ -250,13 +279,14 @@ async function startPreview() {
     characters.value = charList
     currentCharacterIndex.value = 0
 
-    // Step 3: Load player
-    currentStep.value = 3
+    // Step 4: Load player
+    currentStep.value = 4
     playerLoaded.value = true
 
     await nextTick()
     await loadCharacter(0)
   } catch (e) {
+    if (gen !== previewGeneration) return
     ElMessage.error(e.message || t('spinePreview.previewFailed'))
     loading.value = false
   }
@@ -520,6 +550,7 @@ function resetForm() {
   loading.value = false
   currentStep.value = 0
   downloadProgress.value = 0
+  queueInfo.value = null
 }
 
 onUnmounted(() => {
@@ -551,6 +582,23 @@ onUnmounted(() => {
 .upload-badge {
   margin-left: 6px;
   vertical-align: middle;
+}
+
+.queue-info {
+  margin-top: 16px;
+}
+
+.preview-steps :deep(.el-step__head.is-process) {
+  color: #67c23a;
+  border-color: #67c23a;
+}
+
+.preview-steps :deep(.el-step__title.is-process) {
+  color: #67c23a;
+}
+
+.preview-steps :deep(.el-step__description.is-process) {
+  color: #67c23a;
 }
 
 .player-card {

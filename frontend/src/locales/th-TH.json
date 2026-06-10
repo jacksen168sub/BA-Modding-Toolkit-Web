@@ -262,6 +262,7 @@
     "bundleFileHint": "ลากและวางหรือคลิกเพื่ออัปโหลดไฟล์ .bundle",
     "startPreview": "เริ่มตัวอย่าง",
     "stepUpload": "อัปโหลด",
+    "stepQueue": "คิว",
     "stepExtract": "แยก",
     "stepDownload": "ดาวน์โหลด",
     "stepLoad": "โหลด",
@@ -282,7 +283,8 @@
     "offsetY": "ออฟเซ็ต Y",
     "resetViewport": "รีเซ็ตวิวพอร์ต",
     "saveImage": "บันทึกภาพ",
-    "saveImageFailed": "บันทึกภาพล้มเหลว ไม่พบ canvas"
+    "saveImageFailed": "บันทึกภาพล้มเหลว ไม่พบ canvas",
+    "queueWaiting": "อยู่ในคิว ตำแหน่ง: {position}/{total}"
   },
   "footer": {
     "poweredBy": "Powered by",

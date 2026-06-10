@@ -262,6 +262,7 @@
     "bundleFileHint": "드래그 앤 드롭 또는 클릭하여 .bundle 파일 업로드",
     "startPreview": "미리보기 시작",
     "stepUpload": "업로드",
+    "stepQueue": "대기",
     "stepExtract": "추출",
     "stepDownload": "다운로드",
     "stepLoad": "로드",
@@ -282,7 +283,8 @@
     "offsetY": "Y 오프셋",
     "resetViewport": "뷰포트 초기화",
     "saveImage": "이미지 저장",
-    "saveImageFailed": "이미지 저장 실패, 캔버스를 찾을 수 없습니다"
+    "saveImageFailed": "이미지 저장 실패, 캔버스를 찾을 수 없습니다",
+    "queueWaiting": "대기열에서 대기 중, 현재 위치: {position}/{total}"
   },
   "footer": {
     "poweredBy": "Powered by",
