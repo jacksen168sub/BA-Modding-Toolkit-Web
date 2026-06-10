@@ -1,6 +1,6 @@
 [project]
 name = "bamt-web"
-version = "0.5.0"
+version = "0.5.1"
 description = "Web service for BA-Modding-Toolkit"
 license = "GPL-3.0-only"
 requires-python = ">=3.10"
