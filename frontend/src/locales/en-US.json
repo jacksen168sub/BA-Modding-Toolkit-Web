@@ -316,5 +316,10 @@
     "resetSuccess": "Session reset successfully",
     "version": "Version",
     "commit": "Commit"
+  },
+  "uploadRules": {
+    "emptyName": "Filename is empty",
+    "whitelistBlocked": "File '{name}' is not allowed by the upload whitelist",
+    "blacklistBlocked": "File '{name}' is blocked by an upload rule: {rule}"
   }
 }

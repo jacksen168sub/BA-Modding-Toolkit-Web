@@ -316,5 +316,10 @@
     "resetSuccess": "Session réinitialisée",
     "version": "Version",
     "commit": "Commit"
+  },
+  "uploadRules": {
+    "emptyName": "Le nom du fichier est vide",
+    "whitelistBlocked": "Le fichier « {name} » n'est pas autorisé par la liste blanche d'envoi",
+    "blacklistBlocked": "Le fichier « {name} » est bloqué par une règle d'envoi : {rule}"
   }
 }

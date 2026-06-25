@@ -316,5 +316,10 @@
     "resetSuccess": "Сессия сброшена",
     "version": "Версия",
     "commit": "Коммит"
+  },
+  "uploadRules": {
+    "emptyName": "Имя файла пустое",
+    "whitelistBlocked": "Файл «{name}» не разрешён белым списком загрузки",
+    "blacklistBlocked": "Файл «{name}» заблокирован правилом загрузки: {rule}"
   }
 }

@@ -8,9 +8,21 @@ from ..models.schemas import FileResponse as FileResponseSchema, MessageResponse
 from ..models.file import FileType
 from ..services.file_service import FileService
 from ..services.session_service import SessionService
+from ..services.upload_rules import get_upload_rule_service, UploadRuleError
 from ..config import settings
 
 router = APIRouter(prefix="/files", tags=["Files"])
+
+
+@router.get("/upload-rules")
+def get_upload_rules():
+    """Return the active upload filename rules so the frontend can pre-validate.
+
+    The frontend should treat this as informational only — the backend always
+    enforces the rules regardless of what the frontend does.
+    """
+    service = get_upload_rule_service()
+    return service.snapshot()
 
 
 @router.post("/upload", response_model=FileResponseSchema)
@@ -50,6 +62,15 @@ async def upload_file(
             status_code=400,
             detail=f"File type not allowed. Allowed: {settings.ALLOWED_EXTENSIONS}"
         )
+    
+    # Apply upload filename black/whitelist rules (regex-based).
+    # Runs on every request so changes to the mounted rules file take effect
+    # after a reload (see UploadRuleService.reload).
+    rule_service = get_upload_rule_service()
+    try:
+        rule_service.raise_if_invalid(file.filename or "")
+    except UploadRuleError as exc:
+        raise HTTPException(status_code=403, detail=str(exc))
     
     # Save file
     file_service = FileService(db)

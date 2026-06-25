@@ -316,5 +316,10 @@
     "resetSuccess": "会话已重置",
     "version": "版本",
     "commit": "提交"
+  },
+  "uploadRules": {
+    "emptyName": "文件名为空",
+    "whitelistBlocked": "文件「{name}」不在上传白名单中",
+    "blacklistBlocked": "文件「{name}」被上传规则拦截：{rule}"
   }
 }

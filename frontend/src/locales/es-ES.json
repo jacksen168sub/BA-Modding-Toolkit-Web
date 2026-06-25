@@ -316,5 +316,10 @@
     "resetSuccess": "Sesión restablecida",
     "version": "Versión",
     "commit": "Commit"
+  },
+  "uploadRules": {
+    "emptyName": "El nombre del archivo está vacío",
+    "whitelistBlocked": "El archivo '{name}' no está permitido por la lista blanca de subida",
+    "blacklistBlocked": "El archivo '{name}' está bloqueado por una regla de subida: {rule}"
   }
 }

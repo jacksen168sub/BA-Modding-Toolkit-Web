@@ -316,5 +316,10 @@
     "resetSuccess": "รีเซ็ตเซสชันแล้ว",
     "version": "เวอร์ชัน",
     "commit": "คอมมิต"
+  },
+  "uploadRules": {
+    "emptyName": "ชื่อไฟล์ว่าง",
+    "whitelistBlocked": "ไฟล์ '{name}' ไม่ได้รับอนุญาตโดยรายการที่อนุญาตการอัปโหลด",
+    "blacklistBlocked": "ไฟล์ '{name}' ถูกบล็อกโดยกฎการอัปโหลด: {rule}"
   }
 }

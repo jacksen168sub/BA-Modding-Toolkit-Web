@@ -51,3 +51,12 @@ export function deleteFile(fileId) {
 export function listSessionFiles(sessionUuid) {
   return api.get(`/files/session/${sessionUuid}`)
 }
+
+/**
+ * Get the active upload filename rules (black/whitelist, regex patterns).
+ * Frontend uses this for pre-upload validation; the backend always enforces
+ * the rules regardless.
+ */
+export function getUploadRules() {
+  return api.get('/files/upload-rules')
+}

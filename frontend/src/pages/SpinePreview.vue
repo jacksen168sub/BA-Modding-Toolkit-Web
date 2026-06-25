@@ -131,6 +131,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
+import { validateFilename } from '@/utils/uploadRules'
 import { useSessionStore } from '@/stores/session'
 import { useTasksStore } from '@/stores/tasks'
 import { createExtractTask, getTask } from '@/api/tasks'
@@ -196,7 +197,14 @@ function beforeUpload(file) {
     ElMessage.error(t('spinePreview.fileTooLarge'))
     return false
   }
-  return true
+  // Filename black/whitelist (regex). Awaited so el-upload aborts on false.
+  return validateFilename(file.name).then(verdict => {
+    if (!verdict.ok) {
+      ElMessage.error(t(verdict.key, verdict.params))
+      return false
+    }
+    return true
+  })
 }
 
 function onBundleUploaded(response) {
