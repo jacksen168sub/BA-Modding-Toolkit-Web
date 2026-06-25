@@ -316,5 +316,10 @@
     "resetSuccess": "सेशन रीसेट हो गया",
     "version": "संस्करण",
     "commit": "कमिट"
+  },
+  "uploadRules": {
+    "emptyName": "फ़ाइल नाम खाली है",
+    "whitelistBlocked": "फ़ाइल '{name}' अपलोड श्वेतसूची द्वारा अनुमत नहीं है",
+    "blacklistBlocked": "फ़ाइल '{name}' अपलोड नियम द्वारा अवरुद्ध है: {rule}"
   }
 }

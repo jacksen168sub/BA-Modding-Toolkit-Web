@@ -316,5 +316,10 @@
     "resetSuccess": "تم إعادة تعيين الجلسة",
     "version": "الإصدار",
     "commit": "Commit"
+  },
+  "uploadRules": {
+    "emptyName": "اسم الملف فارغ",
+    "whitelistBlocked": "الملف '{name}' غير مسموح به في قائمة السماح بالرفع",
+    "blacklistBlocked": "الملف '{name}' محظور بواسطة قاعدة رفع: {rule}"
   }
 }

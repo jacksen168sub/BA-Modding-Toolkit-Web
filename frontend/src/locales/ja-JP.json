@@ -316,5 +316,10 @@
     "resetSuccess": "セッションをリセットしました",
     "version": "バージョン",
     "commit": "コミット"
+  },
+  "uploadRules": {
+    "emptyName": "ファイル名が空です",
+    "whitelistBlocked": "ファイル「{name}」はアップロード許可リストにありません",
+    "blacklistBlocked": "ファイル「{name}」はアップロードルールによりブロックされました：{rule}"
   }
 }

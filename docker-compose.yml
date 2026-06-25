@@ -14,9 +14,16 @@ services:
     volumes:
       - ./storage:/app/storage
       - ./data:/app/data
+      # Optional: custom upload filename black/whitelist rules.
+      # Create ./data/upload-rules.json on the host (see example below) and
+      # the backend will load it on startup / first upload.
+      #   - ./data/upload-rules.json:/app/data/upload-rules.json:ro
     environment:
       - DATABASE_URL=sqlite:///./data/bamt.db
       - DEBUG=false
+      # Path to the upload rules JSON file. Relative paths resolve to /app.
+      # Leave empty to use built-in default rules (allow bundle/png/skel/atlas).
+      - UPLOAD_RULES_FILE=/app/data/upload-rules.json
       # CORS settings (optional, defaults to allow all origins)
       # - CORS_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
       # - CORS_ALLOW_CREDENTIALS=true

@@ -316,5 +316,10 @@
     "resetSuccess": "工作階段已重設",
     "version": "版本",
     "commit": "提交"
+  },
+  "uploadRules": {
+    "emptyName": "檔案名稱為空",
+    "whitelistBlocked": "檔案「{name}」不在上傳白名單中",
+    "blacklistBlocked": "檔案「{name}」被上傳規則攔截：{rule}"
   }
 }

@@ -316,5 +316,10 @@
     "resetSuccess": "সেশন রিসেট হয়েছে",
     "version": "সংস্করণ",
     "commit": "কমিট"
+  },
+  "uploadRules": {
+    "emptyName": "ফাইলের নাম খালি",
+    "whitelistBlocked": "ফাইল '{name}' আপলোড হোয়াইটলিস্ট দ্বারা অনুমোদিত নয়",
+    "blacklistBlocked": "ফাইল '{name}' একটি আপলোড নিয়ম দ্বারা অবরুদ্ধ: {rule}"
   }
 }

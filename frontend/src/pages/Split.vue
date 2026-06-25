@@ -96,6 +96,7 @@ import { ref, reactive, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
+import { validateFilename } from '@/utils/uploadRules'
 import TaskStatus from '@/components/TaskStatus.vue'
 import { useSessionStore } from '@/stores/session'
 import { useTasksStore } from '@/stores/tasks'
@@ -137,7 +138,14 @@ function beforeUpload(file) {
     ElMessage.error(t('split.fileTooLarge'))
     return false
   }
-  return true
+  // Filename black/whitelist (regex). Awaited so el-upload aborts on false.
+  return validateFilename(file.name).then(verdict => {
+    if (!verdict.ok) {
+      ElMessage.error(t(verdict.key, verdict.params))
+      return false
+    }
+    return true
+  })
 }
 
 function onLegacyUploaded(response) {

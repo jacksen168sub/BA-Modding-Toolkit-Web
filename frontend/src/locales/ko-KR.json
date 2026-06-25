@@ -316,5 +316,10 @@
     "resetSuccess": "세션이 초기화되었습니다",
     "version": "버전",
     "commit": "커밋"
+  },
+  "uploadRules": {
+    "emptyName": "파일 이름이 비어 있습니다",
+    "whitelistBlocked": "파일 '{name}'이(가) 업로드 화이트리스트에 허용되지 않습니다",
+    "blacklistBlocked": "파일 '{name}'이(가) 업로드 규칙에 의해 차단되었습니다: {rule}"
   }
 }

@@ -82,6 +82,7 @@ import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
+import { validateFilename } from '@/utils/uploadRules'
 import TaskStatus from '@/components/TaskStatus.vue'
 import { useSessionStore } from '@/stores/session'
 import { useTasksStore } from '@/stores/tasks'
@@ -117,18 +118,25 @@ const maxSize = 500 * 1024 * 1024 // 500MB
 
 function beforeUpload(file) {
   const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase()
-  
+
   if (!allowedExtensions.includes(ext)) {
     ElMessage.error(t('crc.unsupportedFileType'))
     return false
   }
-  
+
   if (file.size > maxSize) {
     ElMessage.error(t('crc.fileTooLarge'))
     return false
   }
-  
-  return true
+
+  // Filename black/whitelist (regex). Awaited so el-upload aborts on false.
+  return validateFilename(file.name).then(verdict => {
+    if (!verdict.ok) {
+      ElMessage.error(t(verdict.key, verdict.params))
+      return false
+    }
+    return true
+  })
 }
 
 function onModifiedUploaded(response) {

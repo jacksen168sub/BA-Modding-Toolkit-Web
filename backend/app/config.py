@@ -40,6 +40,12 @@ class Settings(BaseSettings):
     # File upload limits
     MAX_FILE_SIZE: int = 500 * 1024 * 1024  # 500MB
     ALLOWED_EXTENSIONS: set = {".bundle", ".png", ".skel", ".atlas"}
+
+    # Upload filename black/whitelist rules.
+    # Path to a JSON rule file. When empty/missing, built-in default rules
+    # (allow all allowed extensions) are used. In Docker, mount a custom file
+    # to /app/data/upload-rules.json and set UPLOAD_RULES_FILE accordingly.
+    UPLOAD_RULES_FILE: str = ""
     
     # CLI settings
     CLI_TIMEOUT: int = 600  # 10 minutes
@@ -86,6 +92,22 @@ class Settings(BaseSettings):
         if self.CORS_ALLOW_HEADERS == "*":
             return ["*"]
         return [header.strip() for header in self.CORS_ALLOW_HEADERS.split(",") if header.strip()]
+
+    @property
+    def upload_rules_file(self) -> Path | None:
+        """Resolve the upload rules file path.
+
+        - Absolute paths are used as-is.
+        - Relative paths are resolved against PROJECT_ROOT.
+        - Empty string returns None (signals: use default rules).
+        """
+        raw = (self.UPLOAD_RULES_FILE or "").strip()
+        if not raw:
+            return None
+        p = Path(raw)
+        if not p.is_absolute():
+            p = self.PROJECT_ROOT / p
+        return p
 
     class Config:
         env_file = ".env"
