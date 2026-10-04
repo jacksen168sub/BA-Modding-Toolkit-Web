@@ -20,6 +20,7 @@
     "home": "হোম",
     "tools": "টুলস",
     "tasks": "আমার কাজ",
+    "status": "অবস্থা",
     "settings": "সেটিংস"
   },
   "home": {
@@ -316,6 +317,82 @@
     "resetSuccess": "সেশন রিসেট হয়েছে",
     "version": "সংস্করণ",
     "commit": "কমিট"
+  },
+  "status": {
+    "uptime": "চালু সময়",
+    "serverTime": "সার্ভার সময়",
+    "autoRefresh": "প্রতি {seconds} সেকেন্ডে স্বয়ংক্রিয় রিফ্রেশ",
+    "loadFailed": "সেবার অবস্থা লোড করা যায়নি",
+    "redactedNote": "কিছু তথ্য স্থাপনার নীতি অনুসারে লুকানো হয়েছে: {sections}",
+    "units": {
+      "days": "দি",
+      "hours": "ঘ",
+      "minutes": "মি",
+      "seconds": "সে"
+    },
+    "kpi": {
+      "totalTasks": "মোট প্রক্রিয়াকৃত কাজ",
+      "totalTasksSub": "গত ২৪ ঘণ্টায় {count}",
+      "queueLength": "বর্তমান সারির দৈর্ঘ্য",
+      "queueSub": "{pending} অপেক্ষমাণ · {processing} চলমান",
+      "cpu": "CPU ব্যবহার",
+      "memory": "মেমরি ব্যবহার"
+    },
+    "tasks": {
+      "statusTitle": "কাজের অবস্থা বিন্যাস",
+      "typeTitle": "কাজের ধরন বিন্যাস",
+      "successRate": "সফলতার হার",
+      "avgDuration": "গড় সময়",
+      "recentTitle": "সাম্প্রতিক কার্যক্রম",
+      "lastHour": "গত ১ ঘণ্টা",
+      "last24h": "গত ২৪ ঘণ্টা",
+      "last7d": "গত ৭ দিন"
+    },
+    "system": {
+      "title": "সিস্টেম লোড",
+      "cpu": "CPU",
+      "memory": "মেমরি",
+      "disk": "ডিস্ক",
+      "cores": "{cores} কোর",
+      "loadAvg": "গড় লোড {values}",
+      "memoryDetail": "{total} এর মধ্যে {used} ব্যবহৃত",
+      "diskDetail": "{total} এর মধ্যে {used} ব্যবহৃত"
+    },
+    "container": {
+      "docker": "Docker",
+      "podman": "Podman",
+      "kubernetes": "Kubernetes",
+      "generic": "কন্টেইনার",
+      "cgroup": "cgroup v{version}",
+      "cpuLimit": "CPU সীমা {cores} কোর",
+      "memoryLimit": "মেমরি সীমা {size}",
+      "noLimits": "কোনো সম্পদ সীমা নেই",
+      "hostTotals": "হোস্ট {cores} কোর / {memory}"
+    },
+    "queue": {
+      "title": "ওয়ার্কার পুল",
+      "slots": "{max} এর মধ্যে {used} ব্যস্ত"
+    },
+    "storage": {
+      "title": "স্টোরেজ ও সেশন",
+      "uploads": "আপলোড করা ফাইল",
+      "outputs": "ফলাফল ফাইল",
+      "totalSize": "মোট আকার",
+      "sessions": "সেশন",
+      "sessionsValue": "{total} এর মধ্যে {active} সক্রিয়",
+      "process": "ব্যাকএন্ড প্রক্রিয়া",
+      "processValue": "PID {pid} · {rss}",
+      "bucket": "{count} ফাইল · {size}"
+    },
+    "redacted": {
+      "system": "সিস্টেম লোড",
+      "host": "হোস্ট কনফিগারেশন",
+      "process": "ব্যাকএন্ড প্রক্রিয়া",
+      "paths": "স্টোরেজ পথ",
+      "version": "সংস্করণ",
+      "storage": "স্টোরেজ ব্যবহার",
+      "sessions": "সেশন"
+    }
   },
   "uploadRules": {
     "emptyName": "ফাইলের নাম খালি",

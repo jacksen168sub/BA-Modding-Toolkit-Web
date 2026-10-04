@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, List, Literal
+from typing import Optional, List, Literal, Dict
 from pydantic import BaseModel, field_validator
 from .task import TaskType, TaskStatus
 from .file import FileType
@@ -204,6 +204,116 @@ class MessageResponse(BaseModel):
 
 class ErrorResponse(BaseModel):
     detail: str
+
+
+# Service status schemas
+class ServiceInfo(BaseModel):
+    """Identity and liveness of the running backend."""
+    name: str
+    version: Optional[str] = None
+    commit: Optional[str] = None
+    status: str  # healthy | degraded
+    uptime_seconds: Optional[int] = None
+    started_at: Optional[datetime] = None
+    server_time: datetime
+
+
+class TaskStats(BaseModel):
+    """Lifetime task counters."""
+    total: int
+    by_status: Dict[str, int]
+    by_type: Dict[str, int]
+    success_rate: Optional[float] = None  # completed / finished, as a percentage
+    avg_duration_seconds: Optional[float] = None
+    recent: Dict[str, int]  # last_hour / last_24h / last_7d
+
+
+class QueueStats(BaseModel):
+    """Current queue depth against the worker limit."""
+    pending: int
+    processing: int
+    length: int
+    max_concurrent: int
+    available_slots: int
+    utilization: float  # percentage of worker slots in use
+
+
+class ContainerInfo(BaseModel):
+    """Container runtime and the resource limits applied to this process."""
+    detected: bool
+    runtime: Optional[str] = None  # docker | podman | kubernetes
+    cgroup_version: Optional[int] = None
+    cpu_quota: Optional[float] = None  # whole cores, None when unlimited
+    memory_limit: Optional[int] = None  # bytes, None when unlimited
+
+
+class CpuStats(BaseModel):
+    percent: Optional[float] = None
+    cores: Optional[int] = None  # effective cores (container quota or host)
+    host_cores: Optional[int] = None
+    quota: Optional[float] = None
+    load_avg: Optional[List[float]] = None
+
+
+class MemoryStats(BaseModel):
+    total: Optional[int] = None
+    used: Optional[int] = None
+    available: Optional[int] = None
+    percent: Optional[float] = None
+    host_total: Optional[int] = None
+    limit: Optional[int] = None  # container memory limit, None when unlimited
+
+
+class DiskStats(BaseModel):
+    path: Optional[str] = None
+    total: Optional[int] = None
+    used: Optional[int] = None
+    free: Optional[int] = None
+    percent: Optional[float] = None
+
+
+class ProcessStats(BaseModel):
+    """The backend process itself, as opposed to the whole host."""
+    pid: Optional[int] = None
+    memory_rss: Optional[int] = None
+    cpu_percent: Optional[float] = None
+    threads: Optional[int] = None
+    started_at: Optional[datetime] = None
+
+
+class SystemStats(BaseModel):
+    container: ContainerInfo
+    cpu: CpuStats
+    memory: MemoryStats
+    disk: DiskStats
+    process: ProcessStats
+
+
+class StorageBucket(BaseModel):
+    count: Optional[int] = None
+    size: Optional[int] = None
+
+
+class StorageStats(BaseModel):
+    uploads: StorageBucket
+    outputs: StorageBucket
+    total_size: Optional[int] = None
+
+
+class SessionStats(BaseModel):
+    total: Optional[int] = None
+    active: Optional[int] = None
+
+
+class ServiceStatus(BaseModel):
+    """Full service status snapshot."""
+    service: ServiceInfo
+    tasks: TaskStats
+    queue: QueueStats
+    system: SystemStats
+    storage: StorageStats
+    sessions: SessionStats
+    redacted: List[str] = []  # sections blanked out by STATUS_REDACT
 
 
 # Update forward references

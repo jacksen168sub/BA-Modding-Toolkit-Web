@@ -20,6 +20,7 @@
     "home": "หน้าแรก",
     "tools": "เครื่องมือ",
     "tasks": "งานของฉัน",
+    "status": "สถานะ",
     "settings": "การตั้งค่า"
   },
   "home": {
@@ -316,6 +317,82 @@
     "resetSuccess": "รีเซ็ตเซสชันแล้ว",
     "version": "เวอร์ชัน",
     "commit": "คอมมิต"
+  },
+  "status": {
+    "uptime": "เวลาทำงาน",
+    "serverTime": "เวลาเซิร์ฟเวอร์",
+    "autoRefresh": "รีเฟรชอัตโนมัติทุก {seconds} วินาที",
+    "loadFailed": "โหลดสถานะบริการไม่สำเร็จ",
+    "redactedNote": "ข้อมูลบางส่วนถูกซ่อนตามนโยบายการติดตั้ง: {sections}",
+    "units": {
+      "days": "ว",
+      "hours": "ชม",
+      "minutes": "น",
+      "seconds": "วิ"
+    },
+    "kpi": {
+      "totalTasks": "งานที่ประมวลผลทั้งหมด",
+      "totalTasksSub": "{count} ใน 24 ชั่วโมงล่าสุด",
+      "queueLength": "ความยาวคิวปัจจุบัน",
+      "queueSub": "{pending} รออยู่ · {processing} กำลังทำงาน",
+      "cpu": "การใช้ CPU",
+      "memory": "การใช้หน่วยความจำ"
+    },
+    "tasks": {
+      "statusTitle": "สัดส่วนตามสถานะงาน",
+      "typeTitle": "สัดส่วนตามประเภทงาน",
+      "successRate": "อัตราความสำเร็จ",
+      "avgDuration": "เวลาเฉลี่ย",
+      "recentTitle": "กิจกรรมล่าสุด",
+      "lastHour": "1 ชั่วโมงล่าสุด",
+      "last24h": "24 ชั่วโมงล่าสุด",
+      "last7d": "7 วันล่าสุด"
+    },
+    "system": {
+      "title": "ภาระระบบ",
+      "cpu": "CPU",
+      "memory": "หน่วยความจำ",
+      "disk": "ดิสก์",
+      "cores": "{cores} คอร์",
+      "loadAvg": "ค่าโหลดเฉลี่ย {values}",
+      "memoryDetail": "ใช้ {used} จาก {total}",
+      "diskDetail": "ใช้ {used} จาก {total}"
+    },
+    "container": {
+      "docker": "Docker",
+      "podman": "Podman",
+      "kubernetes": "Kubernetes",
+      "generic": "คอนเทนเนอร์",
+      "cgroup": "cgroup v{version}",
+      "cpuLimit": "จำกัด CPU {cores} คอร์",
+      "memoryLimit": "จำกัดหน่วยความจำ {size}",
+      "noLimits": "ไม่จำกัดทรัพยากร",
+      "hostTotals": "โฮสต์ {cores} คอร์ / {memory}"
+    },
+    "queue": {
+      "title": "พูลผู้ประมวลผล",
+      "slots": "ใช้ {used} จาก {max}"
+    },
+    "storage": {
+      "title": "พื้นที่จัดเก็บและเซสชัน",
+      "uploads": "ไฟล์ที่อัปโหลด",
+      "outputs": "ไฟล์ผลลัพธ์",
+      "totalSize": "ขนาดรวม",
+      "sessions": "เซสชัน",
+      "sessionsValue": "ใช้งาน {active} จาก {total}",
+      "process": "โปรเซสแบ็กเอนด์",
+      "processValue": "PID {pid} · {rss}",
+      "bucket": "{count} ไฟล์ · {size}"
+    },
+    "redacted": {
+      "system": "ภาระระบบ",
+      "host": "การตั้งค่าโฮสต์",
+      "process": "โปรเซสแบ็กเอนด์",
+      "paths": "พาธพื้นที่จัดเก็บ",
+      "version": "เวอร์ชัน",
+      "storage": "การใช้พื้นที่จัดเก็บ",
+      "sessions": "เซสชัน"
+    }
   },
   "uploadRules": {
     "emptyName": "ชื่อไฟล์ว่าง",

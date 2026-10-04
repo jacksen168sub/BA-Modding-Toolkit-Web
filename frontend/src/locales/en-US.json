@@ -20,6 +20,7 @@
     "home": "Home",
     "tools": "Tools",
     "tasks": "My Tasks",
+    "status": "Status",
     "settings": "Settings"
   },
   "home": {
@@ -316,6 +317,82 @@
     "resetSuccess": "Session reset successfully",
     "version": "Version",
     "commit": "Commit"
+  },
+  "status": {
+    "uptime": "Uptime",
+    "serverTime": "Server Time",
+    "autoRefresh": "Auto-refreshes every {seconds}s",
+    "loadFailed": "Failed to load service status",
+    "redactedNote": "Some information is hidden by the deployment policy: {sections}",
+    "units": {
+      "days": "d",
+      "hours": "h",
+      "minutes": "m",
+      "seconds": "s"
+    },
+    "kpi": {
+      "totalTasks": "Total Tasks Processed",
+      "totalTasksSub": "{count} in the last 24h",
+      "queueLength": "Current Queue Length",
+      "queueSub": "{pending} pending · {processing} running",
+      "cpu": "CPU Usage",
+      "memory": "Memory Usage"
+    },
+    "tasks": {
+      "statusTitle": "Task Status Breakdown",
+      "typeTitle": "Task Type Breakdown",
+      "successRate": "Success Rate",
+      "avgDuration": "Avg. Runtime",
+      "recentTitle": "Recent Activity",
+      "lastHour": "Last hour",
+      "last24h": "Last 24h",
+      "last7d": "Last 7 days"
+    },
+    "system": {
+      "title": "System Load",
+      "cpu": "CPU",
+      "memory": "Memory",
+      "disk": "Disk",
+      "cores": "{cores} cores",
+      "loadAvg": "Load avg {values}",
+      "memoryDetail": "{used} used of {total}",
+      "diskDetail": "{used} used of {total}"
+    },
+    "container": {
+      "docker": "Docker",
+      "podman": "Podman",
+      "kubernetes": "Kubernetes",
+      "generic": "Container",
+      "cgroup": "cgroup v{version}",
+      "cpuLimit": "CPU limit {cores} cores",
+      "memoryLimit": "memory limit {size}",
+      "noLimits": "no resource limits",
+      "hostTotals": "host {cores} cores / {memory}"
+    },
+    "queue": {
+      "title": "Worker Pool",
+      "slots": "{used} of {max} busy"
+    },
+    "storage": {
+      "title": "Storage & Sessions",
+      "uploads": "Uploaded files",
+      "outputs": "Result files",
+      "totalSize": "Total size",
+      "sessions": "Sessions",
+      "sessionsValue": "{active} active of {total}",
+      "process": "Backend process",
+      "processValue": "PID {pid} · {rss}",
+      "bucket": "{count} files · {size}"
+    },
+    "redacted": {
+      "system": "system load",
+      "host": "host topology",
+      "process": "backend process",
+      "paths": "storage paths",
+      "version": "version",
+      "storage": "storage usage",
+      "sessions": "sessions"
+    }
   },
   "uploadRules": {
     "emptyName": "Filename is empty",

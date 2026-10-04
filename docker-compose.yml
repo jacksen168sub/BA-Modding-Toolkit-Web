@@ -24,9 +24,24 @@ services:
       # Path to the upload rules JSON file. Relative paths resolve to /app.
       # Leave empty to use built-in default rules (allow bundle/png/skel/atlas).
       - UPLOAD_RULES_FILE=/app/data/upload-rules.json
+      # Status page (/status) reports the container's own resource limits by
+      # reading the cgroup, rather than the host's totals. Set to false to
+      # always report host-wide figures.
+      - STATUS_CONTAINER_AWARE=true
+      # Hide parts of /api/status from visitors who should not learn the host's
+      # hardware. Comma-separated; accepts system, host, process, paths,
+      # version, storage, sessions, or "all". Default is to hide nothing.
+      # - STATUS_REDACT=host,process,paths,version
       # CORS settings (optional, defaults to allow all origins)
       # - CORS_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
       # - CORS_ALLOW_CREDENTIALS=true
       # - CORS_ALLOW_METHODS=GET,POST,DELETE
       # - CORS_ALLOW_HEADERS=Content-Type,Authorization
+    # Optional: cap the service so STATUS_CONTAINER_AWARE has limits to report.
+    # Without these the status page shows the whole host's CPU and memory.
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: "2.0"
+    #       memory: 4g
     restart: unless-stopped

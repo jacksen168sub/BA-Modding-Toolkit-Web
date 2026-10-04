@@ -5,6 +5,18 @@ from pathlib import Path
 from pydantic_settings import BaseSettings
 
 
+# Sections of GET /api/status that STATUS_REDACT is allowed to blank out.
+STATUS_REDACTABLE_SECTIONS = (
+    "system",
+    "host",
+    "process",
+    "paths",
+    "version",
+    "storage",
+    "sessions",
+)
+
+
 class Settings(BaseSettings):
     # Application
     APP_NAME: str = "BA-Modding-Toolkit Web"
@@ -53,6 +65,26 @@ class Settings(BaseSettings):
 
     # Concurrency settings
     MAX_CONCURRENT_TASKS: int = 2  # Maximum concurrent tasks
+
+    # Container settings
+    # Inside a container the host's /proc describes the whole machine, so the
+    # status endpoint reads the cgroup limits and reports CPU / memory relative
+    # to this container's own quota. Set to false to always report host figures.
+    STATUS_CONTAINER_AWARE: bool = True
+
+    # Status page privacy
+    # Comma-separated list of sections to blank out in GET /api/status, for
+    # deployments that must not advertise their hardware. Accepts any of:
+    #   system   - CPU / memory / disk utilisation figures
+    #   host     - host core & memory totals, and container / cgroup details
+    #   process  - backend PID, memory and thread count
+    #   paths    - filesystem path of the storage volume
+    #   version  - application version and commit hash
+    #   storage  - uploaded / result file counts and sizes
+    #   sessions - session counts
+    #   all      - every section above
+    # Example: STATUS_REDACT=host,process,paths,version
+    STATUS_REDACT: str = ""
     
     # CORS settings
     CORS_ORIGINS: str = "*"  # Comma-separated list of allowed origins, e.g., "https://example.com,https://www.example.com"
@@ -92,6 +124,20 @@ class Settings(BaseSettings):
         if self.CORS_ALLOW_HEADERS == "*":
             return ["*"]
         return [header.strip() for header in self.CORS_ALLOW_HEADERS.split(",") if header.strip()]
+
+    @property
+    def status_redact_set(self) -> set[str]:
+        """Parse STATUS_REDACT into the set of sections to blank out.
+
+        Unknown entries are ignored; ``all`` expands to every redactable section.
+        """
+        raw = (self.STATUS_REDACT or "").strip().lower()
+        if not raw:
+            return set()
+        requested = {part.strip() for part in raw.split(",") if part.strip()}
+        if "all" in requested:
+            return set(STATUS_REDACTABLE_SECTIONS)
+        return requested & set(STATUS_REDACTABLE_SECTIONS)
 
     @property
     def upload_rules_file(self) -> Path | None:

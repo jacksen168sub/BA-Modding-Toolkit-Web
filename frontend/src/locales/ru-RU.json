@@ -20,6 +20,7 @@
     "home": "Главная",
     "tools": "Инструменты",
     "tasks": "Мои Задачи",
+    "status": "Состояние",
     "settings": "Настройки"
   },
   "home": {
@@ -316,6 +317,82 @@
     "resetSuccess": "Сессия сброшена",
     "version": "Версия",
     "commit": "Коммит"
+  },
+  "status": {
+    "uptime": "Время работы",
+    "serverTime": "Время сервера",
+    "autoRefresh": "Автообновление каждые {seconds} с",
+    "loadFailed": "Не удалось загрузить состояние сервиса",
+    "redactedNote": "Часть информации скрыта политикой развёртывания: {sections}",
+    "units": {
+      "days": "д",
+      "hours": "ч",
+      "minutes": "мин",
+      "seconds": "с"
+    },
+    "kpi": {
+      "totalTasks": "Всего обработано задач",
+      "totalTasksSub": "{count} за последние 24 ч",
+      "queueLength": "Текущая очередь",
+      "queueSub": "{pending} в ожидании · {processing} выполняется",
+      "cpu": "Загрузка CPU",
+      "memory": "Использование памяти"
+    },
+    "tasks": {
+      "statusTitle": "Распределение по статусам",
+      "typeTitle": "Распределение по типам",
+      "successRate": "Доля успешных",
+      "avgDuration": "Среднее время",
+      "recentTitle": "Недавняя активность",
+      "lastHour": "За час",
+      "last24h": "За 24 часа",
+      "last7d": "За 7 дней"
+    },
+    "system": {
+      "title": "Нагрузка системы",
+      "cpu": "CPU",
+      "memory": "Память",
+      "disk": "Диск",
+      "cores": "{cores} ядер",
+      "loadAvg": "Ср. нагрузка {values}",
+      "memoryDetail": "{used} из {total} занято",
+      "diskDetail": "{used} из {total} занято"
+    },
+    "container": {
+      "docker": "Docker",
+      "podman": "Podman",
+      "kubernetes": "Kubernetes",
+      "generic": "Контейнер",
+      "cgroup": "cgroup v{version}",
+      "cpuLimit": "лимит CPU {cores} ядер",
+      "memoryLimit": "лимит памяти {size}",
+      "noLimits": "без ограничений ресурсов",
+      "hostTotals": "хост {cores} ядер / {memory}"
+    },
+    "queue": {
+      "title": "Пул обработчиков",
+      "slots": "{used} из {max} занято"
+    },
+    "storage": {
+      "title": "Хранилище и сессии",
+      "uploads": "Загруженные файлы",
+      "outputs": "Файлы результатов",
+      "totalSize": "Общий размер",
+      "sessions": "Сессии",
+      "sessionsValue": "{active} активных из {total}",
+      "process": "Процесс бэкенда",
+      "processValue": "PID {pid} · {rss}",
+      "bucket": "{count} файлов · {size}"
+    },
+    "redacted": {
+      "system": "нагрузка системы",
+      "host": "конфигурация хоста",
+      "process": "процесс бэкенда",
+      "paths": "пути хранилища",
+      "version": "версия",
+      "storage": "объём хранилища",
+      "sessions": "сессии"
+    }
   },
   "uploadRules": {
     "emptyName": "Имя файла пустое",

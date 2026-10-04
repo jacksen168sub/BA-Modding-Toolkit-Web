@@ -20,6 +20,7 @@
     "home": "ホーム",
     "tools": "ツール",
     "tasks": "マイタスク",
+    "status": "サービス状態",
     "settings": "設定"
   },
   "home": {
@@ -316,6 +317,82 @@
     "resetSuccess": "セッションをリセットしました",
     "version": "バージョン",
     "commit": "コミット"
+  },
+  "status": {
+    "uptime": "稼働時間",
+    "serverTime": "サーバー時刻",
+    "autoRefresh": "{seconds} 秒ごとに自動更新",
+    "loadFailed": "サービス状態の取得に失敗しました",
+    "redactedNote": "一部の情報は配備ポリシーにより非表示です：{sections}",
+    "units": {
+      "days": "日",
+      "hours": "時間",
+      "minutes": "分",
+      "seconds": "秒"
+    },
+    "kpi": {
+      "totalTasks": "処理済みタスク総数",
+      "totalTasksSub": "直近24時間 {count}",
+      "queueLength": "現在のキュー長",
+      "queueSub": "待機 {pending} · 実行中 {processing}",
+      "cpu": "CPU 使用率",
+      "memory": "メモリ使用率"
+    },
+    "tasks": {
+      "statusTitle": "タスク状態の内訳",
+      "typeTitle": "タスク種別の内訳",
+      "successRate": "成功率",
+      "avgDuration": "平均処理時間",
+      "recentTitle": "最近の実績",
+      "lastHour": "直近1時間",
+      "last24h": "直近24時間",
+      "last7d": "直近7日間"
+    },
+    "system": {
+      "title": "システム負荷",
+      "cpu": "CPU",
+      "memory": "メモリ",
+      "disk": "ディスク",
+      "cores": "{cores} コア",
+      "loadAvg": "負荷平均 {values}",
+      "memoryDetail": "使用 {used} / 全体 {total}",
+      "diskDetail": "使用 {used} / 全体 {total}"
+    },
+    "container": {
+      "docker": "Docker",
+      "podman": "Podman",
+      "kubernetes": "Kubernetes",
+      "generic": "コンテナ",
+      "cgroup": "cgroup v{version}",
+      "cpuLimit": "CPU 上限 {cores} コア",
+      "memoryLimit": "メモリ上限 {size}",
+      "noLimits": "リソース制限なし",
+      "hostTotals": "ホスト {cores} コア / {memory}"
+    },
+    "queue": {
+      "title": "ワーカー",
+      "slots": "{used} / {max} 使用中"
+    },
+    "storage": {
+      "title": "ストレージとセッション",
+      "uploads": "アップロードファイル",
+      "outputs": "出力ファイル",
+      "totalSize": "合計サイズ",
+      "sessions": "セッション",
+      "sessionsValue": "有効 {active} / 全体 {total}",
+      "process": "バックエンドプロセス",
+      "processValue": "PID {pid} · {rss}",
+      "bucket": "{count} 件 · {size}"
+    },
+    "redacted": {
+      "system": "システム負荷",
+      "host": "ホスト構成",
+      "process": "バックエンドプロセス",
+      "paths": "保存パス",
+      "version": "バージョン",
+      "storage": "ストレージ使用量",
+      "sessions": "セッション"
+    }
   },
   "uploadRules": {
     "emptyName": "ファイル名が空です",

@@ -20,6 +20,7 @@
     "home": "홈",
     "tools": "도구",
     "tasks": "내 작업",
+    "status": "서비스 상태",
     "settings": "설정"
   },
   "home": {
@@ -316,6 +317,82 @@
     "resetSuccess": "세션이 초기화되었습니다",
     "version": "버전",
     "commit": "커밋"
+  },
+  "status": {
+    "uptime": "가동 시간",
+    "serverTime": "서버 시간",
+    "autoRefresh": "{seconds}초마다 자동 새로 고침",
+    "loadFailed": "서비스 상태를 불러오지 못했습니다",
+    "redactedNote": "일부 정보는 배포 정책에 따라 숨겨졌습니다: {sections}",
+    "units": {
+      "days": "일",
+      "hours": "시간",
+      "minutes": "분",
+      "seconds": "초"
+    },
+    "kpi": {
+      "totalTasks": "총 처리 작업 수",
+      "totalTasksSub": "최근 24시간 {count}",
+      "queueLength": "현재 대기열 길이",
+      "queueSub": "대기 {pending} · 실행 {processing}",
+      "cpu": "CPU 사용률",
+      "memory": "메모리 사용률"
+    },
+    "tasks": {
+      "statusTitle": "작업 상태 분포",
+      "typeTitle": "작업 유형 분포",
+      "successRate": "성공률",
+      "avgDuration": "평균 소요 시간",
+      "recentTitle": "최근 활동",
+      "lastHour": "최근 1시간",
+      "last24h": "최근 24시간",
+      "last7d": "최근 7일"
+    },
+    "system": {
+      "title": "시스템 부하",
+      "cpu": "CPU",
+      "memory": "메모리",
+      "disk": "디스크",
+      "cores": "{cores} 코어",
+      "loadAvg": "부하 평균 {values}",
+      "memoryDetail": "사용 {used} / 전체 {total}",
+      "diskDetail": "사용 {used} / 전체 {total}"
+    },
+    "container": {
+      "docker": "Docker",
+      "podman": "Podman",
+      "kubernetes": "Kubernetes",
+      "generic": "컨테이너",
+      "cgroup": "cgroup v{version}",
+      "cpuLimit": "CPU 제한 {cores} 코어",
+      "memoryLimit": "메모리 제한 {size}",
+      "noLimits": "리소스 제한 없음",
+      "hostTotals": "호스트 {cores} 코어 / {memory}"
+    },
+    "queue": {
+      "title": "워커 풀",
+      "slots": "{used} / {max} 사용 중"
+    },
+    "storage": {
+      "title": "저장소 및 세션",
+      "uploads": "업로드 파일",
+      "outputs": "결과 파일",
+      "totalSize": "총 크기",
+      "sessions": "세션",
+      "sessionsValue": "활성 {active} / 전체 {total}",
+      "process": "백엔드 프로세스",
+      "processValue": "PID {pid} · {rss}",
+      "bucket": "{count}개 · {size}"
+    },
+    "redacted": {
+      "system": "시스템 부하",
+      "host": "호스트 구성",
+      "process": "백엔드 프로세스",
+      "paths": "저장 경로",
+      "version": "버전",
+      "storage": "저장소 사용량",
+      "sessions": "세션"
+    }
   },
   "uploadRules": {
     "emptyName": "파일 이름이 비어 있습니다",

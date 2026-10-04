@@ -20,6 +20,7 @@
     "home": "首頁",
     "tools": "工具",
     "tasks": "我的任務",
+    "status": "服務狀態",
     "settings": "設定"
   },
   "home": {
@@ -316,6 +317,82 @@
     "resetSuccess": "工作階段已重設",
     "version": "版本",
     "commit": "提交"
+  },
+  "status": {
+    "uptime": "運行時長",
+    "serverTime": "伺服器時間",
+    "autoRefresh": "每 {seconds} 秒自動重新整理",
+    "loadFailed": "服務狀態載入失敗",
+    "redactedNote": "部分資訊已依部署策略隱去：{sections}",
+    "units": {
+      "days": "天",
+      "hours": "時",
+      "minutes": "分",
+      "seconds": "秒"
+    },
+    "kpi": {
+      "totalTasks": "歷史任務總數",
+      "totalTasksSub": "近 24 小時 {count}",
+      "queueLength": "目前佇列長度",
+      "queueSub": "{pending} 個排隊 · {processing} 個執行中",
+      "cpu": "CPU 使用率",
+      "memory": "記憶體使用率"
+    },
+    "tasks": {
+      "statusTitle": "任務狀態分佈",
+      "typeTitle": "任務類型分佈",
+      "successRate": "成功率",
+      "avgDuration": "平均耗時",
+      "recentTitle": "近期任務",
+      "lastHour": "最近 1 小時",
+      "last24h": "最近 24 小時",
+      "last7d": "最近 7 天"
+    },
+    "system": {
+      "title": "系統負載",
+      "cpu": "CPU",
+      "memory": "記憶體",
+      "disk": "磁碟",
+      "cores": "{cores} 核心",
+      "loadAvg": "負載 {values}",
+      "memoryDetail": "已用 {used} / 共 {total}",
+      "diskDetail": "已用 {used} / 共 {total}"
+    },
+    "container": {
+      "docker": "Docker",
+      "podman": "Podman",
+      "kubernetes": "Kubernetes",
+      "generic": "容器",
+      "cgroup": "cgroup v{version}",
+      "cpuLimit": "CPU 限額 {cores} 核",
+      "memoryLimit": "記憶體限額 {size}",
+      "noLimits": "無資源限制",
+      "hostTotals": "宿主 {cores} 核 / {memory}"
+    },
+    "queue": {
+      "title": "工作程序",
+      "slots": "{used} / {max} 佔用"
+    },
+    "storage": {
+      "title": "儲存與工作階段",
+      "uploads": "上傳檔案",
+      "outputs": "結果檔案",
+      "totalSize": "總大小",
+      "sessions": "工作階段",
+      "sessionsValue": "活躍 {active} / 共 {total}",
+      "process": "後端程序",
+      "processValue": "PID {pid} · {rss}",
+      "bucket": "{count} 個 · {size}"
+    },
+    "redacted": {
+      "system": "系統負載",
+      "host": "主機配置",
+      "process": "後端程序",
+      "paths": "儲存路徑",
+      "version": "版本資訊",
+      "storage": "儲存用量",
+      "sessions": "工作階段"
+    }
   },
   "uploadRules": {
     "emptyName": "檔案名稱為空",
