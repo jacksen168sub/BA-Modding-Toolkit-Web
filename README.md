@@ -157,32 +157,51 @@ Backend configuration is located in `backend/app/config.py`, supports environmen
 | SESSION_EXPIRE_HOURS | Session expiration time | 24 |
 | CLI_COMPRESSION | Bundle compression method (lzma, lz4, original, none) | lzma |
 | STATUS_CONTAINER_AWARE | Report this container's cgroup limits rather than the host's totals | true |
-| STATUS_REDACT | Comma-separated sections to hide from `/api/status` | (empty) |
+| STATUS_REDACT | Comma-separated facets to hide from `/api/status` | (empty) |
 
 ### Hiding information on the status page
 
 `GET /api/status` and the `/status` page can be published without advertising
-your hardware. Set `STATUS_REDACT` to a comma-separated list of the sections to
-blank out:
+your hardware or traffic. Every facet is hideable on its own, so you can hide
+CPU load while still showing disk, or hide the storage path while keeping the
+usage figures:
 
-| Section | What it hides |
-|---------|---------------|
-| `system` | CPU, memory and disk utilisation figures |
-| `host` | Host core/memory totals, and container / cgroup details |
-| `process` | Backend PID, memory and thread count |
+| Facet | What it hides |
+|-------|---------------|
+| `cpu` | CPU utilisation, effective core count, load average |
+| `memory` | Memory total / used / available / percentage |
+| `disk` | Disk total / used / free / percentage |
 | `paths` | Filesystem path of the storage volume |
+| `host` | Host core count and host memory total |
+| `container` | Runtime, cgroup version, CPU quota and memory limit |
+| `process` | Backend PID, RSS, CPU, thread count, start time |
 | `version` | Application version and commit hash |
+| `uptime` | Uptime and process start time |
+| `tasks` | Task total and the status / type breakdowns |
+| `performance` | Success rate and average runtime |
+| `activity` | Recent task volume (1h / 24h / 7d) |
+| `queue` | Queue depth and worker-pool occupancy |
 | `storage` | Uploaded / result file counts and sizes |
 | `sessions` | Session counts |
 
-`all` hides every section above. Task and queue counters are never redacted, so
-the page stays useful. Redacted fields are returned as `null` and listed in the
-response's `redacted` array; the page then shows a notice and `—` in place of
-each value.
+Two shorthands are accepted: `system` expands to `cpu,memory,disk`, and `all`
+expands to every facet above. Unknown entries are ignored, so a typo leaves that
+facet *visible* rather than hidden — check the response's `redacted` array to
+confirm what actually took effect.
+
+Redacted fields are returned as `null` and listed in the response's `redacted`
+array. The page then shows a notice naming the hidden facets and `—` in place of
+each value — including a hatched placeholder instead of a misleading `0%` bar.
 
 ```bash
-# Example: publish the page but reveal nothing about the host or version
-STATUS_REDACT=host,process,paths,version
+# Hide how loaded the machine is and where its storage lives
+STATUS_REDACT=cpu,memory,disk,paths
+
+# Keep the resource gauges but reveal nothing about the host or build
+STATUS_REDACT=host,container,process,version,uptime
+
+# Everything
+STATUS_REDACT=all
 ```
 
 Inside a container, CPU and memory are reported against the container's own

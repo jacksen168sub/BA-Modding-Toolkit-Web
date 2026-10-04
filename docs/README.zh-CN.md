@@ -157,30 +157,49 @@ BA-Modding-Toolkit-Web/
 | SESSION_EXPIRE_HOURS | 会话过期时间 | 24 |
 | CLI_COMPRESSION | Bundle 压缩方式 (lzma, lz4, original, none) | lz4 |
 | STATUS_CONTAINER_AWARE | 读取本容器的 cgroup 限额，而非宿主机总量 | true |
-| STATUS_REDACT | 需要从 `/api/status` 中隐去的字段，逗号分隔 | （空） |
+| STATUS_REDACT | 需要从 `/api/status` 中隐去的细项，逗号分隔 | （空） |
 
 ### 隐去状态页上的信息
 
-`GET /api/status` 与 `/status` 页面可以对外公开，而不必暴露硬件配置。将
-`STATUS_REDACT` 设为需要隐去的字段列表即可：
+`GET /api/status` 与 `/status` 页面可以对外公开，而不必暴露硬件配置或访问量。
+每个细项都可以单独隐去，例如只隐藏 CPU 占用而保留磁盘信息，或隐藏存储路径
+但保留用量数据：
 
-| 字段 | 隐去的内容 |
+| 细项 | 隐去的内容 |
 |------|-----------|
-| `system` | CPU、内存、磁盘的使用率数值 |
-| `host` | 宿主机核心数/内存总量，以及容器 / cgroup 详情 |
-| `process` | 后端进程的 PID、内存与线程数 |
+| `cpu` | CPU 使用率、有效核心数、负载均值 |
+| `memory` | 内存总量 / 已用 / 可用 / 百分比 |
+| `disk` | 磁盘总量 / 已用 / 可用 / 百分比 |
 | `paths` | 存储卷的文件系统路径 |
+| `host` | 宿主机核心数与内存总量 |
+| `container` | 容器运行时、cgroup 版本、CPU 配额与内存限额 |
+| `process` | 后端进程 PID、内存、CPU、线程数、启动时间 |
 | `version` | 应用版本号与提交哈希 |
+| `uptime` | 运行时长与启动时间 |
+| `tasks` | 任务总数与状态 / 类型分布 |
+| `performance` | 成功率与平均耗时 |
+| `activity` | 近期任务量（1 小时 / 24 小时 / 7 天） |
+| `queue` | 队列长度与工作进程占用 |
 | `storage` | 上传 / 结果文件的数量与体积 |
 | `sessions` | 会话数量 |
 
-`all` 表示隐去以上全部。任务与队列计数不会被隐去，页面仍然可用。被隐去的
-字段以 `null` 返回，并列入响应的 `redacted` 数组；页面会显示提示，相应位置
-以 `—` 代替。
+另有两个简写：`system` 等于 `cpu,memory,disk`，`all` 等于以上全部。无法识别的
+条目会被忽略，也就是说拼错时该项会被**保留显示**而非隐藏——请检查响应的
+`redacted` 数组以确认实际生效的细项。
+
+被隐去的字段以 `null` 返回，并列入响应的 `redacted` 数组；页面会显示提示并列出
+被隐去的细项，相应位置以 `—` 代替（进度条会换成斜纹占位块，而不是误导性的
+`0%`）。
 
 ```bash
-# 示例：页面照常公开，但不透露宿主机与版本信息
-STATUS_REDACT=host,process,paths,version
+# 隐藏机器负载与存储位置
+STATUS_REDACT=cpu,memory,disk,paths
+
+# 保留资源图表，但不透露宿主机与构建信息
+STATUS_REDACT=host,container,process,version,uptime
+
+# 全部隐去
+STATUS_REDACT=all
 ```
 
 在容器中运行时，CPU 与内存按容器自身的 cgroup 限额统计，与实际分配的资源

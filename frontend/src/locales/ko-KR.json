@@ -385,11 +385,19 @@
       "bucket": "{count}개 · {size}"
     },
     "redacted": {
-      "system": "시스템 부하",
-      "host": "호스트 구성",
-      "process": "백엔드 프로세스",
+      "cpu": "CPU",
+      "memory": "메모리",
+      "disk": "디스크",
       "paths": "저장 경로",
+      "host": "호스트 하드웨어",
+      "container": "컨테이너 제한",
+      "process": "백엔드 프로세스",
       "version": "버전",
+      "uptime": "가동 시간",
+      "tasks": "작업 총수",
+      "performance": "성공률 및 소요 시간",
+      "activity": "최근 활동",
+      "queue": "대기열",
       "storage": "저장소 사용량",
       "sessions": "세션"
     }

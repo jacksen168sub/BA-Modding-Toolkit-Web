@@ -385,11 +385,19 @@
       "bucket": "{count} fichiers · {size}"
     },
     "redacted": {
-      "system": "charge système",
-      "host": "configuration de l'hôte",
-      "process": "processus backend",
+      "cpu": "CPU",
+      "memory": "mémoire",
+      "disk": "disque",
       "paths": "chemins de stockage",
+      "host": "matériel de l'hôte",
+      "container": "limites du conteneur",
+      "process": "processus backend",
       "version": "version",
+      "uptime": "durée de fonctionnement",
+      "tasks": "totaux des tâches",
+      "performance": "taux de réussite et durée",
+      "activity": "activité récente",
+      "queue": "file d'attente",
       "storage": "utilisation du stockage",
       "sessions": "sessions"
     }
