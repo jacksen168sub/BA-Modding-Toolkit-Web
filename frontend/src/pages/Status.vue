@@ -320,10 +320,12 @@ const statusColors = {
 
 const statusSegments = computed(() => {
   const byStatus = tasks.value.by_status || {}
+  // An empty breakdown means the facet was redacted, not that nothing ran.
+  const hidden = Object.keys(byStatus).length === 0
   return statusOrder.map(key => ({
     key,
     label: t(`tasks.statuses.${key}`),
-    count: byStatus[key] || 0,
+    count: hidden ? null : (byStatus[key] || 0),
     color: statusColors[key]
   }))
 })
@@ -334,21 +336,28 @@ const typeOrder = ['update', 'pack', 'extract', 'crc', 'split', 'merge']
 
 const typeRows = computed(() => {
   const byType = tasks.value.by_type || {}
+  const hidden = Object.keys(byType).length === 0
   const rows = typeOrder.map(key => ({
     key,
     label: t(`tasks.types.${key}`),
-    count: byType[key] || 0
+    count: hidden ? null : (byType[key] || 0)
   }))
-  const max = Math.max(1, ...rows.map(row => row.count))
-  return rows.map(row => ({ ...row, pct: (row.count / max) * 100 }))
+  const max = Math.max(1, ...rows.map(row => row.count || 0))
+  return rows.map(row => ({ ...row, pct: ((row.count || 0) / max) * 100 }))
+})
+
+// Null when the "activity" facet was redacted.
+const recentCounts = computed(() => {
+  const recent = tasks.value.recent || {}
+  return Object.keys(recent).length ? recent : null
 })
 
 const recentItems = computed(() => {
-  const recent = tasks.value.recent || {}
+  const recent = recentCounts.value
   return [
-    { key: 'last_hour', label: t('status.tasks.lastHour'), count: recent.last_hour || 0 },
-    { key: 'last_24h', label: t('status.tasks.last24h'), count: recent.last_24h || 0 },
-    { key: 'last_7d', label: t('status.tasks.last7d'), count: recent.last_7d || 0 }
+    { key: 'last_hour', label: t('status.tasks.lastHour'), count: recent ? (recent.last_hour || 0) : null },
+    { key: 'last_24h', label: t('status.tasks.last24h'), count: recent ? (recent.last_24h || 0) : null },
+    { key: 'last_7d', label: t('status.tasks.last7d'), count: recent ? (recent.last_7d || 0) : null }
   ]
 })
 
@@ -378,9 +387,10 @@ const diskDetail = computed(() => {
   })
 })
 
-const workerDetail = computed(() =>
-  t('status.queue.slots', { used: queue.value.processing, max: queue.value.max_concurrent })
-)
+const workerDetail = computed(() => {
+  if (queue.value.max_concurrent === null || queue.value.max_concurrent === undefined) return ''
+  return t('status.queue.slots', { used: queue.value.processing, max: queue.value.max_concurrent })
+})
 
 // Every meter is a single ratio against a limit, so a percentage bar is the
 // right form; the numeric value always rides alongside the colour.
@@ -445,13 +455,17 @@ const kpiTiles = computed(() => [
     key: 'total',
     label: t('status.kpi.totalTasks'),
     value: formatNumber(tasks.value.total),
-    sub: t('status.kpi.totalTasksSub', { count: formatNumber(tasks.value.recent?.last_24h || 0) })
+    sub: t('status.kpi.totalTasksSub', {
+      count: recentCounts.value ? formatNumber(recentCounts.value.last_24h || 0) : '—'
+    })
   },
   {
     key: 'queue',
     label: t('status.kpi.queueLength'),
     value: formatNumber(queue.value.length),
-    sub: t('status.kpi.queueSub', { pending: queue.value.pending, processing: queue.value.processing })
+    sub: queue.value.length === null || queue.value.length === undefined
+      ? '—'
+      : t('status.kpi.queueSub', { pending: queue.value.pending, processing: queue.value.processing })
   },
   {
     key: 'cpu',

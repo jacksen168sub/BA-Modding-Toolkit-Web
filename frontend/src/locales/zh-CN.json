@@ -385,11 +385,19 @@
       "bucket": "{count} 个 · {size}"
     },
     "redacted": {
-      "system": "系统负载",
-      "host": "宿主机配置",
-      "process": "后端进程",
+      "cpu": "CPU",
+      "memory": "内存",
+      "disk": "磁盘",
       "paths": "存储路径",
+      "host": "宿主机硬件",
+      "container": "容器限额",
+      "process": "后端进程",
       "version": "版本信息",
+      "uptime": "运行时长",
+      "tasks": "任务总数",
+      "performance": "成功率与耗时",
+      "activity": "近期任务量",
+      "queue": "队列",
       "storage": "存储用量",
       "sessions": "会话"
     }

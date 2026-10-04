@@ -5,16 +5,36 @@ from pathlib import Path
 from pydantic_settings import BaseSettings
 
 
-# Sections of GET /api/status that STATUS_REDACT is allowed to blank out.
-STATUS_REDACTABLE_SECTIONS = (
-    "system",
-    "host",
-    "process",
-    "paths",
-    "version",
-    "storage",
-    "sessions",
+# Individual facets of GET /api/status that STATUS_REDACT can blank out.
+# One facet == one independently hideable piece of information.
+STATUS_REDACTABLE_FACETS = (
+    # Host resources
+    "cpu",          # CPU percent, effective core count, load average
+    "memory",       # memory total / used / available / percent
+    "disk",         # disk total / used / free / percent
+    # Where and on what the service runs
+    "paths",        # filesystem path of the storage volume
+    "host",         # host core count and host memory total
+    "container",    # runtime, cgroup version, CPU quota and memory limit
+    "process",      # backend PID, RSS, CPU, thread count, start time
+    # Build identity
+    "version",      # application version and commit hash
+    "uptime",       # uptime and process start time
+    # Workload
+    "tasks",        # task total plus status / type breakdowns
+    "performance",  # success rate and average runtime
+    "activity",     # recent task volume (1h / 24h / 7d)
+    "queue",        # queue depth and worker-pool occupancy
+    # Stored data
+    "storage",      # uploaded / result file counts and sizes
+    "sessions",     # session counts
 )
+
+# Convenience groups, expanded before the facet set is resolved.
+STATUS_REDACT_GROUPS = {
+    "system": ("cpu", "memory", "disk"),
+    "all": STATUS_REDACTABLE_FACETS,
+}
 
 
 class Settings(BaseSettings):
@@ -73,17 +93,18 @@ class Settings(BaseSettings):
     STATUS_CONTAINER_AWARE: bool = True
 
     # Status page privacy
-    # Comma-separated list of sections to blank out in GET /api/status, for
-    # deployments that must not advertise their hardware. Accepts any of:
-    #   system   - CPU / memory / disk utilisation figures
-    #   host     - host core & memory totals, and container / cgroup details
-    #   process  - backend PID, memory and thread count
-    #   paths    - filesystem path of the storage volume
-    #   version  - application version and commit hash
-    #   storage  - uploaded / result file counts and sizes
-    #   sessions - session counts
-    #   all      - every section above
-    # Example: STATUS_REDACT=host,process,paths,version
+    # Comma-separated list of facets to blank out in GET /api/status, for
+    # deployments that must not advertise their hardware or traffic. Each facet
+    # is hideable on its own; see STATUS_REDACTABLE_FACETS above for the list.
+    #   system   - shorthand for cpu,memory,disk
+    #   all      - shorthand for every facet
+    # Unknown entries are ignored, so a typo silently leaves that facet visible
+    # rather than hidden — check the response's `redacted` array to confirm what
+    # actually took effect.
+    # Examples:
+    #   STATUS_REDACT=cpu,disk
+    #   STATUS_REDACT=host,paths,version,container
+    #   STATUS_REDACT=all
     STATUS_REDACT: str = ""
     
     # CORS settings
@@ -127,17 +148,24 @@ class Settings(BaseSettings):
 
     @property
     def status_redact_set(self) -> set[str]:
-        """Parse STATUS_REDACT into the set of sections to blank out.
+        """Resolve STATUS_REDACT into the set of facets to blank out.
 
-        Unknown entries are ignored; ``all`` expands to every redactable section.
+        Group names (``system``, ``all``) are expanded, unknown entries are
+        ignored, and the result only ever contains redactable facets.
         """
         raw = (self.STATUS_REDACT or "").strip().lower()
         if not raw:
             return set()
-        requested = {part.strip() for part in raw.split(",") if part.strip()}
-        if "all" in requested:
-            return set(STATUS_REDACTABLE_SECTIONS)
-        return requested & set(STATUS_REDACTABLE_SECTIONS)
+
+        resolved: set[str] = set()
+        for token in (part.strip() for part in raw.split(",")):
+            if not token:
+                continue
+            if token in STATUS_REDACT_GROUPS:
+                resolved.update(STATUS_REDACT_GROUPS[token])
+            elif token in STATUS_REDACTABLE_FACETS:
+                resolved.add(token)
+        return resolved
 
     @property
     def upload_rules_file(self) -> Path | None:

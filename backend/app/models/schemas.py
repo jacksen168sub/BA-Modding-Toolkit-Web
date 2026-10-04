@@ -220,22 +220,22 @@ class ServiceInfo(BaseModel):
 
 class TaskStats(BaseModel):
     """Lifetime task counters."""
-    total: int
-    by_status: Dict[str, int]
-    by_type: Dict[str, int]
+    total: Optional[int] = None
+    by_status: Dict[str, int] = {}
+    by_type: Dict[str, int] = {}
     success_rate: Optional[float] = None  # completed / finished, as a percentage
     avg_duration_seconds: Optional[float] = None
-    recent: Dict[str, int]  # last_hour / last_24h / last_7d
+    recent: Dict[str, int] = {}  # last_hour / last_24h / last_7d
 
 
 class QueueStats(BaseModel):
     """Current queue depth against the worker limit."""
-    pending: int
-    processing: int
-    length: int
-    max_concurrent: int
-    available_slots: int
-    utilization: float  # percentage of worker slots in use
+    pending: Optional[int] = None
+    processing: Optional[int] = None
+    length: Optional[int] = None
+    max_concurrent: Optional[int] = None
+    available_slots: Optional[int] = None
+    utilization: Optional[float] = None  # percentage of worker slots in use
 
 
 class ContainerInfo(BaseModel):

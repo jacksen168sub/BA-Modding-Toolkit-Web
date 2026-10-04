@@ -385,11 +385,19 @@
       "bucket": "{count} 件 · {size}"
     },
     "redacted": {
-      "system": "システム負荷",
-      "host": "ホスト構成",
-      "process": "バックエンドプロセス",
+      "cpu": "CPU",
+      "memory": "メモリ",
+      "disk": "ディスク",
       "paths": "保存パス",
+      "host": "ホストのハードウェア",
+      "container": "コンテナ上限",
+      "process": "バックエンドプロセス",
       "version": "バージョン",
+      "uptime": "稼働時間",
+      "tasks": "タスク総数",
+      "performance": "成功率と所要時間",
+      "activity": "最近の実績",
+      "queue": "キュー",
       "storage": "ストレージ使用量",
       "sessions": "セッション"
     }

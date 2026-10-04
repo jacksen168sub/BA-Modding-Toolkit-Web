@@ -385,11 +385,19 @@
       "bucket": "{count} 個 · {size}"
     },
     "redacted": {
-      "system": "系統負載",
-      "host": "主機配置",
-      "process": "後端程序",
+      "cpu": "CPU",
+      "memory": "記憶體",
+      "disk": "磁碟",
       "paths": "儲存路徑",
+      "host": "主機硬體",
+      "container": "容器限額",
+      "process": "後端程序",
       "version": "版本資訊",
+      "uptime": "運行時長",
+      "tasks": "任務總數",
+      "performance": "成功率與耗時",
+      "activity": "近期任務量",
+      "queue": "佇列",
       "storage": "儲存用量",
       "sessions": "工作階段"
     }

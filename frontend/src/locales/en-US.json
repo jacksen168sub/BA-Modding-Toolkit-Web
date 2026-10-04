@@ -385,11 +385,19 @@
       "bucket": "{count} files · {size}"
     },
     "redacted": {
-      "system": "system load",
-      "host": "host topology",
-      "process": "backend process",
+      "cpu": "CPU",
+      "memory": "memory",
+      "disk": "disk",
       "paths": "storage paths",
+      "host": "host hardware",
+      "container": "container limits",
+      "process": "backend process",
       "version": "version",
+      "uptime": "uptime",
+      "tasks": "task totals",
+      "performance": "success rate & runtime",
+      "activity": "recent activity",
+      "queue": "queue",
       "storage": "storage usage",
       "sessions": "sessions"
     }

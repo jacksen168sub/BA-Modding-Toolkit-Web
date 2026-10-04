@@ -26,65 +26,116 @@ _BLANK_CONTAINER = {
     "memory_limit": None,
 }
 
+# Facets redacted by nulling a handful of scalar fields, as dotted payload paths.
+_FACET_PATHS = {
+    "cpu": (
+        "system.cpu.percent",
+        "system.cpu.cores",
+        "system.cpu.load_avg",
+    ),
+    "memory": (
+        "system.memory.total",
+        "system.memory.used",
+        "system.memory.available",
+        "system.memory.percent",
+    ),
+    "disk": (
+        "system.disk.total",
+        "system.disk.used",
+        "system.disk.free",
+        "system.disk.percent",
+    ),
+    "paths": ("system.disk.path",),
+    "host": (
+        "system.cpu.host_cores",
+        "system.memory.host_total",
+    ),
+    "process": (
+        "system.process.pid",
+        "system.process.memory_rss",
+        "system.process.cpu_percent",
+        "system.process.threads",
+        "system.process.started_at",
+    ),
+    "version": (
+        "service.version",
+        "service.commit",
+    ),
+    "uptime": (
+        "service.uptime_seconds",
+        "service.started_at",
+    ),
+    "performance": (
+        "tasks.success_rate",
+        "tasks.avg_duration_seconds",
+    ),
+}
 
-def apply_redaction(payload: dict, sections: set) -> list:
-    """Blank out the requested sections of a status payload in place.
+# Facets redacted by replacing a whole nested block.
+_BLANK_QUEUE = {key: None for key in (
+    "pending", "processing", "length", "max_concurrent", "available_slots", "utilization"
+)}
+_BLANK_STORAGE = {
+    "uploads": {"count": None, "size": None},
+    "outputs": {"count": None, "size": None},
+    "total_size": None,
+}
+_BLANK_SESSIONS = {"total": None, "active": None}
 
-    Returns the sections actually applied, so the response can tell the client
-    the page is deliberately incomplete rather than broken.
+
+def _null_path(payload: dict, dotted: str) -> None:
+    """Set a dotted payload path to None, ignoring paths that do not exist."""
+    *parents, leaf = dotted.split(".")
+    node = payload
+    for key in parents:
+        node = node.get(key)
+        if not isinstance(node, dict):
+            return
+    if leaf in node:
+        node[leaf] = None
+
+
+def apply_redaction(payload: dict, facets: set) -> list:
+    """Blank out the requested facets of a status payload in place.
+
+    Each facet is an independently hideable piece of information, so a
+    deployment can hide CPU load while still showing disk, or vice versa.
+    Returns the facets actually applied, in a stable order, so the response can
+    tell the client the page is deliberately incomplete rather than broken.
     """
-    if not sections:
+    if not facets:
         return []
 
-    applied = []
-    system = payload.get("system") or {}
-    cpu = system.get("cpu") or {}
-    memory = system.get("memory") or {}
-    disk = system.get("disk") or {}
-    process = system.get("process") or {}
-    service = payload.get("service") or {}
+    applied = sorted(facets)
 
-    if "system" in sections:
-        for key in ("percent", "cores", "quota", "load_avg"):
-            cpu[key] = None
-        for key in ("total", "used", "available", "percent", "limit"):
-            memory[key] = None
-        for key in ("total", "used", "free", "percent"):
-            disk[key] = None
-        applied.append("system")
+    for facet in applied:
+        for dotted in _FACET_PATHS.get(facet, ()):
+            _null_path(payload, dotted)
 
-    if "host" in sections:
-        cpu["host_cores"] = None
-        memory["host_total"] = None
-        system["container"] = dict(_BLANK_CONTAINER)
-        applied.append("host")
-
-    if "process" in sections:
-        for key in ("pid", "memory_rss", "cpu_percent", "threads", "started_at"):
-            process[key] = None
-        applied.append("process")
-
-    if "paths" in sections:
-        disk["path"] = None
-        applied.append("paths")
-
-    if "version" in sections:
-        service["version"] = None
-        service["commit"] = None
-        applied.append("version")
-
-    if "storage" in sections:
-        storage = payload.get("storage") or {}
-        for bucket in ("uploads", "outputs"):
-            storage[bucket] = {"count": None, "size": None}
-        storage["total_size"] = None
-        applied.append("storage")
-
-    if "sessions" in sections:
-        payload["sessions"] = {"total": None, "active": None}
-        applied.append("sessions")
+    # Facets that replace a block outright.
+    if "container" in facets:
+        payload["system"]["container"] = dict(_BLANK_CONTAINER)
+    if "tasks" in facets:
+        # Counts become null and the breakdowns empty, so the page renders an
+        # empty chart rather than a misleading zero.
+        payload["tasks"]["total"] = None
+        payload["tasks"]["by_status"] = {}
+        payload["tasks"]["by_type"] = {}
+    if "activity" in facets:
+        payload["tasks"]["recent"] = {}
+    if "queue" in facets:
+        payload["queue"] = dict(_BLANK_QUEUE)
+    if "storage" in facets:
+        payload["storage"] = {
+            "uploads": dict(_BLANK_STORAGE["uploads"]),
+            "outputs": dict(_BLANK_STORAGE["outputs"]),
+            "total_size": None,
+        }
+    if "sessions" in facets:
+        payload["sessions"] = dict(_BLANK_SESSIONS)
 
     return applied
+
 
 
 class StatusService:

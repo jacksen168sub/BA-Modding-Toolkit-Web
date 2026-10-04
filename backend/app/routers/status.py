@@ -48,7 +48,7 @@ def _build_service_info(system: dict) -> dict:
 def get_service_status(db: Session = Depends(get_db)):
     """Current service status: task totals, queue depth, host load and storage.
 
-    Container limits are honoured, and sections listed in STATUS_REDACT are
+    Container limits are honoured, and any facet listed in STATUS_REDACT is
     blanked out before the response is returned.
     """
     system = system_stats(
