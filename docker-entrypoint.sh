@@ -9,6 +9,7 @@ TEMPLATE_DIR=/opt/frontend-template
 WEB_ROOT=/var/www/html
 
 if [ -d "$TEMPLATE_DIR" ]; then
+    echo "docker-entrypoint: rendering frontend from $TEMPLATE_DIR"
     mkdir -p "$WEB_ROOT"
     cp -a "$TEMPLATE_DIR"/. "$WEB_ROOT"/
 

@@ -75,10 +75,12 @@ COPY backend/pyproject.toml ./pyproject.toml
 # Write version.json at build time (version source of truth)
 RUN echo "{\"version\":\"${GIT_TAG}\",\"tag\":\"${GIT_TAG}\",\"commit\":\"${GIT_COMMIT}\"}" > /app/version.json
 
-# Frontend: keep a pristine template and let the entrypoint render it into the web root at
-# startup, so an operator can inject their own page HTML without rebuilding the image.
+# Frontend: ship a working copy in the web root, plus a pristine template the entrypoint
+# re-renders at startup so an operator can inject their own page HTML without rebuilding.
+# The web root is seeded here (not left empty) so the site still serves even if the render
+# is ever skipped.
 COPY --from=frontend-build /app/frontend/dist /opt/frontend-template
-RUN mkdir -p /var/www/html
+COPY --from=frontend-build /app/frontend/dist /var/www/html
 
 # Setup nginx - use as main config (not sites-enabled)
 COPY nginx.conf /etc/nginx/nginx.conf
