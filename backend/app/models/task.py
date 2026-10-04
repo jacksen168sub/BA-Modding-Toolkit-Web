@@ -13,8 +13,6 @@ class TaskType(str, Enum):
     PACK = "pack"
     EXTRACT = "extract"
     CRC = "crc"
-    SPLIT = "split"
-    MERGE = "merge"
 
 
 class TaskStatus(str, Enum):

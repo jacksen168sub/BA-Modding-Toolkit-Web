@@ -38,3 +38,13 @@ def get_db():
 def init_db():
     """Initialize database tables."""
     Base.metadata.create_all(bind=engine)
+
+    # One-off cleanup for the removal of the SPLIT/MERGE task types (kernel v2.9.2 dropped
+    # the split/merge commands they wrapped). SQLAlchemy's Enum stores member NAMES, so any
+    # legacy rows hold 'SPLIT'/'MERGE'; left in place they raise LookupError on the next
+    # Task load. Delete their files first to avoid orphans, then the tasks themselves.
+    with engine.begin() as conn:
+        conn.exec_driver_sql(
+            "DELETE FROM files WHERE task_id IN (SELECT id FROM tasks WHERE type IN ('SPLIT','MERGE'))"
+        )
+        conn.exec_driver_sql("DELETE FROM tasks WHERE type IN ('SPLIT','MERGE')")

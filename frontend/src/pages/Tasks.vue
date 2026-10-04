@@ -122,9 +122,7 @@ const typeMap = {
   update: 'tasks.types.update',
   pack: 'tasks.types.pack',
   extract: 'tasks.types.extract',
-  crc: 'tasks.types.crc',
-  split: 'tasks.types.split',
-  merge: 'tasks.types.merge'
+  crc: 'tasks.types.crc'
 }
 
 const statusMap = {

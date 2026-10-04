@@ -28,7 +28,8 @@ WORKDIR /app/upstream/BA-Modding-Toolkit
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
-RUN apt-get update && apt-get install -y --no-install-recommends gcc g++ && rm -rf /var/lib/apt/lists/*
+# git is required: v2.9.2 sources spineatlas from a git repo rather than PyPI
+RUN apt-get update && apt-get install -y --no-install-recommends gcc g++ git ca-certificates && rm -rf /var/lib/apt/lists/*
 
 COPY upstream/BA-Modding-Toolkit/ .
 RUN uv sync --no-dev
@@ -74,8 +75,10 @@ COPY backend/pyproject.toml ./pyproject.toml
 # Write version.json at build time (version source of truth)
 RUN echo "{\"version\":\"${GIT_TAG}\",\"tag\":\"${GIT_TAG}\",\"commit\":\"${GIT_COMMIT}\"}" > /app/version.json
 
-# Setup frontend (copy from build stage, works for all platforms)
-COPY --from=frontend-build /app/frontend/dist /var/www/html
+# Frontend: keep a pristine template and let the entrypoint render it into the web root at
+# startup, so an operator can inject their own page HTML without rebuilding the image.
+COPY --from=frontend-build /app/frontend/dist /opt/frontend-template
+RUN mkdir -p /var/www/html
 
 # Setup nginx - use as main config (not sites-enabled)
 COPY nginx.conf /etc/nginx/nginx.conf
@@ -87,6 +90,11 @@ RUN mkdir -p /app/storage/uploads /app/storage/outputs /app/storage/temp /app/da
 RUN mkdir -p /var/log/supervisor
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+# Entrypoint renders the frontend template (and any page injection) before supervisord starts
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 EXPOSE 80
 
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

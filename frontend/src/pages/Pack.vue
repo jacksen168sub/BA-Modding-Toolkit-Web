@@ -41,7 +41,11 @@
           </div>
         </el-form-item>
         
-        <el-form-item :label="$t('pack.targetBundle')" required>
+        <el-form-item required>
+          <template #label>
+            {{ $t('pack.targetBundle') }}
+            <el-tag type="primary" size="small" class="upload-badge">{{ $t('common.multiSelect') }}</el-tag>
+          </template>
           <div class="upload-area">
             <el-upload
               ref="targetUploadRef"
@@ -49,9 +53,10 @@
               :data="{ session_uuid: sessionUuid }"
               :on-success="onTargetUploaded"
               :on-error="onUploadError"
+              :on-remove="onTargetRemoved"
               :before-upload="beforeUploadBundle"
-              :limit="1"
               :file-list="targetFileList"
+              multiple
               drag
             >
               <el-icon class="el-icon--upload"><UploadFilled /></el-icon>
@@ -117,7 +122,7 @@ const submitting = ref(false)
 const currentTask = ref(null)
 
 const assetFiles = ref([])
-const targetFile = ref(null)
+const targetFiles = ref([])
 const assetFileList = ref([])
 const targetFileList = ref([])
 
@@ -191,8 +196,13 @@ function onAssetRemoved(file) {
 }
 
 function onTargetUploaded(response) {
-  targetFile.value = response
+  targetFiles.value.push({ id: response.id, name: response.original_name || response.name })
   ElMessage.success(t('pack.targetUploaded'))
+}
+
+function onTargetRemoved(file) {
+  const idx = targetFiles.value.findIndex(f => f.id === (file.response?.id))
+  if (idx > -1) targetFiles.value.splice(idx, 1)
 }
 
 function onUploadError(error) {
@@ -205,7 +215,7 @@ async function submitTask() {
     return
   }
   
-  if (!targetFile.value) {
+  if (targetFiles.value.length === 0) {
     ElMessage.warning(t('pack.pleaseUploadTarget'))
     return
   }
@@ -216,7 +226,7 @@ async function submitTask() {
     const task = await createPackTask({
       session_uuid: sessionStore.uuid,
       asset_folder_files: assetFiles.value.map(f => f.id),
-      target_bundle_file_id: targetFile.value.id,
+      target_bundle_file_ids: targetFiles.value.map(f => f.id),
       crc_correction: form.crc_correction,
       compression: form.compression
     })
@@ -226,7 +236,7 @@ async function submitTask() {
     
     // 立即清空已上传文件，让用户可以开始下一个任务的上传
     assetFiles.value = []
-    targetFile.value = null
+    targetFiles.value = []
     assetFileList.value = []
     targetFileList.value = []
     assetUploadRef.value?.clearFiles()
@@ -250,7 +260,7 @@ async function submitTask() {
 
 function resetForm() {
   assetFiles.value = []
-  targetFile.value = null
+  targetFiles.value = []
   assetFileList.value = []
   targetFileList.value = []
   currentTask.value = null

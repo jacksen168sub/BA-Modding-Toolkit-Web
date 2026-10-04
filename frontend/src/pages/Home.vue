@@ -47,18 +47,10 @@
       </el-col>
       
       <el-col :xs="24" :sm="12" :md="6">
-        <el-card class="feature-card" @click="$router.push('/split')">
-          <el-icon class="feature-icon"><Scissor /></el-icon>
-          <h3>{{ $t('home.features.split') }}</h3>
-          <p>{{ $t('home.features.splitDesc') }}</p>
-        </el-card>
-      </el-col>
-      
-      <el-col :xs="24" :sm="12" :md="6">
-        <el-card class="feature-card" @click="$router.push('/merge')">
-          <el-icon class="feature-icon"><Connection /></el-icon>
-          <h3>{{ $t('home.features.merge') }}</h3>
-          <p>{{ $t('home.features.mergeDesc') }}</p>
+        <el-card class="feature-card" @click="$router.push('/parse')">
+          <el-icon class="feature-icon"><Search /></el-icon>
+          <h3>{{ $t('home.features.parse') }}</h3>
+          <p>{{ $t('home.features.parseDesc') }}</p>
         </el-card>
       </el-col>
       
@@ -93,7 +85,7 @@
 import { onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { Refresh, Box, FolderOpened, Key, Scissor, Connection, VideoPlay } from '@element-plus/icons-vue'
+import { Refresh, Box, FolderOpened, Key, Search, VideoPlay } from '@element-plus/icons-vue'
 import { useSessionStore } from '@/stores/session'
 
 const { t } = useI18n()

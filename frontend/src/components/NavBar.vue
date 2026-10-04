@@ -34,13 +34,9 @@
                 <el-icon class="feature-icon"><Key /></el-icon>
                 {{ $t('home.features.crc') }}
               </el-dropdown-item>
-              <el-dropdown-item command="/split" :class="{ 'is-active-tool': route.path === '/split' }">
-                <el-icon class="feature-icon"><Scissor /></el-icon>
-                {{ $t('home.features.split') }}
-              </el-dropdown-item>
-              <el-dropdown-item command="/merge" :class="{ 'is-active-tool': route.path === '/merge' }">
-                <el-icon class="feature-icon"><Connection /></el-icon>
-                {{ $t('home.features.merge') }}
+              <el-dropdown-item command="/parse" :class="{ 'is-active-tool': route.path === '/parse' }">
+                <el-icon class="feature-icon"><Search /></el-icon>
+                {{ $t('home.features.parse') }}
               </el-dropdown-item>
               <el-dropdown-item command="/spine-preview" :class="{ 'is-active-tool': route.path === '/spine-preview' }">
                 <el-icon class="feature-icon"><VideoPlay /></el-icon>
@@ -135,13 +131,9 @@
             <el-icon class="feature-icon"><Key /></el-icon>
             <span>{{ $t('home.features.crc') }}</span>
           </router-link>
-          <router-link to="/split" class="drawer-link" :class="{ active: route.path === '/split' }" @click="drawerVisible = false">
-            <el-icon class="feature-icon"><Scissor /></el-icon>
-            <span>{{ $t('home.features.split') }}</span>
-          </router-link>
-          <router-link to="/merge" class="drawer-link" :class="{ active: route.path === '/merge' }" @click="drawerVisible = false">
-            <el-icon class="feature-icon"><Connection /></el-icon>
-            <span>{{ $t('home.features.merge') }}</span>
+          <router-link to="/parse" class="drawer-link" :class="{ active: route.path === '/parse' }" @click="drawerVisible = false">
+            <el-icon class="feature-icon"><Search /></el-icon>
+            <span>{{ $t('home.features.parse') }}</span>
           </router-link>
           <router-link to="/spine-preview" class="drawer-link" :class="{ active: route.path === '/spine-preview' }" @click="drawerVisible = false">
             <el-icon class="feature-icon"><VideoPlay /></el-icon>
@@ -187,7 +179,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { HomeFilled, Tools, List, Odometer, Platform, Setting, ArrowDown, Refresh, Box, FolderOpened, Key, Scissor, Connection, VideoPlay, Menu } from '@element-plus/icons-vue'
+import { HomeFilled, Tools, List, Odometer, Platform, Setting, ArrowDown, Refresh, Box, FolderOpened, Key, Search, VideoPlay, Menu } from '@element-plus/icons-vue'
 import { setLocale, getLocale } from '@/i18n'
 import i18n from '@/i18n'
 
@@ -200,7 +192,7 @@ const drawerVisible = ref(false)
 const windowWidth = ref(window.innerWidth)
 const isMobile = computed(() => windowWidth.value < 768)
 
-const toolPaths = ['/update', '/pack', '/extract', '/crc', '/split', '/merge', '/spine-preview']
+const toolPaths = ['/update', '/pack', '/extract', '/crc', '/parse', '/spine-preview']
 const isToolActive = computed(() => toolPaths.includes(route.path))
 
 const availableLocales = [
