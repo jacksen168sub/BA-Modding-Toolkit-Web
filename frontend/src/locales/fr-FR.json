@@ -20,6 +20,7 @@
     "home": "Accueil",
     "tools": "Outils",
     "tasks": "Mes Tâches",
+    "status": "État",
     "settings": "Paramètres"
   },
   "home": {
@@ -316,6 +317,82 @@
     "resetSuccess": "Session réinitialisée",
     "version": "Version",
     "commit": "Commit"
+  },
+  "status": {
+    "uptime": "Durée de fonctionnement",
+    "serverTime": "Heure du serveur",
+    "autoRefresh": "Actualisation toutes les {seconds} s",
+    "loadFailed": "Échec du chargement de l'état du service",
+    "redactedNote": "Certaines informations sont masquées par la politique de déploiement : {sections}",
+    "units": {
+      "days": "j",
+      "hours": "h",
+      "minutes": "min",
+      "seconds": "s"
+    },
+    "kpi": {
+      "totalTasks": "Tâches traitées",
+      "totalTasksSub": "{count} sur les dernières 24 h",
+      "queueLength": "File d'attente actuelle",
+      "queueSub": "{pending} en attente · {processing} en cours",
+      "cpu": "Utilisation du CPU",
+      "memory": "Utilisation de la mémoire"
+    },
+    "tasks": {
+      "statusTitle": "Répartition par état",
+      "typeTitle": "Répartition par type",
+      "successRate": "Taux de réussite",
+      "avgDuration": "Durée moyenne",
+      "recentTitle": "Activité récente",
+      "lastHour": "Dernière heure",
+      "last24h": "Dernières 24 h",
+      "last7d": "7 derniers jours"
+    },
+    "system": {
+      "title": "Charge système",
+      "cpu": "CPU",
+      "memory": "Mémoire",
+      "disk": "Disque",
+      "cores": "{cores} cœurs",
+      "loadAvg": "Charge moy. {values}",
+      "memoryDetail": "{used} sur {total} utilisés",
+      "diskDetail": "{used} sur {total} utilisés"
+    },
+    "container": {
+      "docker": "Docker",
+      "podman": "Podman",
+      "kubernetes": "Kubernetes",
+      "generic": "Conteneur",
+      "cgroup": "cgroup v{version}",
+      "cpuLimit": "limite CPU {cores} cœurs",
+      "memoryLimit": "limite mémoire {size}",
+      "noLimits": "aucune limite de ressources",
+      "hostTotals": "hôte {cores} cœurs / {memory}"
+    },
+    "queue": {
+      "title": "Processus de travail",
+      "slots": "{used} sur {max} occupés"
+    },
+    "storage": {
+      "title": "Stockage et sessions",
+      "uploads": "Fichiers envoyés",
+      "outputs": "Fichiers de résultats",
+      "totalSize": "Taille totale",
+      "sessions": "Sessions",
+      "sessionsValue": "{active} actives sur {total}",
+      "process": "Processus backend",
+      "processValue": "PID {pid} · {rss}",
+      "bucket": "{count} fichiers · {size}"
+    },
+    "redacted": {
+      "system": "charge système",
+      "host": "configuration de l'hôte",
+      "process": "processus backend",
+      "paths": "chemins de stockage",
+      "version": "version",
+      "storage": "utilisation du stockage",
+      "sessions": "sessions"
+    }
   },
   "uploadRules": {
     "emptyName": "Le nom du fichier est vide",

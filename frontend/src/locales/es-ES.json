@@ -20,6 +20,7 @@
     "home": "Inicio",
     "tools": "Herramientas",
     "tasks": "Mis Tareas",
+    "status": "Estado",
     "settings": "Configuración"
   },
   "home": {
@@ -316,6 +317,82 @@
     "resetSuccess": "Sesión restablecida",
     "version": "Versión",
     "commit": "Commit"
+  },
+  "status": {
+    "uptime": "Tiempo activo",
+    "serverTime": "Hora del servidor",
+    "autoRefresh": "Se actualiza cada {seconds} s",
+    "loadFailed": "No se pudo cargar el estado del servicio",
+    "redactedNote": "Parte de la información está oculta por la política de despliegue: {sections}",
+    "units": {
+      "days": "d",
+      "hours": "h",
+      "minutes": "min",
+      "seconds": "s"
+    },
+    "kpi": {
+      "totalTasks": "Tareas procesadas",
+      "totalTasksSub": "{count} en las últimas 24 h",
+      "queueLength": "Cola actual",
+      "queueSub": "{pending} en espera · {processing} en ejecución",
+      "cpu": "Uso de CPU",
+      "memory": "Uso de memoria"
+    },
+    "tasks": {
+      "statusTitle": "Distribución por estado",
+      "typeTitle": "Distribución por tipo",
+      "successRate": "Tasa de éxito",
+      "avgDuration": "Duración media",
+      "recentTitle": "Actividad reciente",
+      "lastHour": "Última hora",
+      "last24h": "Últimas 24 h",
+      "last7d": "Últimos 7 días"
+    },
+    "system": {
+      "title": "Carga del sistema",
+      "cpu": "CPU",
+      "memory": "Memoria",
+      "disk": "Disco",
+      "cores": "{cores} núcleos",
+      "loadAvg": "Carga media {values}",
+      "memoryDetail": "{used} de {total} en uso",
+      "diskDetail": "{used} de {total} en uso"
+    },
+    "container": {
+      "docker": "Docker",
+      "podman": "Podman",
+      "kubernetes": "Kubernetes",
+      "generic": "Contenedor",
+      "cgroup": "cgroup v{version}",
+      "cpuLimit": "límite de CPU {cores} núcleos",
+      "memoryLimit": "límite de memoria {size}",
+      "noLimits": "sin límites de recursos",
+      "hostTotals": "host {cores} núcleos / {memory}"
+    },
+    "queue": {
+      "title": "Grupo de trabajadores",
+      "slots": "{used} de {max} ocupados"
+    },
+    "storage": {
+      "title": "Almacenamiento y sesiones",
+      "uploads": "Archivos subidos",
+      "outputs": "Archivos de resultados",
+      "totalSize": "Tamaño total",
+      "sessions": "Sesiones",
+      "sessionsValue": "{active} activas de {total}",
+      "process": "Proceso del backend",
+      "processValue": "PID {pid} · {rss}",
+      "bucket": "{count} archivos · {size}"
+    },
+    "redacted": {
+      "system": "carga del sistema",
+      "host": "configuración del host",
+      "process": "proceso del backend",
+      "paths": "rutas de almacenamiento",
+      "version": "versión",
+      "storage": "uso de almacenamiento",
+      "sessions": "sesiones"
+    }
   },
   "uploadRules": {
     "emptyName": "El nombre del archivo está vacío",

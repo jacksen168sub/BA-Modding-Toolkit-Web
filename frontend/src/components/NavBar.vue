@@ -53,6 +53,10 @@
           <el-icon><List /></el-icon>
           <span>{{ $t('nav.tasks') }}</span>
         </router-link>
+        <router-link to="/status" class="nav-link" :class="{ active: route.path === '/status' }">
+          <el-icon><Odometer /></el-icon>
+          <span>{{ $t('nav.status') }}</span>
+        </router-link>
       </div>
       <div class="navbar-actions">
         <el-dropdown trigger="hover" @command="handleLocaleSelect">
@@ -150,6 +154,10 @@
             <el-icon><List /></el-icon>
             <span>{{ $t('nav.tasks') }}</span>
           </router-link>
+          <router-link to="/status" class="drawer-link" :class="{ active: route.path === '/status' }" @click="drawerVisible = false">
+            <el-icon><Odometer /></el-icon>
+            <span>{{ $t('nav.status') }}</span>
+          </router-link>
           <router-link to="/settings" class="drawer-link" :class="{ active: route.path === '/settings' }" @click="drawerVisible = false">
             <el-icon><Setting /></el-icon>
             <span>{{ $t('nav.settings') }}</span>
@@ -179,7 +187,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { HomeFilled, Tools, List, Platform, Setting, ArrowDown, Refresh, Box, FolderOpened, Key, Scissor, Connection, VideoPlay, Menu } from '@element-plus/icons-vue'
+import { HomeFilled, Tools, List, Odometer, Platform, Setting, ArrowDown, Refresh, Box, FolderOpened, Key, Scissor, Connection, VideoPlay, Menu } from '@element-plus/icons-vue'
 import { setLocale, getLocale } from '@/i18n'
 import i18n from '@/i18n'
 

@@ -20,6 +20,7 @@
     "home": "الرئيسية",
     "tools": "الأدوات",
     "tasks": "مهامي",
+    "status": "حالة الخدمة",
     "settings": "الإعدادات"
   },
   "home": {
@@ -316,6 +317,82 @@
     "resetSuccess": "تم إعادة تعيين الجلسة",
     "version": "الإصدار",
     "commit": "Commit"
+  },
+  "status": {
+    "uptime": "مدة التشغيل",
+    "serverTime": "وقت الخادم",
+    "autoRefresh": "يتم التحديث كل {seconds} ثانية",
+    "loadFailed": "فشل تحميل حالة الخدمة",
+    "redactedNote": "بعض المعلومات مخفية وفقًا لسياسة النشر: {sections}",
+    "units": {
+      "days": "ي",
+      "hours": "س",
+      "minutes": "د",
+      "seconds": "ث"
+    },
+    "kpi": {
+      "totalTasks": "إجمالي المهام المعالجة",
+      "totalTasksSub": "{count} خلال آخر 24 ساعة",
+      "queueLength": "طول قائمة الانتظار الحالية",
+      "queueSub": "{pending} في الانتظار · {processing} قيد التنفيذ",
+      "cpu": "استخدام المعالج",
+      "memory": "استخدام الذاكرة"
+    },
+    "tasks": {
+      "statusTitle": "توزيع حالات المهام",
+      "typeTitle": "توزيع أنواع المهام",
+      "successRate": "نسبة النجاح",
+      "avgDuration": "متوسط المدة",
+      "recentTitle": "النشاط الأخير",
+      "lastHour": "آخر ساعة",
+      "last24h": "آخر 24 ساعة",
+      "last7d": "آخر 7 أيام"
+    },
+    "system": {
+      "title": "حمل النظام",
+      "cpu": "المعالج",
+      "memory": "الذاكرة",
+      "disk": "القرص",
+      "cores": "{cores} نواة",
+      "loadAvg": "متوسط الحمل {values}",
+      "memoryDetail": "{used} مستخدم من {total}",
+      "diskDetail": "{used} مستخدم من {total}"
+    },
+    "container": {
+      "docker": "Docker",
+      "podman": "Podman",
+      "kubernetes": "Kubernetes",
+      "generic": "حاوية",
+      "cgroup": "cgroup v{version}",
+      "cpuLimit": "حد المعالج {cores} نواة",
+      "memoryLimit": "حد الذاكرة {size}",
+      "noLimits": "لا توجد حدود للموارد",
+      "hostTotals": "المضيف {cores} نواة / {memory}"
+    },
+    "queue": {
+      "title": "مجموعة المعالجة",
+      "slots": "{used} من {max} مشغولة"
+    },
+    "storage": {
+      "title": "التخزين والجلسات",
+      "uploads": "الملفات المرفوعة",
+      "outputs": "ملفات النتائج",
+      "totalSize": "الحجم الإجمالي",
+      "sessions": "الجلسات",
+      "sessionsValue": "{active} نشطة من {total}",
+      "process": "عملية الخادم",
+      "processValue": "PID {pid} · {rss}",
+      "bucket": "{count} ملف · {size}"
+    },
+    "redacted": {
+      "system": "حمل النظام",
+      "host": "إعداد المضيف",
+      "process": "عملية الخادم",
+      "paths": "مسارات التخزين",
+      "version": "الإصدار",
+      "storage": "استخدام التخزين",
+      "sessions": "الجلسات"
+    }
   },
   "uploadRules": {
     "emptyName": "اسم الملف فارغ",

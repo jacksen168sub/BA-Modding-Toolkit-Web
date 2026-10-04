@@ -20,6 +20,7 @@
     "home": "होम",
     "tools": "उपकरण",
     "tasks": "मेरे कार्य",
+    "status": "स्थिति",
     "settings": "सेटिंग्स"
   },
   "home": {
@@ -316,6 +317,82 @@
     "resetSuccess": "सेशन रीसेट हो गया",
     "version": "संस्करण",
     "commit": "कमिट"
+  },
+  "status": {
+    "uptime": "चालू अवधि",
+    "serverTime": "सर्वर समय",
+    "autoRefresh": "हर {seconds} सेकंड में स्वतः रीफ़्रेश",
+    "loadFailed": "सेवा स्थिति लोड नहीं हो सकी",
+    "redactedNote": "कुछ जानकारी परिनियोजन नीति के अनुसार छिपाई गई है: {sections}",
+    "units": {
+      "days": "दि",
+      "hours": "घं",
+      "minutes": "मि",
+      "seconds": "से"
+    },
+    "kpi": {
+      "totalTasks": "कुल संसाधित कार्य",
+      "totalTasksSub": "पिछले 24 घंटे में {count}",
+      "queueLength": "वर्तमान कतार लंबाई",
+      "queueSub": "{pending} प्रतीक्षारत · {processing} चल रहे",
+      "cpu": "CPU उपयोग",
+      "memory": "मेमोरी उपयोग"
+    },
+    "tasks": {
+      "statusTitle": "कार्य स्थिति वितरण",
+      "typeTitle": "कार्य प्रकार वितरण",
+      "successRate": "सफलता दर",
+      "avgDuration": "औसत समय",
+      "recentTitle": "हाल की गतिविधि",
+      "lastHour": "पिछला 1 घंटा",
+      "last24h": "पिछले 24 घंटे",
+      "last7d": "पिछले 7 दिन"
+    },
+    "system": {
+      "title": "सिस्टम लोड",
+      "cpu": "CPU",
+      "memory": "मेमोरी",
+      "disk": "डिस्क",
+      "cores": "{cores} कोर",
+      "loadAvg": "लोड औसत {values}",
+      "memoryDetail": "{total} में से {used} प्रयुक्त",
+      "diskDetail": "{total} में से {used} प्रयुक्त"
+    },
+    "container": {
+      "docker": "Docker",
+      "podman": "Podman",
+      "kubernetes": "Kubernetes",
+      "generic": "कंटेनर",
+      "cgroup": "cgroup v{version}",
+      "cpuLimit": "CPU सीमा {cores} कोर",
+      "memoryLimit": "मेमोरी सीमा {size}",
+      "noLimits": "कोई संसाधन सीमा नहीं",
+      "hostTotals": "होस्ट {cores} कोर / {memory}"
+    },
+    "queue": {
+      "title": "वर्कर पूल",
+      "slots": "{max} में से {used} व्यस्त"
+    },
+    "storage": {
+      "title": "संग्रहण और सत्र",
+      "uploads": "अपलोड की गई फ़ाइलें",
+      "outputs": "परिणाम फ़ाइलें",
+      "totalSize": "कुल आकार",
+      "sessions": "सत्र",
+      "sessionsValue": "{total} में से {active} सक्रिय",
+      "process": "बैकएंड प्रक्रिया",
+      "processValue": "PID {pid} · {rss}",
+      "bucket": "{count} फ़ाइलें · {size}"
+    },
+    "redacted": {
+      "system": "सिस्टम लोड",
+      "host": "होस्ट कॉन्फ़िगरेशन",
+      "process": "बैकएंड प्रक्रिया",
+      "paths": "संग्रहण पथ",
+      "version": "संस्करण",
+      "storage": "संग्रहण उपयोग",
+      "sessions": "सत्र"
+    }
   },
   "uploadRules": {
     "emptyName": "फ़ाइल नाम खाली है",

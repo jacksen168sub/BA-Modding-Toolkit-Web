@@ -20,6 +20,7 @@
     "home": "首页",
     "tools": "工具",
     "tasks": "我的任务",
+    "status": "服务状态",
     "settings": "设置"
   },
   "home": {
@@ -316,6 +317,82 @@
     "resetSuccess": "会话已重置",
     "version": "版本",
     "commit": "提交"
+  },
+  "status": {
+    "uptime": "运行时长",
+    "serverTime": "服务器时间",
+    "autoRefresh": "每 {seconds} 秒自动刷新",
+    "loadFailed": "服务状态加载失败",
+    "redactedNote": "部分信息已按部署策略隐去：{sections}",
+    "units": {
+      "days": "天",
+      "hours": "时",
+      "minutes": "分",
+      "seconds": "秒"
+    },
+    "kpi": {
+      "totalTasks": "历史任务总数",
+      "totalTasksSub": "近 24 小时 {count}",
+      "queueLength": "当前队列长度",
+      "queueSub": "{pending} 个排队 · {processing} 个运行中",
+      "cpu": "CPU 使用率",
+      "memory": "内存使用率"
+    },
+    "tasks": {
+      "statusTitle": "任务状态分布",
+      "typeTitle": "任务类型分布",
+      "successRate": "成功率",
+      "avgDuration": "平均耗时",
+      "recentTitle": "近期任务",
+      "lastHour": "最近 1 小时",
+      "last24h": "最近 24 小时",
+      "last7d": "最近 7 天"
+    },
+    "system": {
+      "title": "系统负载",
+      "cpu": "CPU",
+      "memory": "内存",
+      "disk": "磁盘",
+      "cores": "{cores} 核",
+      "loadAvg": "负载 {values}",
+      "memoryDetail": "已用 {used} / 共 {total}",
+      "diskDetail": "已用 {used} / 共 {total}"
+    },
+    "container": {
+      "docker": "Docker",
+      "podman": "Podman",
+      "kubernetes": "Kubernetes",
+      "generic": "容器",
+      "cgroup": "cgroup v{version}",
+      "cpuLimit": "CPU 限额 {cores} 核",
+      "memoryLimit": "内存限额 {size}",
+      "noLimits": "无资源限制",
+      "hostTotals": "宿主 {cores} 核 / {memory}"
+    },
+    "queue": {
+      "title": "工作进程",
+      "slots": "{used} / {max} 占用"
+    },
+    "storage": {
+      "title": "存储与会话",
+      "uploads": "上传文件",
+      "outputs": "结果文件",
+      "totalSize": "总大小",
+      "sessions": "会话",
+      "sessionsValue": "活跃 {active} / 共 {total}",
+      "process": "后端进程",
+      "processValue": "PID {pid} · {rss}",
+      "bucket": "{count} 个 · {size}"
+    },
+    "redacted": {
+      "system": "系统负载",
+      "host": "宿主机配置",
+      "process": "后端进程",
+      "paths": "存储路径",
+      "version": "版本信息",
+      "storage": "存储用量",
+      "sessions": "会话"
+    }
   },
   "uploadRules": {
     "emptyName": "文件名为空",

@@ -15,6 +15,7 @@ A web service platform for [BA-Modding-Toolkit](https://github.com/Agent-0808/BA
 - **Asset Pack** - Pack resource files into game bundles
 - **Asset Extract** - Extract assets from game bundles
 - **CRC Tool** - Calculate and fix CRC checksums
+- **Service Status** - Task totals, queue depth and host/container load at `/status`
 
 ## Tech Stack
 
@@ -155,6 +156,38 @@ Backend configuration is located in `backend/app/config.py`, supports environmen
 | OUTPUT_DIR | Output directory | storage/outputs |
 | SESSION_EXPIRE_HOURS | Session expiration time | 24 |
 | CLI_COMPRESSION | Bundle compression method (lzma, lz4, original, none) | lzma |
+| STATUS_CONTAINER_AWARE | Report this container's cgroup limits rather than the host's totals | true |
+| STATUS_REDACT | Comma-separated sections to hide from `/api/status` | (empty) |
+
+### Hiding information on the status page
+
+`GET /api/status` and the `/status` page can be published without advertising
+your hardware. Set `STATUS_REDACT` to a comma-separated list of the sections to
+blank out:
+
+| Section | What it hides |
+|---------|---------------|
+| `system` | CPU, memory and disk utilisation figures |
+| `host` | Host core/memory totals, and container / cgroup details |
+| `process` | Backend PID, memory and thread count |
+| `paths` | Filesystem path of the storage volume |
+| `version` | Application version and commit hash |
+| `storage` | Uploaded / result file counts and sizes |
+| `sessions` | Session counts |
+
+`all` hides every section above. Task and queue counters are never redacted, so
+the page stays useful. Redacted fields are returned as `null` and listed in the
+response's `redacted` array; the page then shows a notice and `—` in place of
+each value.
+
+```bash
+# Example: publish the page but reveal nothing about the host or version
+STATUS_REDACT=host,process,paths,version
+```
+
+Inside a container, CPU and memory are reported against the container's own
+cgroup quota, so the figures match the resources you actually allocated.
+`STATUS_CONTAINER_AWARE=false` restores host-wide reporting.
 
 ## Supported Languages
 

@@ -15,6 +15,7 @@
 - **资源打包** - 将资源文件打包成游戏 Bundle
 - **资源解包** - 从游戏 Bundle 中提取资源
 - **CRC 校验** - 计算并修复文件 CRC 校验值
+- **服务状态** - 在 `/status` 查看任务总数、队列长度与主机/容器负载
 
 ## 技术栈
 
@@ -155,6 +156,35 @@ BA-Modding-Toolkit-Web/
 | OUTPUT_DIR | 输出文件目录 | storage/outputs |
 | SESSION_EXPIRE_HOURS | 会话过期时间 | 24 |
 | CLI_COMPRESSION | Bundle 压缩方式 (lzma, lz4, original, none) | lz4 |
+| STATUS_CONTAINER_AWARE | 读取本容器的 cgroup 限额，而非宿主机总量 | true |
+| STATUS_REDACT | 需要从 `/api/status` 中隐去的字段，逗号分隔 | （空） |
+
+### 隐去状态页上的信息
+
+`GET /api/status` 与 `/status` 页面可以对外公开，而不必暴露硬件配置。将
+`STATUS_REDACT` 设为需要隐去的字段列表即可：
+
+| 字段 | 隐去的内容 |
+|------|-----------|
+| `system` | CPU、内存、磁盘的使用率数值 |
+| `host` | 宿主机核心数/内存总量，以及容器 / cgroup 详情 |
+| `process` | 后端进程的 PID、内存与线程数 |
+| `paths` | 存储卷的文件系统路径 |
+| `version` | 应用版本号与提交哈希 |
+| `storage` | 上传 / 结果文件的数量与体积 |
+| `sessions` | 会话数量 |
+
+`all` 表示隐去以上全部。任务与队列计数不会被隐去，页面仍然可用。被隐去的
+字段以 `null` 返回，并列入响应的 `redacted` 数组；页面会显示提示，相应位置
+以 `—` 代替。
+
+```bash
+# 示例：页面照常公开，但不透露宿主机与版本信息
+STATUS_REDACT=host,process,paths,version
+```
+
+在容器中运行时，CPU 与内存按容器自身的 cgroup 限额统计，与实际分配的资源
+一致。设置 `STATUS_CONTAINER_AWARE=false` 可恢复为宿主机口径。
 
 ## 支持的语言
 
