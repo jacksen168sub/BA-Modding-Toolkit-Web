@@ -332,7 +332,7 @@ const statusSegments = computed(() => {
 
 const visibleSegments = computed(() => statusSegments.value.filter(seg => seg.count > 0))
 
-const typeOrder = ['update', 'pack', 'extract', 'crc', 'split', 'merge']
+const typeOrder = ['update', 'pack', 'extract', 'crc']
 
 const typeRows = computed(() => {
   const byType = tasks.value.by_type || {}

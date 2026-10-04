@@ -39,6 +39,9 @@ frontend/dist/
 data/*.db
 data/*.db-*
 
+# Operator-supplied page injection (deployment-specific)
+data/inject-*.html
+
 # Storage files (user uploads and outputs)
 storage/uploads/*
 storage/outputs/*

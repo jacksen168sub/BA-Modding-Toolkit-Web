@@ -133,7 +133,9 @@ class UpdateTaskCreate(BaseModel):
 class PackTaskCreate(BaseModel):
     session_uuid: str
     asset_folder_files: List[str] = []  # List of uploaded asset file IDs
-    target_bundle_file_id: str
+    # Single target (legacy) or multiple targets — one Spine animation may span two bundles.
+    target_bundle_file_id: Optional[str] = None
+    target_bundle_file_ids: List[str] = []
     crc_correction: bool = True
     compression: str = "lzma"     # Compression method: lzma, lz4, original, none
 
@@ -156,45 +158,15 @@ class ExtractTaskCreate(BaseModel):
 # CRC task specific schemas
 class CrcTaskCreate(BaseModel):
     session_uuid: str
-    modified_file_id: str   # Modified bundle file (to be fixed)
-    original_file_id: str   # Original bundle file (provides target CRC)
-    check_only: bool = False  # Only calculate and compare CRC, do not modify files
+    modified_file_id: str   # Modified bundle file (to be fixed or checked)
+    reference_file_id: Optional[str] = None  # Second file to compare against (check mode only)
+    target_crc: Optional[str] = None  # Target CRC as hex (fix mode); otherwise taken from the filename
+    check: bool = False  # Only calculate and compare CRC, do not modify files
 
 
-# Split task specific schemas
-class SplitTaskCreate(BaseModel):
-    """Split: distribute legacy bundle assets to multiple modern bundles (one-to-many)."""
-    session_uuid: str
-    legacy_file_id: str          # Legacy bundle file
-    modern_file_ids: List[str] = []  # Modern bundle file list
-    crc_correction: bool = True
-    asset_types: List[str] = ["Texture2D", "TextAsset", "Mesh"]
-    compression: str = "lzma"
-
-    @field_validator('compression')
-    @classmethod
-    def validate_compression(cls, v):
-        if v not in ('lzma', 'lz4', 'original', 'none'):
-            raise ValueError('compression must be one of: lzma, lz4, original, none')
-        return v
-
-
-# Merge task specific schemas
-class MergeTaskCreate(BaseModel):
-    """Merge: merge multiple modern bundle assets into a legacy bundle (many-to-one)."""
-    session_uuid: str
-    legacy_file_id: str          # Legacy bundle file (as base)
-    modern_file_ids: List[str] = []  # Modern bundle file list
-    crc_correction: bool = True
-    asset_types: List[str] = ["Texture2D", "TextAsset", "Mesh"]
-    compression: str = "lzma"
-
-    @field_validator('compression')
-    @classmethod
-    def validate_compression(cls, v):
-        if v not in ('lzma', 'lz4', 'original', 'none'):
-            raise ValueError('compression must be one of: lzma, lz4, original, none')
-        return v
+# Parse (bundle filename) specific schemas
+class ParseRequest(BaseModel):
+    filenames: List[str]
 
 
 # API Response schemas

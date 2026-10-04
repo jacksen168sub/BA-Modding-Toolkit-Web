@@ -208,6 +208,58 @@ Inside a container, CPU and memory are reported against the container's own
 cgroup quota, so the figures match the resources you actually allocated.
 `STATUS_CONTAINER_AWARE=false` restores host-wide reporting.
 
+## Custom page injection
+
+The Docker image keeps its frontend as a **pristine template** and renders it into the web
+root on every container start. That lets you add your own HTML to the page — extra styles, a
+notice banner, a feedback widget — **without rebuilding the image**, and keeps the published
+image free of anything deployment-specific.
+
+Content is inserted at one of two markers that Vite preserves in `index.html`:
+
+| Where | Env var | Mounted file (wins over the env var) |
+|-------|---------|--------------------------------------|
+| Just before `</head>` | `INJECT_HEAD_HTML` | `/app/data/inject-head.html` |
+| Just before `</body>` | `INJECT_BODY_HTML` | `/app/data/inject-body.html` |
+
+A file is preferred, since multi-line HTML is awkward to quote in a shell or compose file.
+Override the default paths with `INJECT_HEAD_FILE` / `INJECT_BODY_FILE`. Nothing configured
+means nothing is injected.
+
+```bash
+# Recommended: keep the fragment in a file next to your database
+cat > data/inject-head.html <<'EOF'
+<!-- your HTML here -->
+EOF
+
+docker run -d --name bamt-web -p 80:80 \
+  -v ./storage:/app/storage \
+  -v ./data:/app/data \
+  ghcr.io/jacksen168sub/ba-modding-toolkit-web:latest
+```
+
+The page is re-rendered from the template on every start, so changing the file (or the env
+var) and restarting the container takes effect; with nothing set, the page is plain.
+
+### Single-page apps
+
+This is a Vue single-page app: navigating between tools never reloads the document, so an
+injected fragment that reacts to document loads would only ever fire once. The app exposes a
+hook so injected content can follow in-app navigation:
+
+```js
+// `path` is safe to use; `fullPath` may carry a taskId query.
+window.__bamtRouteChange = ({ path, fullPath }) => { /* ... */ }
+```
+
+### A note on trust
+
+Injection is, by design, "output arbitrary HTML/JS into the page" — the same power you would
+have editing the file on disk. It is meant for the operator of a self-hosted instance, so
+keep these variables to yourself: do not expose them through the API, and do not let
+application users set them. Injection applies to the **Docker image** only; the local
+production mode (`start-prod.ps1`) serves the built files directly and does not inject.
+
 ## Supported Languages
 
 The interface supports multiple languages:

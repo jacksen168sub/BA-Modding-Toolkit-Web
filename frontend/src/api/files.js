@@ -60,3 +60,11 @@ export function listSessionFiles(sessionUuid) {
 export function getUploadRules() {
   return api.get('/files/upload-rules')
 }
+
+/**
+ * Parse one or more BA bundle filenames into their components.
+ * Returns { raw, results } — `raw` is the kernel CLI log, `results` the structured table.
+ */
+export function parseFilenames(filenames) {
+  return api.post('/files/parse', { filenames })
+}

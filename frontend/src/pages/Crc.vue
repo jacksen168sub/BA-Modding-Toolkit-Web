@@ -36,7 +36,7 @@
           </div>
         </el-form-item>
         
-        <el-form-item :label="$t('crc.originalFile')" required>
+        <el-form-item :label="$t('crc.originalFile')">
           <div class="upload-area">
             <el-upload
               ref="originalUploadRef"
@@ -60,8 +60,12 @@
           </div>
         </el-form-item>
 
+        <el-form-item :label="$t('crc.targetCrc')">
+          <el-input v-model="form.target_crc" :placeholder="$t('crc.targetCrcHint')" clearable />
+        </el-form-item>
+
         <el-form-item :label="$t('crc.checkOnly')">
-          <el-switch v-model="form.check_only" />
+          <el-switch v-model="form.check" />
         </el-form-item>
 
         <el-form-item>
@@ -110,7 +114,8 @@ const sessionUuid = computed(() => sessionStore.uuid)
 const uploadUrl = '/api/files/upload'
 
 const form = reactive({
-  check_only: false
+  check: false,
+  target_crc: ''
 })
 
 const allowedExtensions = ['.bundle']
@@ -159,19 +164,15 @@ async function submitTask() {
     return
   }
   
-  if (!originalFile.value) {
-    ElMessage.warning(t('crc.pleaseUploadOriginal'))
-    return
-  }
-  
   submitting.value = true
   
   try {
     const task = await createCrcTask({
       session_uuid: sessionStore.uuid,
       modified_file_id: modifiedFile.value.id,
-      original_file_id: originalFile.value.id,
-      check_only: form.check_only
+      reference_file_id: originalFile.value?.id || null,
+      target_crc: form.target_crc || null,
+      check: form.check
     })
     
     currentTask.value = task
@@ -207,7 +208,8 @@ function resetForm() {
   modifiedFileList.value = []
   originalFileList.value = []
   currentTask.value = null
-  form.check_only = false
+  form.check = false
+  form.target_crc = ''
 }
 
 function handleResize() {

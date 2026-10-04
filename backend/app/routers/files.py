@@ -4,11 +4,13 @@ from sqlalchemy.orm import Session
 from pathlib import Path
 
 from ..models.database import get_db
-from ..models.schemas import FileResponse as FileResponseSchema, MessageResponse
+from ..models.schemas import FileResponse as FileResponseSchema, MessageResponse, ParseRequest
 from ..models.file import FileType
 from ..services.file_service import FileService
 from ..services.session_service import SessionService
 from ..services.upload_rules import get_upload_rule_service, UploadRuleError
+from ..services.naming import display_name_from_core, parse_filename
+from ..services.cli_runner import cli_runner
 from ..config import settings
 
 router = APIRouter(prefix="/files", tags=["Files"])
@@ -23,6 +25,43 @@ def get_upload_rules():
     """
     service = get_upload_rule_service()
     return service.snapshot()
+
+
+@router.post("/parse")
+async def parse_filenames(request: ParseRequest):
+    """Parse one or more BA bundle filenames into their components.
+
+    Runs the kernel's `parse` command for the authoritative log (`raw`), and also returns
+    structured components parsed in-process (`results`) so the UI can render a table
+    without depending on the CLI's log formatting.
+    """
+    filenames = [name.strip() for name in request.filenames if name and name.strip()]
+    if not filenames:
+        raise HTTPException(status_code=400, detail="No filenames provided")
+
+    results = []
+    for name in filenames:
+        parsed = parse_filename(name)
+        results.append({
+            "filename": name,
+            "category": parsed.category,
+            "core": parsed.core,
+            "display_name": display_name_from_core(parsed.core) if parsed.core else None,
+            "res_type": parsed.res_type,
+            "date": parsed.date,
+            "crc": parsed.crc,
+            "prefix": parsed.prefix,
+        })
+
+    raw = ""
+    try:
+        raw, _ = await cli_runner.run_parse(filenames)
+    except Exception as e:
+        # The structured results do not depend on the kernel being installed; surface the
+        # CLI failure in `raw` rather than failing the whole request.
+        raw = f"(kernel parse unavailable: {e})"
+
+    return {"raw": raw, "results": results}
 
 
 @router.post("/upload", response_model=FileResponseSchema)

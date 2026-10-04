@@ -12,28 +12,20 @@ from datetime import datetime
 
 
 def extract_character_name(filename: str) -> str:
-    """Extract character name from bundle filename."""
+    """Extract a short character label from a BA bundle filename (e.g. "yuuka(home)").
+
+    Delegates to the vendored copy of the kernel's naming rules (app/services/naming.py).
+    Returns "unknown" for names that do not look like a bundle (no mx marker), matching the
+    previous behaviour so callers can still filter it out.
+    """
     if not filename:
         return "unknown"
-    
-    patterns = [
-        r'spinelobbies-([a-zA-Z0-9_-]+?)-_mxdependency',
-        r'spinecharacters-([a-zA-Z0-9_-]+?)-_mxprolog',
-        r'spinebackground-([a-zA-Z0-9_-]+?)-_mxdependency',
-        r'assets-_mx-spinecharacters-([a-zA-Z0-9_-]+?)-_mxdependency',
-    ]
-    
-    for pattern in patterns:
-        match = re.search(pattern, filename, re.IGNORECASE)
-        if match:
-            name = match.group(1)
-            # Format: xxx_yyy -> xxx(yyy)
-            idx = name.rfind('_')
-            if idx > 0:
-                return f"{name[:idx]}({name[idx+1:]})"
-            return name
-    
-    return "unknown"
+    if not re.search(r'mx(?:dependency|prolog|load)', filename, re.IGNORECASE):
+        return "unknown"
+    core = parse_filename(filename).core
+    if not core:
+        return "unknown"
+    return display_name_from_core(core)
 
 
 def _create_named_link(stored_path: Path, original_name: str, link_dir: Path) -> Path:
@@ -69,42 +61,12 @@ def _create_named_link(stored_path: Path, original_name: str, link_dir: Path) ->
 
 
 def _extract_character_from_filename(filename: str) -> str:
-    """Extract character identifier from a BA bundle filename.
-    
-    Parses the bundle filename using the same logic as the upstream naming module
-    to extract the character name (core field).
-    
-    Examples:
-        "assets-_mx-spinelobbies-yuuka_home-_mxdependency-2024-11-18_002_assets_all_793614109.bundle"
-        -> "yuuka_home"
-        
-        "assets-_mx-spinecharacters-ch0808_spr-_mxprolog-2024-11-18_textures_12345678.bundle"
-        -> "ch0808_spr"
-    
-    Falls back to the stem of the filename if parsing fails.
+    """Extract the character core from a BA bundle filename (e.g. "yuuka_home").
+
+    Delegates to the vendored copy of the kernel's naming rules (app/services/naming.py).
+    Falls back to the filename stem if no core can be parsed.
     """
-    import re
-    
-    # Remove extension
-    name = filename.rsplit('.', 1)[0]
-    
-    # Try to extract core part using the same logic as upstream naming.py
-    # Pattern: after "assets-_mx-{category}-" and before "-_mxdependency" or "-_mxprolog" or "-_mxload"
-    match = re.search(
-        r'assets-_mx-(?:spinelobbies|spinebackground|spinecharacters|characters)-(.+?)-(?:_mxdependency|_mxprolog|_mxload)',
-        name,
-        re.IGNORECASE
-    )
-    if match:
-        return match.group(1)
-    
-    # Fallback: try simpler pattern - just the part between category prefix and mx marker
-    match = re.search(r'-([a-zA-Z0-9_]+)-_mx', name)
-    if match:
-        return match.group(1)
-    
-    # Final fallback: use the stem
-    return name
+    return parse_filename(filename).core or filename.rsplit('.', 1)[0]
 
 
 from ..models.database import get_db
@@ -112,13 +74,13 @@ from ..models.task import TaskType, TaskStatus
 from ..models.schemas import (
     TaskResponse, TaskBrief, TaskCreate, QueueInfo,
     UpdateTaskCreate, PackTaskCreate, ExtractTaskCreate, CrcTaskCreate,
-    SplitTaskCreate, MergeTaskCreate,
     MessageResponse
 )
 from ..services.session_service import SessionService
 from ..services.task_service import TaskService
 from ..services.file_service import FileService
 from ..services.cli_runner import cli_runner
+from ..services.naming import display_name_from_core, parse_filename
 from ..config import settings
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
@@ -169,34 +131,15 @@ def get_task_response(task, db: Session) -> TaskResponse:
     )
 
 
-def _extract_bundle_sort_key(filename: str) -> str:
-    """Extract a sort key from a bundle filename for matching old mods to targets.
-    
-    Strips the trailing CRC number so bundles from different versions
-    (with different CRCs) can be matched by their identity.
-    
-    Example:
-        "assets-_mx-spinelobbies-yuuka_home-_mxdependency-2024-11-18_002_assets_all_793614109.bundle"
-        -> "assets-_mx-spinelobbies-yuuka_home-_mxdependency-2024-11-18_002_assets_all"
-    """
-    import re
-    name = filename.rsplit('.', 1)[0]  # Remove extension
-    # Remove trailing _DIGITS (CRC) — the last occurrence of _ followed by only digits
-    match = re.match(r'^(.+)_(\d+)$', name)
-    if match:
-        return match.group(1)
-    return name
-
-
 async def execute_update_task(task_id: str, session_uuid: str, options: dict):
-    """Execute update task in background with concurrency control.
-    
-    Supports both single and batch modes:
-    - Single: old_bundle_file_id + target_file_id
-    - Batch: old_bundle_file_ids + target_file_ids, auto-matched by character name
+    """Execute an update task in the background with concurrency control.
+
+    One pooled N-to-N run: every source file's assets are pooled by the kernel and applied
+    to every target. Accepts both the batch arrays (old_bundle_file_ids / target_file_ids)
+    and the legacy single ids (old_bundle_file_id / target_file_id).
     """
     from ..models.database import SessionLocal
-    
+
     # Wait for semaphore slot - this limits concurrent execution
     async with task_semaphore:
         db = SessionLocal()
@@ -204,218 +147,179 @@ async def execute_update_task(task_id: str, session_uuid: str, options: dict):
         try:
             task_service = TaskService(db)
             file_service = FileService(db)
-            
+
             task = task_service.get(task_id)
             if not task:
                 return
-            
+
             task_service.update_status(task_id, TaskStatus.PROCESSING)
-            
-            # Determine single vs batch mode
-            old_bundle_ids = options.get("old_bundle_file_ids", [])
-            target_ids = options.get("target_file_ids", [])
-            
-            if old_bundle_ids and target_ids:
-                # Batch mode
-                pairs = _match_update_pairs(old_bundle_ids, target_ids, file_service)
-                if not pairs:
-                    task_service.update_status(
-                        task_id, TaskStatus.FAILED,
-                        "No matching old mod / target pairs found. "
-                        "Ensure files share the same character name."
-                    )
-                    return
-            else:
-                # Single mode (backward compatible)
-                old_bundle_id = options.get("old_bundle_file_id")
-                target_id = options.get("target_file_id")
-                
-                old_bundle_file = file_service.get(old_bundle_id) if old_bundle_id else None
-                target_file = file_service.get(target_id) if target_id else None
-                
-                if not old_bundle_file:
-                    task_service.update_status(task_id, TaskStatus.FAILED, "Old mod file not found")
-                    return
-                if not target_file:
-                    task_service.update_status(
-                        task_id, TaskStatus.FAILED,
-                        "Target game file not found. Please upload the new game resource bundle."
-                    )
-                    return
-                
-                pairs = [(old_bundle_file, target_file)]
-            
-            # Create output directory
+
+            source_ids = options.get("old_bundle_file_ids") or (
+                [options["old_bundle_file_id"]] if options.get("old_bundle_file_id") else []
+            )
+            target_ids = options.get("target_file_ids") or (
+                [options["target_file_id"]] if options.get("target_file_id") else []
+            )
+            sources = [f for f in (file_service.get(fid) for fid in source_ids) if f]
+            targets = [f for f in (file_service.get(fid) for fid in target_ids) if f]
+
+            if not sources:
+                task_service.update_status(task_id, TaskStatus.FAILED, "Old mod file(s) not found")
+                return
+            if not targets:
+                task_service.update_status(
+                    task_id, TaskStatus.FAILED,
+                    "Target game file(s) not found. Please upload the new game resource bundle(s)."
+                )
+                return
+
+            # Each target becomes an output named after it, so duplicate names would collide.
+            target_names = [t.original_name for t in targets]
+            if len(set(target_names)) != len(target_names):
+                task_service.update_status(
+                    task_id, TaskStatus.FAILED,
+                    "Duplicate target filenames are not supported; upload each target bundle only once."
+                )
+                return
+
             output_dir = settings.output_path / session_uuid / task_id
             output_dir.mkdir(parents=True, exist_ok=True)
-            
-            all_logs = []
-            success_count = 0
-            
+
+            # Named links let the kernel read the target CRC from the output filename. Each
+            # target gets its own subdir so same-named links can never clobber each other.
+            link_root = output_dir / "_links"
+            target_links = [
+                _create_named_link(Path(t.stored_path), t.original_name, link_root / str(i))
+                for i, t in enumerate(targets)
+            ]
+
             try:
-                for idx, (old_bundle_file, target_file) in enumerate(pairs):
-                    # Create named links for CRC correction support
-                    link_dir = output_dir / f"_links_{idx}"
-                    target_link = _create_named_link(
-                        Path(target_file.stored_path), target_file.original_name, link_dir
+                output_paths, cli_log = await cli_runner.run_update(
+                    source_files=[Path(s.stored_path) for s in sources],
+                    target_files=target_links,
+                    output_dir=output_dir,
+                    crc_correction=options.get("crc_correction", True),
+                    asset_types=options.get("asset_types", ["Texture2D", "TextAsset", "Mesh"]),
+                    strategy=options.get("strategy", "path_id"),
+                    compression=options.get("compression", "lzma")
+                )
+
+                by_name = {t.original_name: t for t in targets}
+                for out_path in output_paths:
+                    target = by_name.get(out_path.name)
+                    file_service.create_output_file(
+                        session_uuid=session_uuid,
+                        file_path=out_path,
+                        original_name=target.original_name if target else out_path.name,
+                        task_id=task_id
                     )
-                    
-                    try:
-                        output_path, pair_log = await cli_runner.run_update(
-                            old_bundle=Path(old_bundle_file.stored_path),
-                            output_dir=output_dir,
-                            target_bundle=target_link,
-                            crc_correction=options.get("crc_correction", True),
-                            asset_types=options.get("asset_types", ["Texture2D", "TextAsset", "Mesh"]),
-                            strategy=options.get("strategy", "path_id"),
-                            compression=options.get("compression", "lzma")
-                        )
-                        
-                        # Create output file record
-                        file_service.create_output_file(
-                            session_uuid=session_uuid,
-                            file_path=output_path,
-                            original_name=target_file.original_name,
-                            task_id=task_id
-                        )
-                        
-                        all_logs.append(f"--- Pair {idx+1}: {old_bundle_file.original_name} -> {target_file.original_name} ---\n{pair_log}")
-                        success_count += 1
-                        
-                    except RuntimeError as e:
-                        err_log = ""
-                        if hasattr(e, 'args') and len(e.args) > 1:
-                            err_log = e.args[1] if isinstance(e.args[1], str) else str(e.args[1])
-                        all_logs.append(f"--- Pair {idx+1}: {old_bundle_file.original_name} -> {target_file.original_name} FAILED ---\n{err_log or str(e)}")
-                    finally:
-                        if link_dir.exists():
-                            shutil.rmtree(link_dir, ignore_errors=True)
-                
-                cli_log = "\n\n".join(all_logs)
-                
-                if success_count == 0:
-                    task_service.update_status(task_id, TaskStatus.FAILED, "All update pairs failed", cli_log=cli_log)
-                elif success_count < len(pairs):
+
+                if not output_paths:
                     task_service.update_status(
                         task_id, TaskStatus.COMPLETED,
-                        f"Partially completed: {success_count}/{len(pairs)} pairs succeeded",
+                        "All target files are already up to date; nothing to update.",
                         cli_log=cli_log
                     )
                 else:
                     task_service.update_status(task_id, TaskStatus.COMPLETED, cli_log=cli_log)
-                    
-            except Exception as e:
-                task_service.update_status(task_id, TaskStatus.FAILED, str(e), cli_log="\n\n".join(all_logs))
-                
+
+            except RuntimeError as e:
+                err_log = ""
+                if hasattr(e, 'args') and len(e.args) > 1:
+                    err_log = e.args[1] if isinstance(e.args[1], str) else str(e.args[1])
+                task_service.update_status(task_id, TaskStatus.FAILED, str(e.args[0]) if e.args else str(e), cli_log=err_log)
+            finally:
+                if link_root.exists():
+                    shutil.rmtree(link_root, ignore_errors=True)
+
         finally:
             db.close()
 
 
-def _match_update_pairs(old_bundle_ids: list, target_ids: list, file_service) -> list:
-    """Match old mod files to target files by character name for batch update.
-    
-    Matching strategy:
-    1. Group old mods and targets by character name (extracted from filename)
-    2. Within each character group, sort both lists by filename and match 1:1
-    3. Return list of (old_bundle_file, target_file) tuples
-    
-    Returns empty list if no matches found.
-    """
-    # Load files and group by character name
-    old_by_char = {}  # char_name -> [(sort_key, file_record)]
-    for fid in old_bundle_ids:
-        f = file_service.get(fid)
-        if f:
-            char = _extract_character_from_filename(f.original_name)
-            sort_key = _extract_bundle_sort_key(f.original_name)
-            old_by_char.setdefault(char, []).append((sort_key, f))
-    
-    target_by_char = {}
-    for fid in target_ids:
-        f = file_service.get(fid)
-        if f:
-            char = _extract_character_from_filename(f.original_name)
-            sort_key = _extract_bundle_sort_key(f.original_name)
-            target_by_char.setdefault(char, []).append((sort_key, f))
-    
-    pairs = []
-    for char_name in sorted(set(old_by_char.keys()) & set(target_by_char.keys())):
-        old_list = sorted(old_by_char[char_name], key=lambda x: x[0])
-        target_list = sorted(target_by_char[char_name], key=lambda x: x[0])
-        
-        # Match 1:1 by sorted position
-        for (_, old_file), (_, target_file) in zip(old_list, target_list):
-            pairs.append((old_file, target_file))
-    
-    return pairs
-
-
 async def execute_pack_task(task_id: str, session_uuid: str, options: dict):
-    """Execute pack task in background with concurrency control."""
+    """Execute a pack task in the background with concurrency control.
+
+    The same asset folder is packed into every target bundle — one Spine animation may be
+    split across two bundles. Accepts both the batch list (target_bundle_file_ids) and the
+    legacy single id (target_bundle_file_id).
+    """
     from ..models.database import SessionLocal
-    
+
     async with task_semaphore:
         db = SessionLocal()
         cli_log = ""
         try:
             task_service = TaskService(db)
             file_service = FileService(db)
-            
+
             task = task_service.get(task_id)
             if not task:
                 return
-            
+
             task_service.update_status(task_id, TaskStatus.PROCESSING)
-            
-            # Get target bundle file
-            target_bundle_id = options.get("target_bundle_file_id")
-            target_file = file_service.get(target_bundle_id)
-            
-            if not target_file:
-                task_service.update_status(task_id, TaskStatus.FAILED, "Target bundle not found")
+
+            target_ids = options.get("target_bundle_file_ids") or (
+                [options["target_bundle_file_id"]] if options.get("target_bundle_file_id") else []
+            )
+            targets = [f for f in (file_service.get(fid) for fid in target_ids) if f]
+
+            if not targets:
+                task_service.update_status(task_id, TaskStatus.FAILED, "Target bundle(s) not found")
                 return
-            
+
+            # Each target becomes an output named after it, so duplicate names would collide.
+            target_names = [t.original_name for t in targets]
+            if len(set(target_names)) != len(target_names):
+                task_service.update_status(
+                    task_id, TaskStatus.FAILED,
+                    "Duplicate target filenames are not supported; upload each target bundle only once."
+                )
+                return
+
             # Create asset folder from uploaded files
             asset_folder = settings.temp_path / session_uuid / task_id / "assets"
             asset_folder.mkdir(parents=True, exist_ok=True)
-            
+
             # Copy uploaded asset files to temp folder
             asset_file_ids = options.get("asset_folder_files", [])
             for file_id in asset_file_ids:
                 asset_file = file_service.get(file_id)
                 if asset_file:
-                    import shutil
                     shutil.copy(asset_file.stored_path, asset_folder / asset_file.original_name)
-            
+
             # Create output directory
             output_dir = settings.output_path / session_uuid / task_id
             output_dir.mkdir(parents=True, exist_ok=True)
-            
-            # Create named link for CRC correction support
-            link_dir = output_dir / "_links"
-            target_link = _create_named_link(
-                Path(target_file.stored_path), target_file.original_name, link_dir
-            )
-            
+
+            # Named links let the kernel read the target CRC from the output filename. Each
+            # target gets its own subdir so same-named links can never clobber each other.
+            link_root = output_dir / "_links"
+            target_links = [
+                _create_named_link(Path(t.stored_path), t.original_name, link_root / str(i))
+                for i, t in enumerate(targets)
+            ]
+
             try:
-                output_path, cli_log = await cli_runner.run_pack(
+                output_paths, cli_log = await cli_runner.run_pack(
                     asset_folder=asset_folder,
-                    target_bundle=target_link,
+                    target_bundles=target_links,
                     output_dir=output_dir,
                     crc_correction=options.get("crc_correction", True),
                     compression=options.get("compression", "lzma")
                 )
-                
-                # Use target bundle's original name for output
-                output_file = file_service.create_output_file(
-                    session_uuid=session_uuid,
-                    file_path=output_path,
-                    original_name=target_file.original_name,
-                    task_id=task_id
-                )
-                
+
+                by_name = {t.original_name: t for t in targets}
+                for out_path in output_paths:
+                    target = by_name.get(out_path.name)
+                    file_service.create_output_file(
+                        session_uuid=session_uuid,
+                        file_path=out_path,
+                        original_name=target.original_name if target else out_path.name,
+                        task_id=task_id
+                    )
+
                 task_service.update_status(task_id, TaskStatus.COMPLETED, cli_log=cli_log)
-                
+
             except RuntimeError as e:
                 if hasattr(e, 'args') and len(e.args) > 1:
                     cli_log = e.args[1] if isinstance(e.args[1], str) else str(e.args[1])
@@ -423,13 +327,11 @@ async def execute_pack_task(task_id: str, session_uuid: str, options: dict):
             except Exception as e:
                 task_service.update_status(task_id, TaskStatus.FAILED, str(e), cli_log=cli_log)
             finally:
-                # Cleanup named links
-                if link_dir.exists():
-                    shutil.rmtree(link_dir, ignore_errors=True)
-                
+                if link_root.exists():
+                    shutil.rmtree(link_root, ignore_errors=True)
+
         finally:
             db.close()
-
 
 async def execute_extract_task(task_id: str, session_uuid: str, options: dict):
     """Execute extract task in background with concurrency control.
@@ -597,68 +499,79 @@ async def execute_extract_task(task_id: str, session_uuid: str, options: dict):
 
 
 async def execute_crc_task(task_id: str, session_uuid: str, options: dict):
-    """Execute CRC task in background with concurrency control."""
+    """Execute a CRC task in the background with concurrency control.
+
+    Fix mode copies the uploaded file and fixes the copy's CRC in place, leaving the stored
+    upload untouched. Check mode compares against a reference file if given (else against
+    the CRC in the filename) and modifies nothing.
+    """
     from ..models.database import SessionLocal
-    
+
     async with task_semaphore:
         db = SessionLocal()
         cli_log = ""
         try:
             task_service = TaskService(db)
             file_service = FileService(db)
-            
+
             task = task_service.get(task_id)
             if not task:
                 return
-            
+
             task_service.update_status(task_id, TaskStatus.PROCESSING)
-            
+
             modified_id = options.get("modified_file_id")
-            original_id = options.get("original_file_id")
-            
+            reference_id = options.get("reference_file_id")
+            target_crc = options.get("target_crc")
+            check = options.get("check", False)
+
             modified_file = file_service.get(modified_id)
-            original_file = file_service.get(original_id)
-            
             if not modified_file:
                 task_service.update_status(task_id, TaskStatus.FAILED, "Modified bundle file not found")
                 return
-            
-            if not original_file:
-                task_service.update_status(task_id, TaskStatus.FAILED, "Original bundle file not found")
-                return
-            
-            # Create named links for CRC correction support
-            # The CLI crc command extracts target CRC from the modified file's name
+
+            reference_file = file_service.get(reference_id) if reference_id else None
+
             output_dir = settings.output_path / session_uuid / task_id
+            output_dir.mkdir(parents=True, exist_ok=True)
             link_dir = output_dir / "_links"
-            modified_link = _create_named_link(
-                Path(modified_file.stored_path), modified_file.original_name, link_dir
-            )
-            
-            try:
-                check_only = options.get("check_only", False)
-                output_path, cli_log = await cli_runner.run_crc(
-                    modified_path=modified_link,
-                    original_path=Path(original_file.stored_path),
-                    no_backup=True,
-                    check_only=check_only
+            link_dir.mkdir(parents=True, exist_ok=True)
+
+            # The kernel reads the target CRC from the file's name, so work on a file named
+            # with the original filename. Fix mode rewrites in place, so use a real copy to
+            # avoid mutating the stored upload; check mode never writes, so a link is fine.
+            if check:
+                modified_path = _create_named_link(
+                    Path(modified_file.stored_path), modified_file.original_name, link_dir
                 )
-                
-                if check_only:
-                    # check_only mode does not modify files, just report CRC comparison
+            else:
+                modified_path = link_dir / modified_file.original_name
+                shutil.copy2(str(modified_file.stored_path), str(modified_path))
+
+            try:
+                output_path, cli_log = await cli_runner.run_crc(
+                    modified_path=modified_path,
+                    reference_path=Path(reference_file.stored_path) if reference_file else None,
+                    target_crc=target_crc,
+                    check=check,
+                    no_backup=True
+                )
+
+                if check:
+                    # Check mode modifies nothing, it just reports the comparison.
                     task_service.update_status(task_id, TaskStatus.COMPLETED, cli_log=cli_log)
                     return
-                
-                # Create output file record for the modified bundle
-                output_file = file_service.create_output_file(
+
+                # Register the fixed copy as the task's output.
+                file_service.create_output_file(
                     session_uuid=session_uuid,
                     file_path=output_path,
                     original_name=modified_file.original_name,
                     task_id=task_id
                 )
-                
+
                 task_service.update_status(task_id, TaskStatus.COMPLETED, cli_log=cli_log)
-                
+
             except RuntimeError as e:
                 if hasattr(e, 'args') and len(e.args) > 1:
                     cli_log = e.args[1] if isinstance(e.args[1], str) else str(e.args[1])
@@ -666,182 +579,10 @@ async def execute_crc_task(task_id: str, session_uuid: str, options: dict):
             except Exception as e:
                 task_service.update_status(task_id, TaskStatus.FAILED, str(e), cli_log=cli_log)
             finally:
-                # Cleanup named links
+                # Cleanup working copies/links
                 if link_dir.exists():
                     shutil.rmtree(link_dir, ignore_errors=True)
-                
-        finally:
-            db.close()
 
-
-async def execute_split_task(task_id: str, session_uuid: str, options: dict):
-    """Execute split task in background: legacy bundle -> multiple modern bundles (one-to-many)."""
-    from ..models.database import SessionLocal
-    
-    async with task_semaphore:
-        db = SessionLocal()
-        cli_log = ""
-        try:
-            task_service = TaskService(db)
-            file_service = FileService(db)
-            
-            task = task_service.get(task_id)
-            if not task:
-                return
-            
-            task_service.update_status(task_id, TaskStatus.PROCESSING)
-            
-            # Get legacy bundle file
-            legacy_file_id = options.get("legacy_file_id")
-            legacy_file = file_service.get(legacy_file_id)
-            if not legacy_file:
-                task_service.update_status(task_id, TaskStatus.FAILED, "Legacy bundle file not found")
-                return
-            
-            # Get modern bundle file list
-            modern_file_ids = options.get("modern_file_ids", [])
-            modern_paths = []
-            modern_files = []
-            for fid in modern_file_ids:
-                f = file_service.get(fid)
-                if f:
-                    modern_files.append(f)
-            
-            if not modern_files:
-                task_service.update_status(task_id, TaskStatus.FAILED, "No modern bundle files provided")
-                return
-            
-            output_dir = settings.output_path / session_uuid / task_id
-            output_dir.mkdir(parents=True, exist_ok=True)
-            
-            # Create named links for CRC correction support
-            link_dir = output_dir / "_links"
-            legacy_link = _create_named_link(
-                Path(legacy_file.stored_path), legacy_file.original_name, link_dir
-            )
-            modern_links = []
-            for f in modern_files:
-                modern_links.append(_create_named_link(
-                    Path(f.stored_path), f.original_name, link_dir
-                ))
-            
-            try:
-                output_files, cli_log = await cli_runner.run_split(
-                    legacy_bundle=legacy_link,
-                    modern_bundles=modern_links,
-                    output_dir=output_dir,
-                    crc_correction=options.get("crc_correction", True),
-                    asset_types=options.get("asset_types", ["Texture2D", "TextAsset", "Mesh"]),
-                    compression=options.get("compression", "lzma")
-                )
-                
-                # Create output file record for each output
-                for output_path in output_files:
-                    file_service.create_output_file(
-                        session_uuid=session_uuid,
-                        file_path=output_path,
-                        original_name=output_path.name,
-                        task_id=task_id
-                    )
-                
-                task_service.update_status(task_id, TaskStatus.COMPLETED, cli_log=cli_log)
-                
-            except RuntimeError as e:
-                if hasattr(e, 'args') and len(e.args) > 1:
-                    cli_log = e.args[1] if isinstance(e.args[1], str) else str(e.args[1])
-                task_service.update_status(task_id, TaskStatus.FAILED, str(e.args[0]) if e.args else str(e), cli_log=cli_log)
-            except Exception as e:
-                task_service.update_status(task_id, TaskStatus.FAILED, str(e), cli_log=cli_log)
-            finally:
-                # Cleanup named links
-                if link_dir.exists():
-                    shutil.rmtree(link_dir, ignore_errors=True)
-                
-        finally:
-            db.close()
-
-
-async def execute_merge_task(task_id: str, session_uuid: str, options: dict):
-    """Execute merge task in background: multiple modern bundles -> legacy bundle (many-to-one)."""
-    from ..models.database import SessionLocal
-    
-    async with task_semaphore:
-        db = SessionLocal()
-        cli_log = ""
-        try:
-            task_service = TaskService(db)
-            file_service = FileService(db)
-            
-            task = task_service.get(task_id)
-            if not task:
-                return
-            
-            task_service.update_status(task_id, TaskStatus.PROCESSING)
-            
-            # Get legacy bundle file
-            legacy_file_id = options.get("legacy_file_id")
-            legacy_file = file_service.get(legacy_file_id)
-            if not legacy_file:
-                task_service.update_status(task_id, TaskStatus.FAILED, "Legacy bundle file not found")
-                return
-            
-            # Get modern bundle file list
-            modern_file_ids = options.get("modern_file_ids", [])
-            modern_paths = []
-            modern_files = []
-            for fid in modern_file_ids:
-                f = file_service.get(fid)
-                if f:
-                    modern_files.append(f)
-            
-            if not modern_files:
-                task_service.update_status(task_id, TaskStatus.FAILED, "No modern bundle files provided")
-                return
-            
-            output_dir = settings.output_path / session_uuid / task_id
-            output_dir.mkdir(parents=True, exist_ok=True)
-            
-            # Create named links for CRC correction support
-            link_dir = output_dir / "_links"
-            legacy_link = _create_named_link(
-                Path(legacy_file.stored_path), legacy_file.original_name, link_dir
-            )
-            modern_links = []
-            for f in modern_files:
-                modern_links.append(_create_named_link(
-                    Path(f.stored_path), f.original_name, link_dir
-                ))
-            
-            try:
-                output_path, cli_log = await cli_runner.run_merge(
-                    legacy_bundle=legacy_link,
-                    modern_bundles=modern_links,
-                    output_dir=output_dir,
-                    crc_correction=options.get("crc_correction", True),
-                    asset_types=options.get("asset_types", ["Texture2D", "TextAsset", "Mesh"]),
-                    compression=options.get("compression", "lzma")
-                )
-                
-                file_service.create_output_file(
-                    session_uuid=session_uuid,
-                    file_path=output_path,
-                    original_name=legacy_file.original_name,
-                    task_id=task_id
-                )
-                
-                task_service.update_status(task_id, TaskStatus.COMPLETED, cli_log=cli_log)
-                
-            except RuntimeError as e:
-                if hasattr(e, 'args') and len(e.args) > 1:
-                    cli_log = e.args[1] if isinstance(e.args[1], str) else str(e.args[1])
-                task_service.update_status(task_id, TaskStatus.FAILED, str(e.args[0]) if e.args else str(e), cli_log=cli_log)
-            except Exception as e:
-                task_service.update_status(task_id, TaskStatus.FAILED, str(e), cli_log=cli_log)
-            finally:
-                # Cleanup named links
-                if link_dir.exists():
-                    shutil.rmtree(link_dir, ignore_errors=True)
-                
         finally:
             db.close()
 
@@ -852,7 +593,7 @@ def create_update_task(
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
 ):
-    """Create a mod update task. Supports both single and batch modes."""
+    """Create a mod update task. One pooled N-to-N run: every old mod's assets are applied to every target."""
     session_service = SessionService(db)
     session = session_service.get(request.session_uuid)
     if not session:
@@ -916,8 +657,23 @@ def create_pack_task(
     
     # Get file info to extract character name
     file_service = FileService(db)
-    target_file = file_service.get(request.target_bundle_file_id)
-    name = extract_character_name(target_file.original_name) if target_file else "unknown"
+    target_ids = request.target_bundle_file_ids or (
+        [request.target_bundle_file_id] if request.target_bundle_file_id else []
+    )
+    char_names = set()
+    for fid in target_ids:
+        f = file_service.get(fid)
+        if f:
+            cn = extract_character_name(f.original_name)
+            if cn != "unknown":
+                char_names.add(cn)
+    if not char_names:
+        name = f"{len(target_ids)} items" if target_ids else "unknown"
+    elif len(char_names) == 1:
+        name = char_names.pop()
+    else:
+        first = sorted(char_names)[0]
+        name = f"{first}/... ({len(char_names)})"
     
     task_service = TaskService(db)
     task = task_service.create(
@@ -995,7 +751,7 @@ def create_crc_task(
 ):
     """Create a CRC correction task.
     
-    Requires both modified and original bundle files to perform CRC correction.
+    Fix mode repairs the CRC in place; check mode compares against an optional reference file.
     """
     session_service = SessionService(db)
     session = session_service.get(request.session_uuid)
@@ -1017,74 +773,6 @@ def create_crc_task(
     
     background_tasks.add_task(
         execute_crc_task,
-        task.id,
-        request.session_uuid,
-        request.model_dump()
-    )
-    
-    return get_task_response(task, db)
-
-
-@router.post("/split", response_model=TaskResponse)
-def create_split_task(
-    request: SplitTaskCreate,
-    background_tasks: BackgroundTasks,
-    db: Session = Depends(get_db)
-):
-    """Create a split task: distribute legacy bundle assets to multiple modern bundles (one-to-many)."""
-    session_service = SessionService(db)
-    session = session_service.get(request.session_uuid)
-    if not session:
-        raise HTTPException(status_code=404, detail="Session not found")
-    
-    file_service = FileService(db)
-    legacy_file = file_service.get(request.legacy_file_id)
-    name = extract_character_name(legacy_file.original_name) if legacy_file else "unknown"
-    
-    task_service = TaskService(db)
-    task = task_service.create(
-        session_uuid=request.session_uuid,
-        task_type=TaskType.SPLIT,
-        options=request.model_dump(),
-        name=name
-    )
-    
-    background_tasks.add_task(
-        execute_split_task,
-        task.id,
-        request.session_uuid,
-        request.model_dump()
-    )
-    
-    return get_task_response(task, db)
-
-
-@router.post("/merge", response_model=TaskResponse)
-def create_merge_task(
-    request: MergeTaskCreate,
-    background_tasks: BackgroundTasks,
-    db: Session = Depends(get_db)
-):
-    """Create a merge task: merge multiple modern bundle assets into a legacy bundle (many-to-one)."""
-    session_service = SessionService(db)
-    session = session_service.get(request.session_uuid)
-    if not session:
-        raise HTTPException(status_code=404, detail="Session not found")
-    
-    file_service = FileService(db)
-    legacy_file = file_service.get(request.legacy_file_id)
-    name = extract_character_name(legacy_file.original_name) if legacy_file else "unknown"
-    
-    task_service = TaskService(db)
-    task = task_service.create(
-        session_uuid=request.session_uuid,
-        task_type=TaskType.MERGE,
-        options=request.model_dump(),
-        name=name
-    )
-    
-    background_tasks.add_task(
-        execute_merge_task,
         task.id,
         request.session_uuid,
         request.model_dump()

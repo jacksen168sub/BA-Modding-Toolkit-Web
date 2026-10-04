@@ -205,6 +205,54 @@ STATUS_REDACT=all
 在容器中运行时，CPU 与内存按容器自身的 cgroup 限额统计，与实际分配的资源
 一致。设置 `STATUS_CONTAINER_AWARE=false` 可恢复为宿主机口径。
 
+## 自定义页面注入
+
+Docker 镜像把前端保留为一份**原始模板**，并在每次容器启动时渲染到 Web 根目录。这样
+你可以往页面里加入自己的 HTML——额外样式、公告横幅、反馈按钮——而**无需重新构建镜像**，
+也让公开的镜像本身不含任何与部署环境相关的内容。
+
+内容会插入到 Vite 在 `index.html` 中保留的两个标记处：
+
+| 位置 | 环境变量 | 挂载文件（优先于环境变量） |
+|------|----------|----------------------------|
+| `</head>` 之前 | `INJECT_HEAD_HTML` | `/app/data/inject-head.html` |
+| `</body>` 之前 | `INJECT_BODY_HTML` | `/app/data/inject-body.html` |
+
+推荐用文件，因为多行 HTML 在 shell 或 compose 文件里转义很麻烦。可用
+`INJECT_HEAD_FILE` / `INJECT_BODY_FILE` 覆盖默认路径。两者都不配置则不做任何注入。
+
+```bash
+# 推荐：把片段放进与数据库同级的文件
+cat > data/inject-head.html <<'EOF'
+<!-- 你的 HTML -->
+EOF
+
+docker run -d --name bamt-web -p 80:80 \
+  -v ./storage:/app/storage \
+  -v ./data:/app/data \
+  ghcr.io/jacksen168sub/ba-modding-toolkit-web:latest
+```
+
+每次启动都会从模板重新渲染，因此修改文件（或环境变量）后重启容器即可生效；不配置时
+页面保持原样。
+
+### 单页应用（SPA）
+
+这是一个 Vue 单页应用：在各工具页之间跳转不会重新加载文档，因此只对文档加载做出反应的
+片段只会触发一次。应用暴露了一个钩子，供注入的内容跟随页内跳转：
+
+```js
+// path 可安全使用；fullPath 可能带有 taskId 查询参数。
+window.__bamtRouteChange = ({ path, fullPath }) => { /* ... */ }
+```
+
+### 关于信任边界
+
+注入在本质上就是"向页面输出任意 HTML/JS"——与直接改文件同等的权限。它是给自托管实例的
+操作者自己用的，所以请务必自己保管这些变量：不要通过 API 暴露它们，也不要让应用用户能
+设置它们。注入**仅对 Docker 镜像生效**；本地生产模式（`start-prod.ps1`）直接托管构建
+产物，不会注入。
+
 ## 支持的语言
 
 界面支持多种语言：
