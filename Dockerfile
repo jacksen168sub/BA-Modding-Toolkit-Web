@@ -1,5 +1,5 @@
 # Build stage for frontend (only runs on amd64)
-FROM --platform=$BUILDPLATFORM node:20-alpine AS frontend-build
+FROM --platform=$BUILDPLATFORM node:24-alpine AS frontend-build
 
 WORKDIR /app/frontend
 
@@ -44,6 +44,9 @@ ARG GIT_COMMIT=""
 WORKDIR /app
 
 # Install nginx and supervisor in a single layer, remove build tools afterwards
+# nginx is pinned to the current stable release so builds are reproducible and
+# CVE fixes land as explicit bumps; 1.30.6 resolves all advisories published
+# through 2026-10 (https://nginx.org/en/security_advisories.html).
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     gnupg \
@@ -52,7 +55,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && curl -fsSL https://nginx.org/keys/nginx_signing.key | gpg --dearmor -o /usr/share/keyrings/nginx-archive-keyring.gpg \
     && echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/debian `cat /etc/os-release | grep -oP '(?<=VERSION_CODENAME=).*'` nginx" > /etc/apt/sources.list.d/nginx.list \
     && apt-get update \
-    && apt-get install -y --no-install-recommends nginx \
+    && apt-get install -y --no-install-recommends "nginx=1.30.6-*" \
     && apt-get remove -y curl gnupg \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
