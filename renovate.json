@@ -1,0 +1,50 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "automerge": false,
+  "platformAutomerge": false,
+  "schedule": ["before 4am on monday"],
+  "prConcurrentLimit": 2,
+  "labels": ["dependencies", "nginx"],
+  "ignorePaths": [
+    "backend/**",
+    "frontend/**",
+    "docs/**",
+    "upstream/**",
+    ".github/**",
+    "docker-compose.yml",
+    "docker-compose.*.yml"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "nginx version pinned in the Dockerfile (official nginx.org apt repo)",
+      "managerFilePatterns": ["/^Dockerfile$/"],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\s+ENV NGINX_VERSION=(?<currentValue>[0-9.]+)"
+      ],
+      "registryUrlTemplate": "http://nginx.org/packages/debian?suite=bookworm&components=nginx&binaryArch=amd64"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Base image tags (python/node/nginx/uv) are Dependabot's job - see .github/dependabot.yml",
+      "matchDatasources": ["docker"],
+      "enabled": false
+    },
+    {
+      "description": "nginx pinned in the Dockerfile, from the official nginx.org apt repo (amd64 + arm64 must both have it)",
+      "matchDatasources": ["deb"],
+      "matchPackageNames": ["nginx"],
+      "registryUrls": [
+        "http://nginx.org/packages/debian?suite=bookworm&components=nginx&binaryArch=amd64",
+        "http://nginx.org/packages/debian?suite=bookworm&components=nginx&binaryArch=arm64"
+      ],
+      "allowedVersions": "/^1\\.30\\./",
+      "extractVersion": "^(?<version>\\d+\\.\\d+\\.\\d+)",
+      "rangeStrategy": "replace",
+      "semanticCommitType": "chore",
+      "semanticCommitScope": "deps"
+    }
+  ]
+}

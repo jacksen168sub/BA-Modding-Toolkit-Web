@@ -10,7 +10,7 @@ COPY frontend/ ./
 RUN npm run build
 
 # Build stage for backend dependencies
-FROM python:3.12-slim AS backend-builder
+FROM python:3.12-slim-bookworm AS backend-builder
 
 WORKDIR /app
 
@@ -22,7 +22,7 @@ COPY backend/pyproject.toml backend/uv.lock backend/.python-version ./
 RUN uv sync --no-dev
 
 # Build stage for upstream (needs source code for setuptools build)
-FROM python:3.12-slim AS upstream-builder
+FROM python:3.12-slim-bookworm AS upstream-builder
 
 WORKDIR /app/upstream/BA-Modding-Toolkit
 
@@ -34,8 +34,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends gcc g++ git ca-
 COPY upstream/BA-Modding-Toolkit/ .
 RUN uv sync --no-dev
 
+# CI only: prove a candidate nginx version installs on the real base image.
+# This stage must stay BEFORE the production stage - the last stage is what a
+# plain `docker build .` produces.
+FROM python:3.12-slim-bookworm AS nginx-probe
+ARG NGINX_VERSION
+COPY scripts/nginx-apt-install.sh /tmp/
+RUN /tmp/nginx-apt-install.sh "${NGINX_VERSION}"
+
 # Production stage
-FROM python:3.12-slim
+FROM python:3.12-slim-bookworm
 
 # Build arguments for version info
 ARG GIT_TAG=""
@@ -43,22 +51,17 @@ ARG GIT_COMMIT=""
 
 WORKDIR /app
 
-# Install nginx and supervisor in a single layer, remove build tools afterwards
-# nginx is pinned to the current stable release so builds are reproducible and
-# CVE fixes land as explicit bumps; 1.30.6 resolves all advisories published
-# through 2026-10 (https://nginx.org/en/security_advisories.html).
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    gnupg \
-    ca-certificates \
-    supervisor \
-    && curl -fsSL https://nginx.org/keys/nginx_signing.key | gpg --dearmor -o /usr/share/keyrings/nginx-archive-keyring.gpg \
-    && echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/debian `cat /etc/os-release | grep -oP '(?<=VERSION_CODENAME=).*'` nginx" > /etc/apt/sources.list.d/nginx.list \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends "nginx=1.30.6-*" \
-    && apt-get remove -y curl gnupg \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/*
+# nginx version: single source of truth for the whole repo.
+# The inline comment below is read by Renovate (custom.regex manager) - keep the
+# comment and the ENV on consecutive lines and do not reformat them.
+# renovate: datasource=deb depName=nginx
+ENV NGINX_VERSION=1.30.6
+
+# Install nginx (pinned) and supervisor in one layer; installation logic lives in
+# scripts/nginx-apt-install.sh so the CI probe stage and this stage cannot drift.
+COPY scripts/nginx-apt-install.sh /tmp/
+RUN /tmp/nginx-apt-install.sh "${NGINX_VERSION}" \
+    && rm -f /tmp/nginx-apt-install.sh
 
 # Copy uv binary (needed for `uv run bamt-cli` at runtime)
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
@@ -76,7 +79,7 @@ COPY backend/app ./app
 COPY backend/pyproject.toml ./pyproject.toml
 
 # Write version.json at build time (version source of truth)
-RUN echo "{\"version\":\"${GIT_TAG}\",\"tag\":\"${GIT_TAG}\",\"commit\":\"${GIT_COMMIT}\"}" > /app/version.json
+RUN echo "{\"version\":\"${GIT_TAG}\",\"tag\":\"${GIT_TAG}\",\"commit\":\"${GIT_COMMIT}\",\"nginx\":\"${NGINX_VERSION}\"}" > /app/version.json
 
 # Frontend: ship a working copy in the web root, plus a pristine template the entrypoint
 # re-renders at startup so an operator can inject their own page HTML without rebuilding.

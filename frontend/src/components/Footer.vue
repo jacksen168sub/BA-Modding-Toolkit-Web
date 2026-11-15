@@ -5,7 +5,7 @@
         <a href="https://github.com/jacksen168sub/BA-Modding-Toolkit-Web" target="_blank" class="repo-link">
           {{ $t('footer.repository') }}
         </a>
-        <span v-if="versionInfo" class="version-info">| {{ $t('footer.version') }}: {{ versionInfo.version }} {{ versionInfo.commit ? `(${versionInfo.commit})` : '' }}</span>
+        <span v-if="versionInfo" class="version-info">| {{ $t('footer.version') }}: {{ versionInfo.version }} {{ versionInfo.commit ? `(${versionInfo.commit})` : '' }}{{ versionInfo.nginx ? ` · nginx ${versionInfo.nginx}` : '' }}</span>
       </p>
       <p>
         <a href="https://github.com/Agent-0808/BA-Modding-Toolkit" target="_blank">

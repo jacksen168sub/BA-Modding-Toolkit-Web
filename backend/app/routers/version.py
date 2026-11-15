@@ -35,6 +35,7 @@ def get_version_info():
             result["version"] = data.get("version", "unknown")
             result["tag"] = data.get("tag")
             result["commit"] = data.get("commit")
+            result["nginx"] = data.get("nginx")
             _version_info = result
             return result
         except Exception:
@@ -105,5 +106,6 @@ def get_version():
     return {
         "tag": info["tag"],
         "commit": info["commit"],
-        "version": info["version"]
+        "version": info["version"],
+        "nginx": info.get("nginx")
     }

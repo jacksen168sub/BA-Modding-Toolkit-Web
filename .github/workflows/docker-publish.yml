@@ -1,17 +1,28 @@
 name: Publish Docker image
 
+# Two entry points:
+#   * push a v* tag (application release)
+#   * nginx-tag-release.yml dispatches this workflow at an nginx-<ver> tag
+#     (a tag pushed with GITHUB_TOKEN does not trigger workflows by itself)
+
 on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+
+concurrency:
+  group: docker-publish-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  push_to_registry:
-    name: Push Docker image to multiple registries
+  publish:
+    name: Build, smoke test and publish
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
+      contents: write      # create/update the GitHub Release
+      packages: write      # push to GHCR
+      id-token: write      # provenance / SBOM attestations
 
     steps:
       - name: Check out the repo
@@ -20,12 +31,86 @@ jobs:
           submodules: true
           fetch-depth: 0
 
+      - name: Get short commit SHA
+        id: commit
+        run: echo "short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      # The tag is either v0.6.2 (app release) or nginx-1.30.7 (nginx-only patch).
+      # The application version must never be polluted by the latter.
+      - name: Resolve app version
+        id: appver
+        run: |
+          set -eu
+          if [[ "${GITHUB_REF_NAME}" == v* ]]; then
+            echo "app_tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          else
+            echo "app_tag=$(git describe --tags --abbrev=0 --match 'v[0-9]*')" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Resolve nginx version
+        id: nginxver
+        run: |
+          set -eu
+          echo "ver=$(sh scripts/nginx-version.sh)" >> "$GITHUB_OUTPUT"
+          echo "prev=$(sh scripts/nginx-version.sh "${GITHUB_REF_NAME}^" || true)" >> "$GITHUB_OUTPUT"
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      # 1) Smoke build: single platform, never pushed.
+      - name: Build for smoke test
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64
+          load: true
+          tags: bamt:smoke
+          build-args: |
+            GIT_TAG=${{ steps.appver.outputs.app_tag }}
+            GIT_COMMIT=${{ steps.commit.outputs.short }}
+          cache-from: type=gha
+
+      - name: Smoke test
+        run: |
+          set -eu
+          docker run -d --name smoke -p 8080:80 bamt:smoke
+          ok=0
+          for i in $(seq 1 40); do
+            if curl -fsS localhost:8080/health; then ok=1; break; fi
+            sleep 3
+          done
+          if [ "$ok" != "1" ]; then
+            echo "::error::/health never became available"
+            docker logs smoke || true
+            docker rm -f smoke || true
+            exit 1
+          fi
+          docker exec smoke nginx -t
+          docker exec smoke nginx -v 2>&1 | grep -q "nginx/${{ steps.nginxver.outputs.ver }}"
+          curl -fsS localhost:8080/api/version | tee /tmp/version.json
+          python3 - <<'PY'
+          import json, pathlib
+          data = json.loads(pathlib.Path("/tmp/version.json").read_text())
+          assert data.get("version"), f"version.json carries no version: {data}"
+          print("version.json ok:", data)
+          PY
+          docker rm -f smoke
+
+      # Informational only - must never block a security release.
+      - name: Trivy scan
+        uses: aquasecurity/trivy-action@0.28.0
+        continue-on-error: true
+        with:
+          image-ref: bamt:smoke
+          format: table
+          severity: HIGH,CRITICAL
+          exit-code: '0'
+
+      # 2) Multi-arch push. build-args MUST be repeated here: the args of the
+      # smoke build only affected the locally loaded image.
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -46,21 +131,79 @@ jobs:
           images: |
             ghcr.io/${{ github.repository }}
             ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPONAME }}
+          tags: |
+            type=ref,event=tag
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+          labels: |
+            org.opencontainers.image.nginx.version=${{ steps.nginxver.outputs.ver }}
+            org.opencontainers.image.version=${{ steps.appver.outputs.app_tag }}
 
-      - name: Get short commit SHA
-        id: commit
-        run: echo "short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-
-      - name: Build and push Docker image
+      - name: Build and push
         uses: docker/build-push-action@v5
         with:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
+          provenance: true
+          sbom: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            GIT_TAG=${{ github.ref_name }}
+            GIT_TAG=${{ steps.appver.outputs.app_tag }}
             GIT_COMMIT=${{ steps.commit.outputs.short }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      # 3) Release notes - generated, never hand-written.
+      - name: Build release notes
+        run: |
+          set -eu
+          REF="$GITHUB_REF_NAME"
+          digest=$(docker buildx imagetools inspect \
+            "ghcr.io/${{ github.repository }}:$REF" --format '{{.Manifest.Digest}}')
+          {
+            if [[ "$REF" == nginx-* ]]; then
+              echo "## nginx ${{ steps.nginxver.outputs.ver }}"
+              echo
+              echo "应用版本 ${{ steps.appver.outputs.app_tag }} · 应用代码未变，本次只跟进 nginx 安全补丁"
+              echo
+              python3 scripts/check_nginx_cves.py \
+                --current "${{ steps.nginxver.outputs.prev }}" \
+                --target  "${{ steps.nginxver.outputs.ver }}" \
+                --markdown || true
+            else
+              echo "## ${{ steps.appver.outputs.app_tag }}"
+              echo
+              echo "内置 nginx ${{ steps.nginxver.outputs.ver }}"
+              echo
+              git log --no-merges --pretty='- %s' \
+                "$(git describe --tags --abbrev=0 --match 'v[0-9]*' "${REF}^")..$REF" | head -50
+            fi
+            echo
+            echo "### 镜像"
+            echo
+            echo "- \`ghcr.io/${{ github.repository }}:$REF\` / \`:latest\`"
+            echo "- digest \`$digest\`"
+            echo
+            echo "\`latest\` 已随本次移动，用 latest 部署的实例会无感升级（安全补丁类变更）。"
+          } > /tmp/notes.md
+          cat /tmp/notes.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Create or update release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -eu
+          if [[ "$GITHUB_REF_NAME" == nginx-* ]]; then
+            TITLE="nginx ${{ steps.nginxver.outputs.ver }}"
+          else
+            TITLE="$GITHUB_REF_NAME"
+          fi
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release edit "$GITHUB_REF_NAME" --notes-file /tmp/notes.md
+          else
+            gh release create "$GITHUB_REF_NAME" --title "$TITLE" --notes-file /tmp/notes.md
+          fi

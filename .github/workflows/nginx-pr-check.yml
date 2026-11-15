@@ -1,0 +1,70 @@
+name: nginx pr check
+
+# Runs on EVERY pull request on purpose: a workflow skipped by `paths:` leaves its
+# required status check pending forever, which would permanently block every
+# unrelated PR (Dependabot included). The `guard` step below decides whether the
+# nginx version actually changed and short-circuits when it did not.
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  nginx-check:                       # this name is the required check on master
+    name: nginx-check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect version change
+        id: guard
+        run: |
+          set -eu
+          cur=$(sh scripts/nginx-version.sh "origin/${{ github.base_ref }}" || true)
+          tgt=$(sh scripts/nginx-version.sh || true)
+          echo "cur=$cur" >> "$GITHUB_OUTPUT"
+          echo "tgt=$tgt" >> "$GITHUB_OUTPUT"
+          if [ -z "$cur" ] || [ -z "$tgt" ]; then
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "::error::cannot read nginx version (base='$cur' head='$tgt'); scripts/nginx-version.sh and the Dockerfile ENV drifted apart"
+            exit 1
+          fi
+          if [ "$cur" = "$tgt" ]; then
+            echo "nginx version unchanged ($cur) - nothing to gate"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "nginx $cur -> $tgt"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: CVE gate
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          set -eu
+          python3 scripts/check_nginx_cves.py \
+            --current "${{ steps.guard.outputs.cur }}" \
+            --target  "${{ steps.guard.outputs.tgt }}" \
+            --markdown | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Probe install
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          set -eu
+          docker build --progress=plain \
+            --target nginx-probe \
+            --build-arg NGINX_VERSION="${{ steps.guard.outputs.tgt }}" \
+            -f Dockerfile .
+
+      - name: Comment on PR
+        if: always() && steps.guard.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -eu
+          gh pr comment "${{ github.event.number }}" --body-file "$GITHUB_STEP_SUMMARY" || true

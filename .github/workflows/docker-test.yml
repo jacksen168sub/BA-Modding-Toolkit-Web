@@ -58,8 +58,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            BUILD_VERSION=${{ github.ref_name }}
-            BUILD_COMMIT_SHA=${{ github.sha }}
-            BUILD_COMMIT_LINK=${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
+            GIT_TAG=test-${{ github.ref_name }}
+            GIT_COMMIT=${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
