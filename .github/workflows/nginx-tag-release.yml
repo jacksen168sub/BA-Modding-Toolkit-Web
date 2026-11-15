@@ -41,6 +41,24 @@ jobs:
             echo "nginx $old -> $new"
           fi
 
+      - name: Refuse downgrades and un-gated bumps
+        if: steps.v.outputs.changed == 'true'
+        run: |
+          set -eu
+          new="${{ steps.v.outputs.ver }}"
+          old=$(sh scripts/nginx-version.sh HEAD^ || true)
+
+          # A commit pushed straight to master skips the PR gate, so re-check here:
+          # 1) the version must move forward (a downgrade would publish an older,
+          #    still-vulnerable nginx and drag `latest` backwards)
+          # 2) the CVE gate must pass (cheap, and the only guard when the PR was bypassed)
+          if [ -n "$old" ] && [ "$(printf '%s\n%s\n' "$old" "$new" | sort -V | head -1)" = "$new" ]; then
+            echo "::error::nginx $new is not newer than $old - refusing to publish a downgrade"
+            exit 1
+          fi
+
+          python3 scripts/check_nginx_cves.py --current "$old" --target "$new"
+
       - name: Create tag and start the release
         if: steps.v.outputs.changed == 'true'
         env:
