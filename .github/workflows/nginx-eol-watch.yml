@@ -1,0 +1,44 @@
+name: nginx eol watch
+
+# Weekly safety net: if the locked nginx branch goes EOL, or the same branch got a
+# newer release that never produced an auto-bump PR, say so once (idempotent issue).
+
+on:
+  schedule:
+    - cron: '0 5 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  watch:
+    name: branch eol / chain health
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Watchdog
+        id: w
+        run: |
+          set -eu
+          python3 scripts/check_nginx_cves.py --watchdog \
+            --body-out "$RUNNER_TEMP/watchdog.md" | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Upsert issue
+        if: steps.w.outputs.alert == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -eu
+          TITLE="${{ steps.w.outputs.title }}"
+          NUM=$(gh issue list --state open --search "in:title \"$TITLE\"" --json number -q '.[0].number // empty')
+          if [ -n "$NUM" ]; then
+            gh issue comment "$NUM" --body-file "$RUNNER_TEMP/watchdog.md"
+          else
+            gh issue create --title "$TITLE" --body-file "$RUNNER_TEMP/watchdog.md" --label security
+          fi

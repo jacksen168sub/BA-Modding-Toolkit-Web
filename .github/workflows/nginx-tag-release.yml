@@ -1,0 +1,76 @@
+name: nginx tag release
+
+# Human merges the Renovate PR -> this creates the release tag and starts publishing.
+# Nothing else to click afterwards.
+
+on:
+  push:
+    branches: [master]
+    paths: ['Dockerfile']
+
+permissions:
+  contents: write
+  actions: write        # required for `gh workflow run`
+
+jobs:
+  tag:
+    name: tag nginx-<version>
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Compare versions
+        id: v
+        run: |
+          set -eu
+          new=$(sh scripts/nginx-version.sh)
+          old=$(sh scripts/nginx-version.sh HEAD^ || true)
+          if [ -z "$new" ]; then
+            echo "::error::cannot read nginx version from Dockerfile"
+            exit 1
+          fi
+          echo "ver=$new" >> "$GITHUB_OUTPUT"
+          if [ "$new" = "$old" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "nginx version unchanged ($new) - not a nginx bump"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "nginx $old -> $new"
+          fi
+
+      - name: Create tag and start the release
+        if: steps.v.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -eu
+
+          # Only a pure nginx bump gets its own release. If this commit also
+          # carries application changes, the release belongs to the human's
+          # app version (v*) - do not publish twice for one commit.
+          changed_files=$(git diff --name-only HEAD^ HEAD | tr -d '\r' | sort | paste -sd' ')
+          if [ "$changed_files" != "Dockerfile" ]; then
+            echo "commit also touched: $changed_files - leaving this one to the app release"
+            exit 0
+          fi
+
+          if git describe --tags --exact-match --match 'v*' >/dev/null 2>&1; then
+            echo "HEAD already carries a v* tag - skipping"
+            exit 0
+          fi
+
+          TAG="nginx-${{ steps.v.outputs.ver }}"
+          if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            echo "tag $TAG already exists (rollback / re-run) - skipping"
+            exit 0
+          fi
+
+          git tag "$TAG"
+          git push origin "$TAG"
+
+          # A tag pushed with GITHUB_TOKEN does not trigger other workflows,
+          # so dispatch the publish workflow explicitly.
+          gh workflow run docker-publish.yml --ref "$TAG"

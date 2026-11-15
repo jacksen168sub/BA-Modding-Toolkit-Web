@@ -1,0 +1,32 @@
+# Dependency updates that are NOT covered by the nginx pipeline.
+#
+# scripts/check_nginx_cves.py + renovate.json handle the apt-installed nginx.
+# Everything else (base images, GitHub Actions) is a plain image/tag bump and is
+# left to Dependabot on purpose: no CVE gate needed, but a human still merges.
+version: 2
+updates:
+  - package-ecosystem: docker
+    directories:
+      - "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore(docker)"
+    labels:
+      - dependencies
+    # `nginx=1.30.6-*` is an apt pin inside a RUN step; Dependabot cannot see it
+    # (and must not try). The frontend image tag (Dockerfile.frontend) IS tracked
+    # here, because that one is a plain `FROM nginx:1.30.6`.
+    ignore:
+      - dependency-name: "ghcr.io/astral-sh/uv"
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore(ci)"
+    labels:
+      - dependencies

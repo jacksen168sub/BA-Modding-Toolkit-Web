@@ -114,6 +114,77 @@ Also available on Docker Hub:
 docker pull jacksen168/ba-modding-toolkit-web:latest
 ```
 
+## Image tags & nginx updates
+
+### What the tags mean
+
+| Tag | What it is | Who creates it |
+|---|---|---|
+| `latest` | newest publish of either kind below | CI |
+| `v0.6.2` | application release (code changed) | a human, by pushing a `v*` tag |
+| `nginx-1.30.7` | **runtime patch only** — same application code, newer nginx | CI, after a human merges the bot PR |
+
+`latest` moves on **both** kinds of release, so anything tracking `latest` picks up nginx security patches automatically. If you pin a `v*` tag instead, you keep that exact build forever and only get nginx fixes by moving tags.
+
+Which nginx a given image carries:
+
+```bash
+curl -s localhost/api/version        # {"version":"v0.6.2","nginx":"1.30.7",...}
+docker inspect ghcr.io/jacksen168sub/ba-modding-toolkit-web:latest \
+  --format '{{ index .Config.Labels "org.opencontainers.image.nginx.version" }}'
+```
+
+### How nginx gets updated
+
+1. **Renovate** (`renovate.json`) reads the nginx.org apt index for amd64 + arm64 and opens a PR when the pinned branch (1.30.x) gets a new release. It never touches the application version.
+2. **`nginx pr check`** runs on that PR: the CVE gate (`scripts/check_nginx_cves.py`) plus a real `docker build --target nginx-probe` — it must install before anyone is asked to merge.
+3. A human merges. **`nginx tag release`** creates `nginx-<version>` and starts the publish workflow.
+4. **Publish** builds both architectures, smoke-tests `/health` + `nginx -t` *before* pushing, then creates a GitHub Release whose notes are generated from the advisory page ("what this bump fixed").
+
+The gate only blocks when a candidate would introduce a **major** severity finding that the current version does not have. Being affected isn't enough — the shipped version usually is too, and blocking would just keep the older, equally affected build online.
+
+### Upgrading / rolling back by hand
+
+```bash
+# rollback: revert the bot commit, then tag the result yourself
+git revert <bot-commit> && git push origin master
+git tag nginx-1.30.6-r1 && git push origin nginx-1.30.6-r1
+gh workflow run docker-publish.yml --ref nginx-1.30.6-r1
+```
+
+Reuse of the original tag is deliberately not automated: registry tags are mutable, and silently republishing a version hides history. The `-rN` suffix keeps both visible.
+
+### Keeping a running container current
+
+`latest` is how this repo ships patches, so poll it with one of:
+
+```yaml
+# docker-compose.yml — notify only, decide yourself (recommended)
+  diun:
+    image: crazymax/diun:latest
+    environment:
+      DIUN_WATCH_WORKERS: "10"
+      DIUN_WATCH_SCHEDULE: "0 */6 * * *"
+      DIUN_PROVIDERS_DOCKER: "true"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./diun-data:/data
+```
+
+```bash
+# or zero-downtime restart whenever the tag moves
+docker run -d --name docker-rollout \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  wowu/docker-rollout:latest
+docker rollout bamt-web
+```
+
+**Watchtower is not used**: it was archived on 2025-12-17 and its Docker SDK (API v1.25) predates Docker Engine 29.
+
+### If the weekly nginx check stops
+
+GitHub disables `schedule` triggers after 60 days without repository activity. Re-enable `nginx eol watch` (and Renovate's own schedule) under the Actions tab; the watchdog also opens an issue when the locked branch reaches EOL or a same-branch release has gone unpicked.
+
 ## Project Structure
 
 ```
