@@ -40,7 +40,7 @@ RUN uv sync --no-dev
 FROM python:3.12-slim-bookworm AS nginx-probe
 ARG NGINX_VERSION
 COPY scripts/nginx-apt-install.sh /tmp/
-RUN /tmp/nginx-apt-install.sh "${NGINX_VERSION}"
+RUN sh /tmp/nginx-apt-install.sh "${NGINX_VERSION}"
 
 # Production stage
 FROM python:3.12-slim-bookworm
@@ -60,7 +60,7 @@ ENV NGINX_VERSION=1.30.6
 # Install nginx (pinned) and supervisor in one layer; installation logic lives in
 # scripts/nginx-apt-install.sh so the CI probe stage and this stage cannot drift.
 COPY scripts/nginx-apt-install.sh /tmp/
-RUN /tmp/nginx-apt-install.sh "${NGINX_VERSION}" \
+RUN sh /tmp/nginx-apt-install.sh "${NGINX_VERSION}" \
     && rm -f /tmp/nginx-apt-install.sh
 
 # Copy uv binary (needed for `uv run bamt-cli` at runtime)
