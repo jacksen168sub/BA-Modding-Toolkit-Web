@@ -156,8 +156,11 @@ jobs:
         run: |
           set -eu
           REF="$GITHUB_REF_NAME"
+          # Registry references must be lowercase; $GITHUB_REPOSITORY keeps the
+          # repo's real casing (BA-Modding-Toolkit-Web) and docker rejects it.
+          GHCR_REPO="ghcr.io/${GITHUB_REPOSITORY,,}"
           digest=$(docker buildx imagetools inspect \
-            "ghcr.io/${{ github.repository }}:$REF" --format '{{.Manifest.Digest}}')
+            "$GHCR_REPO:$REF" --format '{{.Manifest.Digest}}')
           {
             if [[ "$REF" == nginx-* ]]; then
               echo "## nginx ${{ steps.nginxver.outputs.ver }}"
@@ -179,7 +182,7 @@ jobs:
             echo
             echo "### 镜像"
             echo
-            echo "- \`ghcr.io/${{ github.repository }}:$REF\` / \`:latest\`"
+            echo "- \`$GHCR_REPO:$REF\` / \`:latest\`"
             echo "- digest \`$digest\`"
             echo
             echo "\`latest\` 已随本次移动，用 latest 部署的实例会无感升级（安全补丁类变更）。"
@@ -215,6 +218,9 @@ jobs:
       contents: read
       packages: read
     steps:
+      - name: Resolve lowercase image reference
+        run: echo "GHCR_REPO=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -225,7 +231,7 @@ jobs:
       - name: Trivy image scan
         uses: aquasecurity/trivy-action@v0.36.0
         with:
-          image-ref: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+          image-ref: ${{ env.GHCR_REPO }}:${{ github.ref_name }}
           format: table
           severity: HIGH,CRITICAL
           exit-code: '0'
