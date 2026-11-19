@@ -99,15 +99,10 @@ jobs:
           PY
           docker rm -f smoke
 
-      # Informational only - must never block a security release.
-      - name: Trivy scan
-        uses: aquasecurity/trivy-action@0.28.0
-        continue-on-error: true
-        with:
-          image-ref: bamt:smoke
-          format: table
-          severity: HIGH,CRITICAL
-          exit-code: '0'
+      # NOTE: vulnerability scanning deliberately lives in the separate `scan` job
+      # below, not here. A step-level `continue-on-error` cannot save a workflow
+      # whose action reference fails to resolve (that happens at prepare time), and
+      # an unavailable scanner must never block a security release.
 
       # 2) Multi-arch push. build-args MUST be repeated here: the args of the
       # smoke build only affected the locally loaded image.
@@ -207,3 +202,30 @@ jobs:
           else
             gh release create "$GITHUB_REF_NAME" --title "$TITLE" --notes-file /tmp/notes.md
           fi
+
+  # Informational only, and deliberately isolated: it runs AFTER the release is
+  # published and job-level `continue-on-error` keeps a scanner outage (or a bad
+  # action ref) from ever turning a successful security release red.
+  scan:
+    name: Trivy scan (informational)
+    needs: publish
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trivy image scan
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+          format: table
+          severity: HIGH,CRITICAL
+          exit-code: '0'
