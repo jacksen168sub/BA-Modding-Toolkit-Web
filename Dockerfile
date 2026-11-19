@@ -55,7 +55,7 @@ WORKDIR /app
 # The inline comment below is read by Renovate (custom.regex manager) - keep the
 # comment and the ENV on consecutive lines and do not reformat them.
 # renovate: datasource=deb depName=nginx
-ENV NGINX_VERSION=1.30.6
+ENV NGINX_VERSION=1.30.7
 
 # Install nginx (pinned) and supervisor in one layer; installation logic lives in
 # scripts/nginx-apt-install.sh so the CI probe stage and this stage cannot drift.
